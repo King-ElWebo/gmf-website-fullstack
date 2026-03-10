@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  items Item[]
+}
+
+model Item {
+  id          String  @id @default(cuid())
+  title       String
+  slug        String  @unique
+  description String?
+  priceCents  Int?
+  published   Boolean @default(false)
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  images    ItemImage[]
+
+  @@index([categoryId])
+}
+
+model ItemImage {
+  id        String  @id @default(cuid())
+  itemId    String
+  item      Item    @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  url       String
+  key       String // storage key: filename for local, object key for S3/R2
+  alt       String?
+  sortOrder Int     @default(0)
+
+  createdAt DateTime @default(now())
+
+  @@index([itemId])
+}
