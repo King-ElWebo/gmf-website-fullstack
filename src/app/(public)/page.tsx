@@ -1,104 +1,29 @@
-"use client";
-
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/public/Button';
 import { ProductCard } from '@/components/public/ProductCard';
-import { products } from '@/data/products';
-import { ChevronLeft, ChevronRight, Instagram, Facebook } from 'lucide-react';
+import { HeroCarousel } from '@/components/public/HeroCarousel';
+import { Instagram, Facebook } from 'lucide-react';
+import { listPublishedItems } from '@/lib/repositories/catalog';
 
-const heroImages = [
-    'https://images.unsplash.com/photo-1530103043960-ef38714abb15?w=1600',
-    'https://images.unsplash.com/photo-1587654780291-39c9404d746b?w=1600',
-    'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1600'
-];
+export default async function HomePage() {
+    const items = await listPublishedItems();
 
-export default function HomePage() {
-    const [currentSlide, setCurrentSlide] = useState(0);
-
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setCurrentSlide((prev) => (prev + 1) % heroImages.length);
-        }, 5000);
-        return () => clearInterval(timer);
-    }, []);
-
-    const nextSlide = () => {
-        setCurrentSlide((prev) => (prev + 1) % heroImages.length);
-    };
-
-    const prevSlide = () => {
-        setCurrentSlide((prev) => (prev - 1 + heroImages.length) % heroImages.length);
-    };
-
-    const topProducts = products.slice(0, 3);
+    const topProducts = items.slice(0, 3).map(item => ({
+        id: item.id,
+        title: item.title,
+        description: item.description ?? '',
+        price: item.priceCents != null
+            ? `ab ${(item.priceCents / 100).toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })} / Tag`
+            : undefined,
+        imageUrl: item.images[0]?.url ?? '',
+        category: item.category.name,
+    }));
 
     return (
         <div className="min-h-screen">
             {/* Hero Section with Carousel */}
-            <section className="relative h-[500px] md:h-[600px] overflow-hidden">
-                {heroImages.map((image, index) => (
-                    <div
-                        key={index}
-                        className={`absolute inset-0 transition-opacity duration-1000 ${index === currentSlide ? 'opacity-100' : 'opacity-0'
-                            }`}
-                    >
-                        <Image
-                            src={image}
-                            alt={`Slide ${index + 1}`}
-                            fill
-                            className="object-cover"
-                            priority={index === 0}
-                            sizes="100vw"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/20" />
-                    </div>
-                ))}
-
-                {/* Hero Content */}
-                <div className="relative z-10 h-full flex items-center">
-                    <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 w-full">
-                        <div className="max-w-[600px]">
-                            <h1 className="font-['Inter'] font-semibold text-[32px] md:text-[48px] leading-tight text-white mb-4">
-                                Unvergessliche Events für Groß und Klein
-                            </h1>
-                            <p className="font-['Inter'] text-[16px] md:text-[18px] leading-[25.6px] text-white mb-8">
-                                Hüpfburgen und Eventmodule für Ihre Feier. Einfach buchen, sicher aufbauen, Spaß haben.
-                            </p>
-                            <Link href="/produkte">
-                                <Button variant="primary">Jetzt entdecken</Button>
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Carousel Controls */}
-                <button
-                    onClick={prevSlide}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-white/80 hover:bg-white p-2 rounded-full transition-colors"
-                >
-                    <ChevronLeft className="text-[#1a3a52]" size={24} />
-                </button>
-                <button
-                    onClick={nextSlide}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-white/80 hover:bg-white p-2 rounded-full transition-colors"
-                >
-                    <ChevronRight className="text-[#1a3a52]" size={24} />
-                </button>
-
-                {/* Dots */}
-                <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-2">
-                    {heroImages.map((_, index) => (
-                        <button
-                            key={index}
-                            onClick={() => setCurrentSlide(index)}
-                            className={`w-2 h-2 rounded-full transition-all ${index === currentSlide ? 'bg-white w-8' : 'bg-white/50'
-                                }`}
-                        />
-                    ))}
-                </div>
-            </section>
+            <HeroCarousel />
 
             {/* Top Products Section */}
             <section className="py-16 bg-white">
