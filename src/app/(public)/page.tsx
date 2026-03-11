@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button } from '@/components/public/Button';
 import { ProductCard } from '@/components/public/ProductCard';
 import { products } from '@/data/products';
@@ -43,10 +44,13 @@ export default function HomePage() {
                         className={`absolute inset-0 transition-opacity duration-1000 ${index === currentSlide ? 'opacity-100' : 'opacity-0'
                             }`}
                     >
-                        <img
+                        <Image
                             src={image}
                             alt={`Slide ${index + 1}`}
-                            className="w-full h-full object-cover"
+                            fill
+                            className="object-cover"
+                            priority={index === 0}
+                            sizes="100vw"
                         />
                         <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/20" />
                     </div>
@@ -206,11 +210,13 @@ export default function HomePage() {
 
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                         {[1, 2, 3, 4].map((i) => (
-                            <div key={i} className="bg-white rounded-[8px] aspect-square border border-[#cbd5e1]">
-                                <img
+                            <div key={i} className="relative bg-white rounded-[8px] aspect-square border border-[#cbd5e1]">
+                                <Image
                                     src={`https://images.unsplash.com/photo-${i === 1 ? '1530103043960-ef38714abb15' : i === 2 ? '1587654780291-39c9404d746b' : i === 3 ? '1492684223066-81342ee5ff30' : '1518199266791-5375a83190b7'}?w=400`}
                                     alt={`Social ${i}`}
-                                    className="w-full h-full object-cover rounded-[8px]"
+                                    fill
+                                    className="object-cover rounded-[8px]"
+                                    sizes="(max-width: 768px) 50vw, 25vw"
                                 />
                             </div>
                         ))}

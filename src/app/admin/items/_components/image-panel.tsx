@@ -32,11 +32,13 @@ function SortableImage({
     isCover,
     onCover,
     onDelete,
+    isDeleting,
 }: {
     image: ImageRow;
     isCover: boolean;
     onCover: () => void;
     onDelete: () => void;
+    isDeleting: boolean;
 }) {
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
         useSortable({ id: image.id });
@@ -45,57 +47,52 @@ function SortableImage({
         transform: CSS.Transform.toString(transform),
         transition,
         opacity: isDragging ? 0.5 : 1,
-        cursor: "grab",
     };
 
     return (
         <div
             ref={setNodeRef}
             style={style}
-            {...attributes}
-            {...listeners}
-            className="relative group rounded-md overflow-hidden border border-neutral-200 bg-neutral-50"
+            className="relative rounded-lg overflow-hidden border border-neutral-200 bg-neutral-50"
         >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-                src={image.url}
-                alt={image.alt ?? ""}
-                className="w-full h-32 object-cover"
-                draggable={false}
-            />
+            {/* Drag handle overlays the image — separate from buttons */}
+            <div {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                    src={image.url}
+                    alt={image.alt ?? ""}
+                    className="w-full h-36 object-cover"
+                    draggable={false}
+                />
+            </div>
 
             {/* Cover badge */}
             {isCover && (
-                <span className="absolute top-1 left-1 bg-black text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">
+                <span className="absolute top-2 left-2 bg-black text-white text-[10px] font-semibold px-2 py-0.5 rounded-full">
                     Cover
                 </span>
             )}
 
-            {/* Action buttons – shown on hover */}
-            <div className="absolute bottom-0 inset-x-0 flex gap-1 p-1 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none group-hover:pointer-events-auto">
+            {/* Action buttons — always visible, outside drag area */}
+            <div className="flex border-t border-neutral-200">
                 {!isCover && (
                     <button
                         type="button"
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            onCover();
-                        }}
+                        onClick={onCover}
+                        className="flex-1 text-xs py-2 text-neutral-600 hover:bg-yellow-50 hover:text-yellow-700 transition-colors border-r border-neutral-200"
                         title="Als Cover setzen"
-                        className="flex-1 rounded text-xs bg-white text-black py-0.5 hover:bg-yellow-100"
                     >
                         ★ Cover
                     </button>
                 )}
                 <button
                     type="button"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        onDelete();
-                    }}
+                    onClick={onDelete}
+                    disabled={isDeleting}
+                    className="flex-1 text-xs py-2 text-red-500 hover:bg-red-50 hover:text-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     title="Bild löschen"
-                    className="flex-1 rounded text-xs bg-white text-red-600 py-0.5 hover:bg-red-50"
                 >
-                    ✕
+                    {isDeleting ? "Löscht…" : "✕ Löschen"}
                 </button>
             </div>
         </div>
@@ -115,9 +112,13 @@ export default function ImagePanel({
         [...initialImages].sort((a, b) => a.sortOrder - b.sortOrder)
     );
     const [uploading, setUploading] = useState(false);
+    const [deletingId, setDeletingId] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
 
-    const sensors = useSensors(useSensor(PointerSensor));
+    // Require 8px drag distance before activating — prevents accidental drags on clicks
+    const sensors = useSensors(
+        useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
+    );
 
     // ── Upload ───────────────────────────────────────────────────────────────
 
@@ -125,7 +126,7 @@ export default function ImagePanel({
         async (e: React.ChangeEvent<HTMLInputElement>) => {
             const fileList = e.target.files;
             if (!fileList || fileList.length === 0) return;
-            const files = Array.from(fileList); // copy before clearing input
+            const files = Array.from(fileList);
             e.target.value = "";
 
             setUploading(true);
@@ -187,6 +188,7 @@ export default function ImagePanel({
 
     const handleCover = useCallback(
         async (imageId: string) => {
+            setError(null);
             const res = await fetch(
                 `/api/admin/items/${itemId}/images/${imageId}/cover`,
                 { method: "PATCH" }
@@ -209,10 +211,15 @@ export default function ImagePanel({
         async (imageId: string) => {
             if (!confirm("Bild wirklich löschen?")) return;
 
+            setDeletingId(imageId);
+            setError(null);
+
             const res = await fetch(
                 `/api/admin/items/${itemId}/images/${imageId}`,
                 { method: "DELETE" }
             );
+
+            setDeletingId(null);
 
             if (!res.ok) {
                 setError("Bild konnte nicht gelöscht werden");
@@ -269,7 +276,7 @@ export default function ImagePanel({
                         items={images.map((img) => img.id)}
                         strategy={rectSortingStrategy}
                     >
-                        <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5">
+                        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
                             {images.map((img) => (
                                 <SortableImage
                                     key={img.id}
@@ -277,6 +284,7 @@ export default function ImagePanel({
                                     isCover={img.id === coverId}
                                     onCover={() => handleCover(img.id)}
                                     onDelete={() => handleDelete(img.id)}
+                                    isDeleting={deletingId === img.id}
                                 />
                             ))}
                         </div>

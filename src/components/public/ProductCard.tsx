@@ -7,7 +7,7 @@ interface ProductCardProps {
     id: string;
     title: string;
     description: string;
-    price: string;
+    price?: string;
     imageUrl: string;
     badge?: string;
     badgeColor?: 'gray' | 'yellow';

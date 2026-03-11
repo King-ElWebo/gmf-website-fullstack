@@ -1,13 +1,25 @@
-"use client";
+import { listPublishedItems, listCategories } from '@/lib/repositories/catalog';
+import { ProduktFilter } from '@/components/public/ProduktFilter';
 
-import { useState } from 'react';
-import { ProductCard } from '@/components/public/ProductCard';
-import { products, categories, getProductsByCategory } from '@/data/products';
+export default async function ProduktePage() {
+    const [items, categories] = await Promise.all([
+        listPublishedItems(),
+        listCategories(),
+    ]);
 
-export default function ProduktePage() {
-    const [selectedCategory, setSelectedCategory] = useState('Alle');
+    // Map Prisma items to the shape ProduktFilter expects
+    const mappedItems = items.map(item => ({
+        id: item.id,
+        title: item.title,
+        description: item.description,
+        price: item.priceCents != null
+            ? `ab ${(item.priceCents / 100).toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })} / Tag`
+            : null,
+        imageUrl: item.images[0]?.url ?? '',
+        category: item.category.name,
+    }));
 
-    const filteredProducts = getProductsByCategory(selectedCategory);
+    const categoryNames = categories.map(c => c.name);
 
     return (
         <div className="min-h-screen bg-white">
@@ -23,38 +35,7 @@ export default function ProduktePage() {
                     </p>
                 </div>
 
-                {/* Category Filter */}
-                <div className="mb-8">
-                    <div className="flex flex-wrap gap-3">
-                        {categories.map(category => (
-                            <button
-                                key={category}
-                                onClick={() => setSelectedCategory(category)}
-                                className={`px-6 py-3 rounded-[8px] font-['Inter'] font-medium text-[14px] transition-colors border ${selectedCategory === category
-                                        ? 'bg-[#1a3a52] text-white border-[#1a3a52]'
-                                        : 'bg-white text-[#2d3748] border-[#cbd5e1] hover:border-[#1a3a52]'
-                                    }`}
-                            >
-                                {category}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-
-                {/* Products Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredProducts.map(product => (
-                        <ProductCard key={product.id} {...product} />
-                    ))}
-                </div>
-
-                {filteredProducts.length === 0 && (
-                    <div className="text-center py-12">
-                        <p className="font-['Inter'] text-[16px] text-[#64748b]">
-                            Keine Produkte in dieser Kategorie gefunden.
-                        </p>
-                    </div>
-                )}
+                <ProduktFilter items={mappedItems} categories={categoryNames} />
             </div>
         </div>
     );
