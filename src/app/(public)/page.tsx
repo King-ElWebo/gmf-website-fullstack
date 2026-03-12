@@ -5,9 +5,12 @@ import { ProductCard } from '@/components/public/ProductCard';
 import { HeroCarousel } from '@/components/public/HeroCarousel';
 import { Instagram, Facebook } from 'lucide-react';
 import { listPublishedItems } from '@/lib/repositories/catalog';
+import { listGlobalImages } from '@/lib/repositories/global-images';
+import { DisplayArea } from '@prisma/client';
 
 export default async function HomePage() {
     const items = await listPublishedItems();
+    const carouselImages = await listGlobalImages(DisplayArea.CAROUSEL);
 
     const topProducts = items.slice(0, 3).map(item => ({
         id: item.id,
@@ -20,10 +23,17 @@ export default async function HomePage() {
         category: item.category.name,
     }));
 
+    const heroCarouselImages = carouselImages
+        .filter(img => img.published)
+        .map(img => ({
+            url: img.url,
+            alt: img.alt,
+        }));
+
     return (
         <div className="min-h-screen">
             {/* Hero Section with Carousel */}
-            <HeroCarousel />
+            <HeroCarousel images={heroCarouselImages} />
 
             {/* Top Products Section */}
             <section className="py-16 bg-white">

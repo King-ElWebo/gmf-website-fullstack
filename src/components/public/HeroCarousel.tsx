@@ -6,33 +6,52 @@ import Link from 'next/link';
 import { Button } from '@/components/public/Button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-const heroImages = [
-    'https://images.unsplash.com/photo-1530103043960-ef38714abb15?w=1600',
-    'https://images.unsplash.com/photo-1587654780291-39c9404d746b?w=1600',
-    'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1600'
+const fallbackImages = [
+    { url: 'https://images.unsplash.com/photo-1530103043960-ef38714abb15?w=1600', alt: 'Placeholder image 1' },
+    { url: 'https://images.unsplash.com/photo-1587654780291-39c9404d746b?w=1600', alt: 'Placeholder image 2' },
+    { url: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1600', alt: 'Placeholder image 3' },
 ];
 
-export function HeroCarousel() {
+type CarouselImage = {
+    url: string;
+    alt: string | null;
+};
+
+type HeroCarouselProps = {
+    images?: CarouselImage[];
+};
+
+export function HeroCarousel({ images }: HeroCarouselProps) {
+    const activeImages = images && images.length > 0 ? images : fallbackImages;
     const [currentSlide, setCurrentSlide] = useState(0);
 
     useEffect(() => {
+        if (activeImages.length === 0) return;
         const timer = setInterval(() => {
-            setCurrentSlide((prev) => (prev + 1) % heroImages.length);
+            setCurrentSlide((prev) => (prev + 1) % activeImages.length);
         }, 5000);
         return () => clearInterval(timer);
-    }, []);
+    }, [activeImages.length]);
+
+    if (activeImages.length === 0) {
+        return (
+            <section className="relative h-[500px] md:h-[600px] bg-gray-200 flex items-center justify-center">
+                <p className="text-gray-500">No images available for the carousel.</p>
+            </section>
+        );
+    }
 
     const nextSlide = () => {
-        setCurrentSlide((prev) => (prev + 1) % heroImages.length);
+        setCurrentSlide((prev) => (prev + 1) % activeImages.length);
     };
 
     const prevSlide = () => {
-        setCurrentSlide((prev) => (prev - 1 + heroImages.length) % heroImages.length);
+        setCurrentSlide((prev) => (prev - 1 + activeImages.length) % activeImages.length);
     };
 
     return (
         <section className="relative h-[500px] md:h-[600px] overflow-hidden">
-            {heroImages.map((image, index) => (
+            {activeImages.map((image, index) => (
                 <div
                     key={index}
                     className={`absolute inset-0 transition-opacity duration-1000 ${
@@ -40,8 +59,8 @@ export function HeroCarousel() {
                     }`}
                 >
                     <Image
-                        src={image}
-                        alt={`Slide ${index + 1}`}
+                        src={image.url}
+                        alt={image.alt ?? `Slide ${index + 1}`}
                         fill
                         className="object-cover"
                         priority={index === 0}
@@ -83,7 +102,7 @@ export function HeroCarousel() {
             </button>
 
             <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-2">
-                {heroImages.map((_, index) => (
+                {activeImages.map((_, index) => (
                     <button
                         key={index}
                         onClick={() => setCurrentSlide(index)}
