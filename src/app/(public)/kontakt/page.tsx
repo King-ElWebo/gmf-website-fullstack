@@ -43,6 +43,7 @@ export default function ContactPage() {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                    {/* LINKE SPALTE: Infos & Karte */}
                     <div>
                         <h2 className="font-['Inter'] font-semibold text-[24px] text-[#1a202c] mb-6">Kontaktinformationen</h2>
                         <div className="space-y-6 mb-8">
@@ -50,7 +51,7 @@ export default function ContactPage() {
                                 <div className="w-10 h-10 bg-[#e2e8f0] rounded-full flex items-center justify-center flex-shrink-0"><MapPin size={20} className="text-[#1a3a52]" /></div>
                                 <div>
                                     <h3 className="font-['Inter'] font-medium text-[16px] text-[#1a202c] mb-1">Adresse</h3>
-                                    <p className="font-['Inter'] text-[14px] text-[#4a5568] leading-[20px]">Musterstraße 123<br />12345 Musterstadt<br />Deutschland</p>
+                                    <p className="font-['Inter'] text-[14px] text-[#4a5568] leading-[20px]">Spargelfeldgasse 22<br />2102 Bisamberg<br />Österreich</p>
                                 </div>
                             </div>
                             <div className="flex items-start gap-4">
@@ -90,14 +91,24 @@ export default function ContactPage() {
                             </div>
                         </div>
 
+                        {/* MAP BEREICH IST JETZT HIER DRIN */}
                         <div className="mt-8">
                             <h3 className="font-['Inter'] font-medium text-[18px] text-[#1a202c] mb-4">Standort</h3>
-                            <div className="bg-[#e2e8f0] rounded-[8px] h-[300px] flex items-center justify-center border border-[#cbd5e1]">
-                                <p className="font-['Inter'] text-[14px] text-[#64748b]">Google Maps Platzhalter</p>
+                            <div className="bg-[#e2e8f0] rounded-[8px] h-[300px] flex items-center justify-center border border-[#cbd5e1] overflow-hidden">
+                                <iframe
+                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2652.3718250777197!2d16.357130356852537!3d48.3341579974037!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x476d0fbf7cc77e57%3A0x6d03f6c40f987f39!2sSpargelfeldgasse%2022%2C%202102%20Bisamberg!5e0!3m2!1sde!2sat!4v1773320289705!5m2!1sde!2sat"
+                                    width="100%"
+                                    height="100%"
+                                    style={{ border: 0 }}
+                                    allowFullScreen
+                                    loading="lazy"
+                                    referrerPolicy="no-referrer-when-downgrade"
+                                ></iframe>
                             </div>
                         </div>
-                    </div>
+                    </div> {/* ENDE LINKE SPALTE */}
 
+                    {/* RECHTE SPALTE: Formular */}
                     <div>
                         <h2 className="font-['Inter'] font-semibold text-[24px] text-[#1a202c] mb-6">Schreiben Sie uns</h2>
                         <form onSubmit={handleSubmit} className="space-y-6">
@@ -113,9 +124,9 @@ export default function ContactPage() {
                                 Mit dem Absenden des Formulars stimmen Sie zu, dass Ihre Daten zur Bearbeitung Ihrer Anfrage verwendet werden. Weitere Informationen finden Sie in unserer Datenschutzerklärung.
                             </p>
                         </div>
-                    </div>
+                    </div> {/* ENDE RECHTE SPALTE */}
                 </div>
             </div>
         </div>
-    );
-}
+    )
+};

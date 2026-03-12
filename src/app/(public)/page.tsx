@@ -119,15 +119,23 @@ export default async function HomePage() {
                             </p>
                             <div className="space-y-3">
                                 <p className="font-['Inter'] text-[14px] text-[#2d3748]">
-                                    <strong>Adresse:</strong> Musterstraße 123, 12345 Musterstadt
+                                    <strong>Adresse:</strong> Spargelfeldgasse 22, 2102 Bisamberg 
                                 </p>
                                 <p className="font-['Inter'] text-[14px] text-[#2d3748]">
                                     <strong>Öffnungszeiten:</strong> Mo-Fr 9-18 Uhr, Sa 10-14 Uhr
                                 </p>
                             </div>
                         </div>
-                        <div className="bg-[#e2e8f0] rounded-[8px] h-[300px] flex items-center justify-center border border-[#cbd5e1]">
-                            <p className="font-['Inter'] text-[14px] text-[#64748b]">Google Maps Platzhalter</p>
+                        <div className="bg-[#e2e8f0] rounded-[8px] h-[300px] flex items-center justify-center border border-[#cbd5e1] overflow-hidden">
+                            <iframe
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2652.3718250777197!2d16.357130356852537!3d48.3341579974037!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x476d0fbf7cc77e57%3A0x6d03f6c40f987f39!2sSpargelfeldgasse%2022%2C%202102%20Bisamberg!5e0!3m2!1sde!2sat!4v1773320289705!5m2!1sde!2sat"
+                                width="100%"
+                                height="100%"
+                                style={{ border: 0 }}
+                                allowFullScreen
+                                loading="lazy"
+                                referrerPolicy="no-referrer-when-downgrade"
+                            ></iframe>
                         </div>
                     </div>
                 </div>
