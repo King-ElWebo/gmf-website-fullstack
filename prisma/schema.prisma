@@ -48,3 +48,34 @@ model ItemImage {
 
   @@index([itemId])
 }
+
+model Faq {
+  id        String  @id @default(cuid())
+  question  String
+  answer    String
+  published Boolean @default(true)
+  sortOrder Int     @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum DisplayArea {
+  CAROUSEL
+  GALLERY
+  SOCIAL
+  OTHER
+}
+
+model GlobalImage {
+  id        String      @id @default(cuid())
+  url       String
+  key       String
+  alt       String?
+  area      DisplayArea @default(OTHER)
+  published Boolean     @default(true)
+  sortOrder Int         @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

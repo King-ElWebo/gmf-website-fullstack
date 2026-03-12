@@ -34,7 +34,7 @@ async function main() {
       priceCents: 3500,
       categoryId: camCat.id,
       images: {
-        create: [{ url: "/uploads/demo.jpg", alt: "Demo", sortOrder: 0 }],
+        create: [{ url: "/uploads/demo.jpg", key: "demo.jpg", alt: "Demo", sortOrder: 0 }],
       },
     },
   });

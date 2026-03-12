@@ -12,6 +12,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <nav className="text-sm text-neutral-700 flex gap-3">
               <Link href="/admin/categories">Categories</Link>
               <Link href="/admin/items">Items</Link>
+              <Link href="/admin/faqs">FAQs</Link>
+              <Link href="/admin/images">Bilder</Link>
             </nav>
           </div>
 
