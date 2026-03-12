@@ -39,8 +39,8 @@ export function Footer() {
                     <div>
                         <h3 className="font-['Inter'] font-semibold text-[18px] mb-4">Kontakt</h3>
                         <p className="font-['Inter'] text-[14px] text-[#e2e8f0] leading-[20px] mb-4">
-                            Musterstraße 123<br />
-                            12345 Musterstadt<br />
+                            Spargelfeldgasse 22<br />
+                            2102 Bisamberg<br />
                             info@event-vermietung.de<br />
                             Tel: 0123 456789
                         </p>
