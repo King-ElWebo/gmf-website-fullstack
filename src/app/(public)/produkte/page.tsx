@@ -22,7 +22,7 @@ export default async function ProduktePage() {
     const categoryNames = categories.map(c => c.name);
 
     return (
-        <div className="min-h-screen bg-white">
+        <div className="min-h-screen" style={{ backgroundColor: '#FFF9E6' }}>
             <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 {/* Page Header */}
                 <div className="mb-12">

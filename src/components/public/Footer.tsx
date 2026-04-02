@@ -39,10 +39,10 @@ export function Footer() {
                     <div>
                         <h3 className="font-['Inter'] font-semibold text-[18px] mb-4">Kontakt</h3>
                         <p className="font-['Inter'] text-[14px] text-[#e2e8f0] leading-[20px] mb-4">
-                            Spargelfeldgasse 22<br />
-                            2102 Bisamberg<br />
-                            info@event-vermietung.de<br />
-                            Tel: 0123 456789
+                            Spargelfeldgasse 22 (fehlt noch)<br />
+                            3702 Stranzendorf<br />
+                            Mail: gmfeventmodule@gmail.com<br />
+                            Tel: 0664 5550324
                         </p>
                         <div className="flex gap-4">
                             <a href="#" className="text-[#e2e8f0] hover:text-white transition-colors">

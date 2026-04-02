@@ -5,8 +5,8 @@ export default async function AdminHome() {
   // 1. Statistics
   const totalCategories = await db.category.count();
   const totalItems = await db.item.count();
-  const totalFaqs = await (db as any).faq?.count() ?? 0;
-  const totalImages = await (db as any).globalImage?.count() ?? 0;
+  const totalFaqs = await db.faq.count();
+  const totalImages = await db.globalImage.count();
 
 
   // 5. Letzte/Wichtigste Items
@@ -17,10 +17,10 @@ export default async function AdminHome() {
   });
 
   // 4. Letzte Bilder
-  const recentImages = await (db as any).globalImage?.findMany({
+  const recentImages = await db.globalImage.findMany({
     orderBy: { createdAt: "desc" },
     take: 6,
-  }) ?? [];
+  });
 
 
   return (
@@ -191,7 +191,7 @@ export default async function AdminHome() {
             </Link>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-            {recentImages.map((img: any) => (
+            {recentImages.map((img) => (
               <div key={img.id} className="group relative border rounded-xl overflow-hidden bg-neutral-100 shadow-sm aspect-square">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={img.url} alt={img.alt || "Bild"} className="w-full h-full object-cover transition-transform group-hover:scale-105" />

@@ -51,36 +51,36 @@ export default function ContactPage() {
                                 <div className="w-10 h-10 bg-[#e2e8f0] rounded-full flex items-center justify-center flex-shrink-0"><MapPin size={20} className="text-[#1a3a52]" /></div>
                                 <div>
                                     <h3 className="font-['Inter'] font-medium text-[16px] text-[#1a202c] mb-1">Adresse</h3>
-                                    <p className="font-['Inter'] text-[14px] text-[#4a5568] leading-[20px]">Spargelfeldgasse 22<br />2102 Bisamberg<br />Österreich</p>
+                                    <p className="font-['Inter'] text-[14px] text-[#4a5568] leading-[20px]">Spargelfeldgasse 22<br />3702 Stranzendorf<br />Österreich</p>
                                 </div>
                             </div>
                             <div className="flex items-start gap-4">
                                 <div className="w-10 h-10 bg-[#e2e8f0] rounded-full flex items-center justify-center flex-shrink-0"><Phone size={20} className="text-[#1a3a52]" /></div>
                                 <div>
                                     <h3 className="font-['Inter'] font-medium text-[16px] text-[#1a202c] mb-1">Telefon</h3>
-                                    <p className="font-['Inter'] text-[14px] text-[#4a5568]">0123 456789</p>
+                                    <p className="font-['Inter'] text-[14px] text-[#4a5568]">0664 5550324</p>
                                 </div>
                             </div>
                             <div className="flex items-start gap-4">
                                 <div className="w-10 h-10 bg-[#e2e8f0] rounded-full flex items-center justify-center flex-shrink-0"><Mail size={20} className="text-[#1a3a52]" /></div>
                                 <div>
                                     <h3 className="font-['Inter'] font-medium text-[16px] text-[#1a202c] mb-1">E-Mail</h3>
-                                    <p className="font-['Inter'] text-[14px] text-[#4a5568]">info@event-vermietung.de</p>
+                                    <p className="font-['Inter'] text-[14px] text-[#4a5568]">gmfeventmodule@gmail.com</p>
                                 </div>
                             </div>
                             <div className="flex items-start gap-4">
                                 <div className="w-10 h-10 bg-[#e2e8f0] rounded-full flex items-center justify-center flex-shrink-0"><Clock size={20} className="text-[#1a3a52]" /></div>
                                 <div>
                                     <h3 className="font-['Inter'] font-medium text-[16px] text-[#1a202c] mb-1">Öffnungszeiten</h3>
-                                    <p className="font-['Inter'] text-[14px] text-[#4a5568] leading-[20px]">Montag - Freitag: 9:00 - 18:00 Uhr<br />Samstag: 10:00 - 14:00 Uhr<br />Sonntag: Geschlossen</p>
+                                    <p className="font-['Inter'] text-[14px] text-[#4a5568] leading-[20px]">Nach telefonischer Vereinbarung</p>
                                 </div>
                             </div>
                         </div>
 
                         <div className="bg-[#e2e8f0] rounded-[8px] p-6 mb-8">
                             <h3 className="font-['Inter'] font-medium text-[18px] text-[#1a202c] mb-3">Lieferung & Abholung</h3>
-                            <p className="font-['Inter'] text-[14px] text-[#4a5568] leading-[20px] mb-3">Wir liefern im Umkreis von 50km kostenlos. Für größere Entfernungen erstellen wir Ihnen gerne ein individuelles Angebot.</p>
-                            <p className="font-['Inter'] text-[14px] text-[#4a5568] leading-[20px]">Selbstabholung ist nach Vereinbarung an unserem Standort möglich.</p>
+                            <p className="font-['Inter'] text-[14px] text-[#4a5568] leading-[20px] mb-3">Wir liefern je nach Entfernung direkt zu Ihnen. Die Lieferkosten werden individuell anhand der Strecke berechnet und im Zuge der Anfrage bekanntgegeben.</p>
+                            <p className="font-['Inter'] text-[14px] text-[#4a5568] leading-[20px]">Selbstabholung ist nach Vereinbarung an unserem Standort möglich. Bitte beachten Sie, dass die gemieteten Produkte auch wieder selbstständig und termingerecht retourniert werden müssen.</p>
                         </div>
 
                         <div>

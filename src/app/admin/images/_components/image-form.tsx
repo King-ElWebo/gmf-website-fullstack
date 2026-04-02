@@ -45,8 +45,8 @@ export default function ImageForm({ mode, initialData }: ImageFormProps) {
 
             router.push("/admin/images");
             router.refresh();
-        } catch (err: any) {
-            setError(err.message);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : "Ein unbekannter Fehler ist aufgetreten");
             setDeleting(false);
         }
     };
@@ -110,8 +110,8 @@ export default function ImageForm({ mode, initialData }: ImageFormProps) {
 
             router.push("/admin/images");
             router.refresh();
-        } catch (err: any) {
-            setError(err.message);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : "Ein unbekannter Fehler ist aufgetreten");
         } finally {
             setLoading(false);
         }

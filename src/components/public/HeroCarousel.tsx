@@ -54,9 +54,8 @@ export function HeroCarousel({ images }: HeroCarouselProps) {
             {activeImages.map((image, index) => (
                 <div
                     key={index}
-                    className={`absolute inset-0 transition-opacity duration-1000 ${
-                        index === currentSlide ? 'opacity-100' : 'opacity-0'
-                    }`}
+                    className={`absolute inset-0 transition-opacity duration-1000 ${index === currentSlide ? 'opacity-100' : 'opacity-0'
+                        }`}
                 >
                     <Image
                         src={image.url}
@@ -74,10 +73,10 @@ export function HeroCarousel({ images }: HeroCarouselProps) {
                 <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 w-full">
                     <div className="max-w-[600px]">
                         <h1 className="font-['Inter'] font-semibold text-[32px] md:text-[48px] leading-tight text-white mb-4">
-                            Unvergessliche Events für Groß und Klein
+                            Unvergessliche Momente
                         </h1>
                         <p className="font-['Inter'] text-[16px] md:text-[18px] leading-[25.6px] text-white mb-8">
-                            Hüpfburgen und Eventmodule für Ihre Feier. Einfach buchen, sicher aufbauen, Spaß haben.
+                            Eventmodule wie Hüpfburgen, Rutschen, Licht und Tontechnik etc. Für Ihre Feier, Einfach Buchen, sicher Verwenden, jede Menge Spaß haben
                         </p>
                         <Link href="/produkte">
                             <Button variant="primary">Jetzt entdecken</Button>
@@ -107,9 +106,8 @@ export function HeroCarousel({ images }: HeroCarouselProps) {
                         key={index}
                         onClick={() => setCurrentSlide(index)}
                         aria-label={`Go to slide ${index + 1}`}
-                        className={`w-2 h-2 rounded-full transition-all ${
-                            index === currentSlide ? 'bg-white w-8' : 'bg-white/50'
-                        }`}
+                        className={`w-2 h-2 rounded-full transition-all ${index === currentSlide ? 'bg-white w-8' : 'bg-white/50'
+                            }`}
                     />
                 ))}
             </div>

@@ -27,8 +27,8 @@ export async function DELETE(
         revalidatePath("/"); // Leert den Cache der Homepage, falls das Bild im Carousel war
 
         return NextResponse.json({ ok: true });
-    } catch (e: any) {
-        return NextResponse.json({ error: e.message }, { status: 500 });
+    } catch (e: unknown) {
+        return NextResponse.json({ error: e instanceof Error ? e.message : "Ein Fehler ist aufgetreten" }, { status: 500 });
     }
 }
 
@@ -62,7 +62,7 @@ export async function PATCH(
 
             const dataToUpdate = {
                 alt: formData.get("alt") as string,
-                area: formData.get("area") as any,
+                area: formData.get("area") as import("@prisma/client").DisplayArea,
                 published: formData.get("published") === "true",
                 sortOrder: Number(formData.get("sortOrder") || 0),
                 ...(url && key ? { url, key } : {}) // URL/Key nur updaten, wenn ein Bild da war
@@ -89,7 +89,7 @@ export async function PATCH(
         revalidatePath("/");
 
         return NextResponse.json({ ok: true });
-    } catch (e: any) {
-        return NextResponse.json({ error: e.message }, { status: 500 });
+    } catch (e: unknown) {
+        return NextResponse.json({ error: e instanceof Error ? e.message : "Ein Fehler ist aufgetreten" }, { status: 500 });
     }
 }

@@ -1,27 +1,12 @@
-import Link from 'next/link';
 import Image from 'next/image';
-import { Button } from '@/components/public/Button';
-import { ProductCard } from '@/components/public/ProductCard';
 import { HeroCarousel } from '@/components/public/HeroCarousel';
+import { CategoryCarousel } from '@/components/public/CategoryCarousel';
 import { Instagram, Facebook } from 'lucide-react';
-import { listPublishedItems } from '@/lib/repositories/catalog';
 import { listGlobalImages } from '@/lib/repositories/global-images';
 import { DisplayArea } from '@prisma/client';
 
 export default async function HomePage() {
-    const items = await listPublishedItems();
     const carouselImages = await listGlobalImages(DisplayArea.CAROUSEL);
-
-    const topProducts = items.slice(0, 3).map(item => ({
-        id: item.id,
-        title: item.title,
-        description: item.description ?? '',
-        price: item.priceCents != null
-            ? `ab ${(item.priceCents / 100).toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })} / Tag`
-            : undefined,
-        imageUrl: item.images[0]?.url ?? '',
-        category: item.category.name,
-    }));
 
     const heroCarouselImages = carouselImages
         .filter(img => img.published)
@@ -37,29 +22,8 @@ export default async function HomePage() {
             {/* Hero Section with Carousel */}
             <HeroCarousel images={heroCarouselImages} />
 
-            {/* Top Products Section */}
-            <section className="py-16 bg-white">
-                <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
-                    <h2 className="font-['Inter'] font-semibold text-[24px] md:text-[32px] text-[#1a202c] mb-4 text-center">
-                        Beliebte Produkte
-                    </h2>
-                    <p className="font-['Inter'] text-[16px] text-[#64748b] mb-12 text-center max-w-[600px] mx-auto">
-                        Entdecken Sie unsere beliebtesten Hüpfburgen und Eventmodule
-                    </p>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {topProducts.map(product => (
-                            <ProductCard key={product.id} {...product} />
-                        ))}
-                    </div>
-
-                    <div className="text-center mt-8">
-                        <Link href="/produkte">
-                            <Button variant="secondary">Alle Produkte ansehen</Button>
-                        </Link>
-                    </div>
-                </div>
-            </section>
+            {/* Category Section */}
+            <CategoryCarousel />
 
             {/* How It Works Section */}
             <section className="py-16 bg-[#e2e8f0]">
@@ -109,7 +73,7 @@ export default async function HomePage() {
             </section>
 
             {/* Location Section */}
-            <section className="py-16 bg-white">
+            <section className="py-16" style={{ backgroundColor: '#FFF9E6' }}>
                 <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                         <div>
@@ -117,14 +81,18 @@ export default async function HomePage() {
                                 Standort & Abholung
                             </h2>
                             <p className="font-['Inter'] text-[16px] text-[#4a5568] leading-[25.6px] mb-6">
-                                Wir liefern im Umkreis von 50km oder Sie holen bei uns ab. Unser Lager befindet sich in Musterstadt und ist gut erreichbar.
+                                Lieferung & Abholung
+
+                                Wir liefern je nach Entfernung direkt zu Ihnen. Die Lieferkosten werden individuell anhand der Strecke berechnet und im Zuge der Anfrage bekanntgegeben. <br /> <br />
+
+                                Selbstabholung ist nach Vereinbarung an unserem Standort möglich. Bitte beachten Sie, dass die gemieteten Produkte auch wieder selbstständig und termingerecht retourniert werden müssen.
                             </p>
                             <div className="space-y-3">
                                 <p className="font-['Inter'] text-[14px] text-[#2d3748]">
-                                    <strong>Adresse:</strong> Spargelfeldgasse 22, 2102 Bisamberg 
+                                    <strong>Adresse:</strong> Spargelfeldgasse 22, 3702 Stranzendorf
                                 </p>
                                 <p className="font-['Inter'] text-[14px] text-[#2d3748]">
-                                    <strong>Öffnungszeiten:</strong> Mo-Fr 9-18 Uhr, Sa 10-14 Uhr
+                                    <strong>Öffnungszeiten:</strong> nach telefonischer Vereinbarung
                                 </p>
                             </div>
                         </div>
