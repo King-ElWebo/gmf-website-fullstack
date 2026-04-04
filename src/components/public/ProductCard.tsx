@@ -2,8 +2,10 @@
 
 import Link from 'next/link';
 import { Button } from './Button';
+import { AddToInquiryCartButton } from './AddToInquiryCartButton';
 
 interface ProductCardProps {
+    id: string;
     slug: string;
     title: string;
     description: string;
@@ -14,6 +16,7 @@ interface ProductCardProps {
 }
 
 export function ProductCard({
+    id,
     slug,
     title,
     description,
@@ -62,9 +65,22 @@ export function ProductCard({
                     <p className="font-['Inter'] font-semibold text-[16px] leading-[25.6px] text-[#4a5568]">
                         {price}
                     </p>
-                    <Link href={`/buchen/${slug}`}>
-                        <Button variant="primary">Buchen</Button>
+                </div>
+                <div className="mt-2 flex items-center gap-3">
+                    <Link href={`/produkt/${slug}`} className="flex-1">
+                        <Button variant="secondary" className="w-full">Details</Button>
                     </Link>
+                    <AddToInquiryCartButton
+                        iconOnly
+                        item={{
+                            id,
+                            slug,
+                            title,
+                            price: price ?? null,
+                            imageUrl,
+                            summary: description,
+                        }}
+                    />
                 </div>
             </div>
         </div>

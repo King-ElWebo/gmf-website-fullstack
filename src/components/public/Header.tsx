@@ -2,10 +2,12 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Menu, X } from 'lucide-react';
+import { Menu, ShoppingCart, X } from 'lucide-react';
+import { useInquiryCart } from '@/components/public/InquiryCartProvider';
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { itemCount, hasHydrated } = useInquiryCart();
 
   const navLinks = [
     { href: '/', label: 'Start' },
@@ -36,6 +38,18 @@ export function Header() {
                 {link.label}
               </Link>
             ))}
+            <Link
+              href="/anfragekorb"
+              className="relative inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#cbd5e1] text-[#1a3a52] transition-colors hover:border-[#1a3a52] hover:bg-[#f7f8fa]"
+              aria-label="Anfragekorb"
+            >
+              <ShoppingCart size={20} />
+              {hasHydrated && itemCount > 0 && (
+                <span className="absolute -right-1 -top-1 inline-flex min-h-[20px] min-w-[20px] items-center justify-center rounded-full bg-[#fbbf24] px-1 text-[11px] font-semibold text-[#1a3a52]">
+                  {itemCount}
+                </span>
+              )}
+            </Link>
           </nav>
 
           {/* Mobile Menu Button */}
@@ -60,6 +74,14 @@ export function Header() {
                 {link.label}
               </Link>
             ))}
+            <Link
+              href="/anfragekorb"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center gap-3 font-['Inter'] font-medium text-[16px] text-[#2d3748] hover:text-[#1a3a52] transition-colors py-2"
+            >
+              <ShoppingCart size={18} />
+              <span>Anfragekorb{hasHydrated && itemCount > 0 ? ` (${itemCount})` : ''}</span>
+            </Link>
           </nav>
         )}
       </div>

@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { getPublishedItemBySlug } from '@/lib/repositories/catalog';
 import { formatItemPrice, getPrimaryImageUrl } from '@/lib/public-catalog';
-import { BuchungsFormular } from '@/components/public/BuchungsFormular';
+import { LegacyBookingRedirect } from '@/components/public/LegacyBookingRedirect';
 
 interface PageProps {
     params: Promise<{ id: string }>;
@@ -23,5 +23,5 @@ export default async function BookingPage({ params }: PageProps) {
         imageUrl: getPrimaryImageUrl(item),
     };
 
-    return <BuchungsFormular item={mappedItem} />;
+    return <LegacyBookingRedirect item={mappedItem} />;
 }

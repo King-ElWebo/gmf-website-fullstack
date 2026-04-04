@@ -1,3 +1,5 @@
+import { formatPriceCents } from "@/lib/items/price";
+
 type PriceLike = {
     priceType: "FIXED" | "ON_REQUEST" | "FROM_PRICE";
     basePriceCents?: number | null;
@@ -17,10 +19,7 @@ type DescriptiveLike = {
 };
 
 export function formatCurrency(cents: number) {
-    return cents.toLocaleString("de-DE", {
-        style: "currency",
-        currency: "EUR",
-    });
+    return formatPriceCents(cents);
 }
 
 export function formatItemPrice(item: PriceLike) {

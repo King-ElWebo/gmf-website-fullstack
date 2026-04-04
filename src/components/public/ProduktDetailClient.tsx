@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { AddToInquiryCartButton } from '@/components/public/AddToInquiryCartButton';
 import { Button } from '@/components/public/Button';
 
 interface ProduktDetailItem {
@@ -226,8 +227,19 @@ export function ProduktDetailClient({ item }: { item: ProduktDetailItem }) {
                         <InfoSection title="Trocknungsgebühr" content={item.dryingFeeInfo} />
 
                         <div className="flex flex-col sm:flex-row gap-4">
-                            <Link href={`/buchen/${item.slug}`} className="flex-1">
-                                <Button variant="primary" className="w-full">Jetzt buchen</Button>
+                            <AddToInquiryCartButton
+                                item={{
+                                    id: item.id,
+                                    slug: item.slug,
+                                    title: item.title,
+                                    price: item.price,
+                                    imageUrl: item.images[0] ?? "",
+                                    summary: item.summary,
+                                }}
+                                className="flex-1"
+                            />
+                            <Link href="/anfragekorb" className="flex-1">
+                                <Button variant="secondary" className="w-full">Zum Anfragekorb</Button>
                             </Link>
                             <Link href="/kontakt" className="flex-1">
                                 <Button variant="secondary" className="w-full">Fragen? Kontakt</Button>

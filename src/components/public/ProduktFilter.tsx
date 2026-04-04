@@ -110,6 +110,7 @@ export function ProduktFilter({
                 {filteredItems.map((item) => (
                     <ProductCard
                         key={item.id}
+                        id={item.id}
                         slug={item.slug}
                         title={item.title}
                         description={item.description}
