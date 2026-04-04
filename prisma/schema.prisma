@@ -8,63 +8,108 @@ datasource db {
 }
 
 model Category {
-  id        String   @id @default(cuid())
-  name      String
-  slug      String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String      @id @default(cuid())
+  name          String
+  slug          String      @unique
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  description   String?
+  imageKey      String?
+  imageUrl      String?
+  catalogTypeId String
+  sortOrder     Int         @default(0)
+  catalogType   CatalogType @relation(fields: [catalogTypeId], references: [id])
+  items         Item[]
 
-  items Item[]
+  @@index([catalogTypeId])
+  @@index([sortOrder])
+}
+
+model CatalogType {
+  id          String     @id @default(cuid())
+  name        String
+  slug        String     @unique
+  description String?
+  sortOrder   Int        @default(0)
+  isActive    Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  categories  Category[]
+
+  @@index([isActive, sortOrder])
 }
 
 model Item {
-  id          String  @id @default(cuid())
-  title       String
-  slug        String  @unique
-  description String?
-  priceCents  Int?
-  published   Boolean @default(false)
-
-  categoryId String
-  category   Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
-
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  images    ItemImage[]
+  id                      String                @id @default(cuid())
+  title                   String
+  slug                    String                @unique
+  description             String?
+  priceCents              Int?
+  published               Boolean               @default(false)
+  categoryId              String
+  createdAt               DateTime              @default(now())
+  updatedAt               DateTime              @updatedAt
+  bufferTimeAfterMin      Int                   @default(0)
+  bufferTimeBeforeMin     Int                   @default(0)
+  totalStock              Int                   @default(1)
+  trackInventory          Boolean               @default(true)
+  type                    String                @default("rental")
+  sortOrder               Int                   @default(0)
+  priceType               ItemPriceType         @default(FIXED)
+  basePriceCents          Int?
+  priceLabel              String?
+  accessRequirements      String?
+  additionalCostsInfo     String?
+  cleaningFeeApplies      Boolean               @default(false)
+  cleaningFeeInfo         String?
+  cleaningFeeLabel        String?
+  deliveryAvailable       Boolean               @default(false)
+  deliveryInfo            String?
+  depositInfo             String?
+  depositLabel            String?
+  depositRequired         Boolean               @default(false)
+  dryingFeeApplies        Boolean               @default(false)
+  dryingFeeInfo           String?
+  dryingFeeLabel          String?
+  longDescription         String?
+  pickupAvailable         Boolean               @default(false)
+  rentalNotes             String?
+  requiresDeliveryAddress Boolean               @default(false)
+  setupRequirements       String?
+  shortDescription        String?
+  usageInfo               String?
+  videoUrl                String?
+  bookingItems            BookingItem[]
+  calendarBlockerItems    CalendarBlockerItem[]
+  category                Category              @relation(fields: [categoryId], references: [id])
+  images                  ItemImage[]
 
   @@index([categoryId])
+  @@index([sortOrder])
 }
 
 model ItemImage {
-  id        String  @id @default(cuid())
-  itemId    String
-  item      Item    @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  id        String    @id @default(cuid())
   url       String
-  key       String // storage key: filename for local, object key for S3/R2
   alt       String?
-  sortOrder Int     @default(0)
-
-  createdAt DateTime @default(now())
+  sortOrder Int       @default(0)
+  itemId    String
+  createdAt DateTime  @default(now())
+  key       String
+  type      MediaType @default(IMAGE)
+  item      Item      @relation(fields: [itemId], references: [id], onDelete: Cascade)
 
   @@index([itemId])
 }
 
 model Faq {
-  id        String  @id @default(cuid())
+  id        String   @id @default(cuid())
   question  String
   answer    String
-  published Boolean @default(true)
-  sortOrder Int     @default(0)
-
+  published Boolean  @default(true)
+  sortOrder Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-}
-
-enum DisplayArea {
-  CAROUSEL
-  GALLERY
-  SOCIAL
-  OTHER
 }
 
 model GlobalImage {
@@ -75,7 +120,156 @@ model GlobalImage {
   area      DisplayArea @default(OTHER)
   published Boolean     @default(true)
   sortOrder Int         @default(0)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
 
+model SiteSettings {
+  id             String           @id @default(cuid())
+  key            String           @unique @default("default")
+  phone          String?
+  email          String?
+  address        String?
+  openingHours   String?
+  noticeText     String?
+  heroTitle      String?
+  heroText       String?
+  additionalInfo String?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  socialLinks    SiteSocialLink[]
+}
+
+model SiteSocialLink {
+  id         String       @id @default(cuid())
+  settingsId String
+  platform   String
+  label      String?
+  url        String
+  sortOrder  Int          @default(0)
+  isActive   Boolean      @default(true)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  settings   SiteSettings @relation(fields: [settingsId], references: [id], onDelete: Cascade)
+
+  @@index([settingsId])
+  @@index([sortOrder])
+}
+
+model BookingCustomer {
+  id           String    @id @default(cuid())
+  firstName    String
+  lastName     String
+  email        String
+  phone        String?
+  addressLine1 String?
+  zip          String?
+  city         String?
+  bookings     Booking[]
+}
+
+model Booking {
+  id              String              @id @default(cuid())
+  referenceCode   String              @unique
+  status          String
+  customerId      String
+  startDate       DateTime
+  endDate         DateTime
+  deliveryType    String
+  customerMessage String?
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  customer        BookingCustomer     @relation(fields: [customerId], references: [id])
+  items           BookingItem[]
+  calendarSync    CalendarSyncRecord?
+  emailLogs       EmailLog[]
+  notes           InternalNote[]
+}
+
+model BookingItem {
+  id        String  @id @default(cuid())
+  bookingId String
+  itemId    String
+  quantity  Int     @default(1)
+  booking   Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  item      Item    @relation(fields: [itemId], references: [id])
+}
+
+model InternalNote {
+  id        String   @id @default(cuid())
+  bookingId String
+  authorId  String
+  content   String
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  booking   Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+}
+
+model EmailLog {
+  id             String   @id @default(cuid())
+  bookingId      String
+  templateType   String
+  status         String
+  recipientEmail String
+  errorText      String?
+  retryCount     Int      @default(0)
+  lastAttemptAt  DateTime @default(now())
+  booking        Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+}
+
+model CalendarSyncRecord {
+  id              String    @id @default(cuid())
+  bookingId       String    @unique
+  externalEventId String?
+  syncStatus      String
+  lastSyncedAt    DateTime?
+  syncError       String?
+  booking         Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+}
+
+model CalendarBlocker {
+  id                String                @id @default(cuid())
+  title             String
+  status            String                @default("blocked")
+  startDate         DateTime
+  endDate           DateTime
+  appliesToAllItems Boolean               @default(false)
+  description       String?
+  contactName       String?
+  source            String                @default("manual")
+  createdBy         String?
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+  items             CalendarBlockerItem[]
+
+  @@index([startDate, endDate])
+  @@index([status])
+}
+
+model CalendarBlockerItem {
+  id        String          @id @default(cuid())
+  blockerId String
+  itemId    String
+  blocker   CalendarBlocker @relation(fields: [blockerId], references: [id], onDelete: Cascade)
+  item      Item            @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@unique([blockerId, itemId])
+  @@index([itemId])
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+}
+
+enum ItemPriceType {
+  FIXED
+  ON_REQUEST
+  FROM_PRICE
+}
+
+enum DisplayArea {
+  CAROUSEL
+  GALLERY
+  SOCIAL
+  OTHER
 }

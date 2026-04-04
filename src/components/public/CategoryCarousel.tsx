@@ -1,24 +1,19 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-// ─── Dummy-Daten ─────────────────────────────────────────────────────────────
-const CATEGORIES = [
-    { id: '1', title: 'Hüpfburgen', description: 'Farbenfrohe Hüpfburgen für unvergesslichen Spaß auf jeder Kinderparty.', imageUrl: 'https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?auto=format&fit=crop&w=800&q=80', slug: 'huepfburgen' },
-    { id: '2', title: 'Rutschbahnen', description: 'Große Riesen-Rutschen für Kinder und Junggebliebene – Nervenkitzel garantiert.', imageUrl: 'https://images.unsplash.com/photo-1605814516246-2495ea7fbaed?auto=format&fit=crop&w=800&q=80', slug: 'rutschbahnen' },
-    { id: '3', title: 'Hindernisbahnen', description: 'Kompakte Hindernisparcours für kleine Abenteurer und sportliche Gruppen.', imageUrl: 'https://images.unsplash.com/photo-1549448833-255d64ffca5b?auto=format&fit=crop&w=800&q=80', slug: 'hindernisbahnen' },
-    { id: '4', title: 'Licht & Ton', description: 'Professionelles Licht- und Tontechnik-Equipment für die perfekte Partystimmung.', imageUrl: 'https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?auto=format&fit=crop&w=800&q=80', slug: 'licht-ton' },
-    { id: '5', title: 'Spiele & Aktionen', description: 'Riesige Gesellschaftsspiele und Aktivitätsstationen für alle Altersgruppen.', imageUrl: 'https://images.unsplash.com/photo-1500917293891-ef795e70e1f6?auto=format&fit=crop&w=800&q=80', slug: 'spiele' },
-    { id: '6', title: 'Zelte & Möbel', description: 'Zelte, Bänke, Tische und mehr für den optimalen Komfort Ihrer Gäste.', imageUrl: 'https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&w=800&q=80', slug: 'zelte-moebel' },
-];
-
-const N = CATEGORIES.length;
-// Erweitertes Array: [letztes N] + [Original] + [erstes N] → 3×N Slides total
-const EXTENDED = [...CATEGORIES.slice(-N), ...CATEGORIES, ...CATEGORIES.slice(0, N)];
-const TOTAL = EXTENDED.length; // 18
+type CategoryCard = {
+    id: string;
+    title: string;
+    description: string | null;
+    imageUrl: string | null;
+    slug: string;
+    catalogTypeName: string;
+    catalogTypeSlug: string;
+};
 
 function getItemsPerView(width: number): number {
     if (width < 768) return 1;
@@ -26,19 +21,22 @@ function getItemsPerView(width: number): number {
     return 3;
 }
 
-export function CategoryCarousel() {
-    // itemsPerView: wie viele Cards gleichzeitig sichtbar sind
+export function CategoryCarousel({ categories }: { categories: CategoryCard[] }) {
     const [itemsPerView, setItemsPerView] = useState(3);
-    // currentIndex: Zeiger auf den aktuellen ersten sichtbaren Slide im EXTENDED-Array.
-    // Startposition = N (erster echter Slide nach dem vorderen Klon-Block).
-    const [currentIndex, setCurrentIndex] = useState(N);
-    // Steuert die CSS-Transition: aus, wenn wir einen Ghost-Jump machen
+    const [currentIndex, setCurrentIndex] = useState(categories.length);
     const [withTransition, setWithTransition] = useState(true);
 
-    const isJumping = useRef(false); // verhindert doppelte Navigation während Transition
+    const isJumping = useRef(false);
     const touchStart = useRef<number | null>(null);
+    const categoryCount = categories.length;
 
-    // ── Resize ────────────────────────────────────────────────────────────────
+    const extended = useMemo(() => {
+        if (categoryCount === 0) return [];
+        return [...categories.slice(-categoryCount), ...categories, ...categories.slice(0, categoryCount)];
+    }, [categories, categoryCount]);
+
+    const total = extended.length;
+
     useEffect(() => {
         const onResize = () => setItemsPerView(getItemsPerView(window.innerWidth));
         onResize();
@@ -46,34 +44,34 @@ export function CategoryCarousel() {
         return () => window.removeEventListener('resize', onResize);
     }, []);
 
-    // ── Navigation ────────────────────────────────────────────────────────────
+    useEffect(() => {
+        setCurrentIndex(categoryCount);
+    }, [categoryCount]);
+
     const navigate = useCallback((dir: 1 | -1) => {
-        if (isJumping.current) return;
+        if (isJumping.current || categoryCount <= 1) return;
         isJumping.current = true;
         setWithTransition(true);
-        setCurrentIndex(prev => prev + dir);
-    }, []);
+        setCurrentIndex((prev) => prev + dir);
+    }, [categoryCount]);
 
-    // ── onTransitionEnd → Infinite-Loop Ghost-Jump ────────────────────────────
     const onTransitionEnd = useCallback(() => {
-        setCurrentIndex(prev => {
-            // Nach dem vorderen Klon-Block? → springe an echte Position zurück
-            if (prev >= N + N) {
+        setCurrentIndex((prev) => {
+            if (prev >= categoryCount + categoryCount) {
                 setWithTransition(false);
-                return prev - N;
+                return prev - categoryCount;
             }
-            // Vor dem echten Start? → springe ans Ende des echten Blocks
-            if (prev < N) {
+
+            if (prev < categoryCount) {
                 setWithTransition(false);
-                return prev + N;
+                return prev + categoryCount;
             }
+
             return prev;
         });
         isJumping.current = false;
-    }, []);
+    }, [categoryCount]);
 
-    // Nach dem Ghost-Jump (withTransition=false) den Frame rendern lassen,
-    // dann Transition wieder einschalten
     useEffect(() => {
         if (!withTransition) {
             const id = requestAnimationFrame(() => {
@@ -83,10 +81,10 @@ export function CategoryCarousel() {
         }
     }, [withTransition]);
 
-    // ── Touch/Swipe ──────────────────────────────────────────────────────────
     const onTouchStart = (e: React.TouchEvent) => {
         touchStart.current = e.targetTouches[0].clientX;
     };
+
     const onTouchEnd = (e: React.TouchEvent) => {
         if (touchStart.current === null) return;
         const delta = touchStart.current - e.changedTouches[0].clientX;
@@ -94,22 +92,81 @@ export function CategoryCarousel() {
         touchStart.current = null;
     };
 
-    // ── Dot-Indikator: welche echte Kategorie ist gerade aktiv? ───────────────
-    const activeDot = ((currentIndex - N) % N + N) % N;
+    if (categoryCount === 0) return null;
 
-    // ── Translate-Berechnung ─────────────────────────────────────────────────
-    // Der flex-Wrapper ist (TOTAL / itemsPerView)*100% breit.
-    // Jede Card nimmt (100/TOTAL)% des Wrappers ein.
-    // Um `currentIndex` Cards zu verschieben: currentIndex * (100/TOTAL) %.
-    const translatePct = -(currentIndex * (100 / TOTAL));
+    if (categoryCount <= itemsPerView) {
+        return (
+            <section className="py-16" style={{ backgroundColor: '#FFFfff' }}>
+                <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center mb-12">
+                        <h2 className="font-['Inter'] font-semibold text-[24px] md:text-[32px] text-[#1a202c] mb-4">
+                            Unsere Kategorien
+                        </h2>
+                        <p className="font-['Inter'] text-[16px] text-[#64748b]">
+                            Entdecken Sie unsere große Auswahl an Eventmodulen für Ihre Veranstaltung.
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {categories.map((category) => (
+                            <div
+                                key={category.id}
+                                className="h-full bg-white rounded-[8px] border border-[#cbd5e1] shadow-[0px_1px_3px_0px_rgba(0,0,0,0.1),0px_1px_2px_0px_rgba(0,0,0,0.1)] overflow-hidden flex flex-col group hover:shadow-md transition-shadow duration-300"
+                            >
+                                <div className="relative w-full shrink-0 bg-[#e2e8f0]" style={{ paddingBottom: '62%' }}>
+                                    {category.imageUrl ? (
+                                        <>
+                                            <Image
+                                                src={category.imageUrl}
+                                                alt={category.title}
+                                                fill
+                                                className="object-cover group-hover:scale-105 transition-transform duration-500"
+                                                sizes="(max-width: 768px) 100vw, (max-width: 1100px) 50vw, 33vw"
+                                                draggable={false}
+                                            />
+                                            <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent" />
+                                        </>
+                                    ) : (
+                                        <div className="absolute inset-0 bg-[linear-gradient(135deg,#1a3a52,#3f6a8f)]" />
+                                    )}
+                                </div>
+
+                                <div className="p-6 flex flex-col flex-1">
+                                    <div className="mb-3">
+                                        <span className="inline-flex rounded-full bg-[#f7f8fa] px-3 py-1 text-[12px] font-medium text-[#1a3a52]">
+                                            {category.catalogTypeName}
+                                        </span>
+                                    </div>
+                                    <h3 className="font-['Inter'] font-semibold text-[18px] text-[#1a202c] mb-2">
+                                        {category.title}
+                                    </h3>
+                                    <p className="font-['Inter'] text-[14px] text-[#64748b] leading-[22px] flex-1 mb-6">
+                                        {category.description?.trim() || 'Produkte und Eventmodule aus dieser Kategorie ansehen.'}
+                                    </p>
+                                    <Link
+                                        href={`/produkte?bereich=${encodeURIComponent(category.catalogTypeSlug)}&kategorie=${encodeURIComponent(category.slug)}`}
+                                        className="block shrink-0"
+                                    >
+                                        <span className="flex items-center justify-center w-full h-[48px] rounded-[8px] bg-[#1a3a52] text-white font-['Inter'] font-medium text-[16px] hover:opacity-90 transition-opacity">
+                                            Produkte ansehen
+                                        </span>
+                                    </Link>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+        );
+    }
+
+    const activeDot = ((currentIndex - categoryCount) % categoryCount + categoryCount) % categoryCount;
+    const translatePct = -(currentIndex * (100 / total));
 
     return (
-        <section className="py-16" style={{ backgroundColor: '#FFF9E6' }}>
+        <section className="py-16" style={{ backgroundColor: '#FFFfff' }}>
             <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
-
-                {/* Header: unsichtbarer Spacer links | zentrierter Text | Pfeile rechts */}
                 <div className="flex justify-between items-center mb-12">
-                    {/* Spacer – exakt so breit wie die Pfeil-Buttons (2 × w-10 + gap-3 = 83px) */}
                     <div className="w-[83px] shrink-0" />
                     <div className="text-center">
                         <h2 className="font-['Inter'] font-semibold text-[24px] md:text-[32px] text-[#1a202c] mb-4">
@@ -122,27 +179,28 @@ export function CategoryCarousel() {
                     <div className="flex gap-3 shrink-0">
                         <button
                             onClick={() => navigate(-1)}
-                            className="w-10 h-10 rounded-full border border-[#cbd5e1] bg-[#FFEC8B] flex items-center justify-center text-[#1a202c] hover:bg-[#1a3a52] hover:text-white hover:border-[#1a3a52] transition-colors"
+                            className="w-10 h-10 rounded-full border border-[#cbd5e1] bg-[#FFEC8B] flex items-center justify-center text-[#1a202c] hover:bg-[#1a3a52] hover:text-white hover:border-[#1a3a52] transition-colors disabled:opacity-50"
                             aria-label="Vorherige Kategorie"
+                            disabled={categoryCount <= 1}
                         >
                             <ChevronLeft size={20} />
                         </button>
                         <button
                             onClick={() => navigate(1)}
-                            className="w-10 h-10 rounded-full border border-[#cbd5e1] bg-[#FFEC8B] flex items-center justify-center text-[#1a202c] hover:bg-[#1a3a52] hover:text-white hover:border-[#1a3a52] transition-colors"
+                            className="w-10 h-10 rounded-full border border-[#cbd5e1] bg-[#FFEC8B] flex items-center justify-center text-[#1a202c] hover:bg-[#1a3a52] hover:text-white hover:border-[#1a3a52] transition-colors disabled:opacity-50"
                             aria-label="Nächste Kategorie"
+                            disabled={categoryCount <= 1}
                         >
                             <ChevronRight size={20} />
                         </button>
                     </div>
                 </div>
 
-                {/* Carousel – py-3 / -my-3: gibt Box-Shadow der Cards genug Luft, damit er nicht geclippt wird */}
                 <div className="overflow-hidden py-3 -my-3">
                     <div
                         className="flex items-stretch"
                         style={{
-                            width: `${(TOTAL / itemsPerView) * 100}%`,
+                            width: `${(total / itemsPerView) * 100}%`,
                             transform: `translateX(${translatePct}%)`,
                             transition: withTransition ? 'transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94)' : 'none',
                         }}
@@ -150,36 +208,47 @@ export function CategoryCarousel() {
                         onTouchStart={onTouchStart}
                         onTouchEnd={onTouchEnd}
                     >
-                        {EXTENDED.map((cat, idx) => (
+                        {extended.map((category, idx) => (
                             <div
-                                key={`${cat.id}-${idx}`}
-                                style={{ width: `${100 / TOTAL}%` }}
+                                key={`${category.id}-${idx}`}
+                                style={{ width: `${100 / total}%` }}
                                 className="px-3"
                             >
                                 <div className="h-full bg-white rounded-[8px] border border-[#cbd5e1] shadow-[0px_1px_3px_0px_rgba(0,0,0,0.1),0px_1px_2px_0px_rgba(0,0,0,0.1)] overflow-hidden flex flex-col group hover:shadow-md transition-shadow duration-300">
-
-                                    {/* Bild — festes Seitenverhältnis 16:10 */}
-                                    <div className="relative w-full shrink-0" style={{ paddingBottom: '62%' }}>
-                                        <Image
-                                            src={cat.imageUrl}
-                                            alt={cat.title}
-                                            fill
-                                            className="object-cover group-hover:scale-105 transition-transform duration-500"
-                                            sizes="(max-width: 768px) 100vw, (max-width: 1100px) 50vw, 33vw"
-                                            draggable={false}
-                                        />
-                                        <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent" />
+                                    <div className="relative w-full shrink-0 bg-[#e2e8f0]" style={{ paddingBottom: '62%' }}>
+                                        {category.imageUrl ? (
+                                            <>
+                                                <Image
+                                                    src={category.imageUrl}
+                                                    alt={category.title}
+                                                    fill
+                                                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                                                    sizes="(max-width: 768px) 100vw, (max-width: 1100px) 50vw, 33vw"
+                                                    draggable={false}
+                                                />
+                                                <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent" />
+                                            </>
+                                        ) : (
+                                            <div className="absolute inset-0 bg-[linear-gradient(135deg,#1a3a52,#3f6a8f)]" />
+                                        )}
                                     </div>
 
-                                    {/* Text + Button */}
                                     <div className="p-6 flex flex-col flex-1">
+                                        <div className="mb-3">
+                                            <span className="inline-flex rounded-full bg-[#f7f8fa] px-3 py-1 text-[12px] font-medium text-[#1a3a52]">
+                                                {category.catalogTypeName}
+                                            </span>
+                                        </div>
                                         <h3 className="font-['Inter'] font-semibold text-[18px] text-[#1a202c] mb-2">
-                                            {cat.title}
+                                            {category.title}
                                         </h3>
                                         <p className="font-['Inter'] text-[14px] text-[#64748b] leading-[22px] flex-1 mb-6">
-                                            {cat.description}
+                                            {category.description?.trim() || 'Produkte und Eventmodule aus dieser Kategorie ansehen.'}
                                         </p>
-                                        <Link href={`/produkte?kategorie=${cat.slug}`} className="block shrink-0">
+                                        <Link
+                                            href={`/produkte?bereich=${encodeURIComponent(category.catalogTypeSlug)}&kategorie=${encodeURIComponent(category.slug)}`}
+                                            className="block shrink-0"
+                                        >
                                             <span className="flex items-center justify-center w-full h-[48px] rounded-[8px] bg-[#1a3a52] text-white font-['Inter'] font-medium text-[16px] hover:opacity-90 transition-opacity">
                                                 Produkte ansehen
                                             </span>
@@ -191,21 +260,22 @@ export function CategoryCarousel() {
                     </div>
                 </div>
 
-                {/* Dot-Indikatoren */}
-                <div className="flex justify-center gap-[6px] mt-8">
-                    {CATEGORIES.map((_, idx) => (
-                        <button
-                            key={idx}
-                            onClick={() => { setWithTransition(true); setCurrentIndex(N + idx); isJumping.current = false; }}
-                            aria-label={`Kategorie ${idx + 1}`}
-                            className={`rounded-full transition-all duration-300 ${activeDot === idx
-                                ? 'w-6 h-2 bg-[#1a3a52]'
-                                : 'w-2 h-2 bg-[#cbd5e1] hover:bg-[#94a3b8]'
-                                }`}
-                        />
-                    ))}
-                </div>
-
+                {categoryCount > 1 && (
+                    <div className="flex justify-center gap-[6px] mt-8">
+                        {categories.map((_, idx) => (
+                            <button
+                                key={idx}
+                                onClick={() => {
+                                    setWithTransition(true);
+                                    setCurrentIndex(categoryCount + idx);
+                                    isJumping.current = false;
+                                }}
+                                aria-label={`Kategorie ${idx + 1}`}
+                                className={`rounded-full transition-all duration-300 ${activeDot === idx ? 'w-6 h-2 bg-[#1a3a52]' : 'w-2 h-2 bg-[#cbd5e1] hover:bg-[#94a3b8]'}`}
+                            />
+                        ))}
+                    </div>
+                )}
             </div>
         </section>
     );

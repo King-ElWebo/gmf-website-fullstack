@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
-import { getPublishedItemById } from '@/lib/repositories/catalog';
+import { getPublishedItemBySlug } from '@/lib/repositories/catalog';
+import { formatItemPrice, getItemLongDescription, getItemSummary, getVideoUrl } from '@/lib/public-catalog';
 import { ProduktDetailClient } from '@/components/public/ProduktDetailClient';
 
 interface PageProps {
@@ -7,8 +8,8 @@ interface PageProps {
 }
 
 export default async function ProductDetailPage({ params }: PageProps) {
-    const { id } = await params;
-    const item = await getPublishedItemById(id);
+    const { id: slug } = await params;
+    const item = await getPublishedItemBySlug(slug);
 
     if (!item) {
         notFound();
@@ -16,13 +17,30 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
     const mappedItem = {
         id: item.id,
+        slug: item.slug,
         title: item.title,
-        description: item.description,
-        price: item.priceCents != null
-            ? `ab ${(item.priceCents / 100).toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })} / Tag`
-            : null,
-        images: item.images.map(img => img.url),
+        summary: getItemSummary(item),
+        description: getItemLongDescription(item),
+        price: formatItemPrice(item),
+        images: item.images.map((image) => image.url),
+        videoUrl: getVideoUrl(item),
         category: item.category.name,
+        catalogType: item.category.catalogType.name,
+        deliveryInfo: item.deliveryInfo,
+        additionalCostsInfo: item.additionalCostsInfo,
+        usageInfo: item.usageInfo,
+        rentalNotes: item.rentalNotes,
+        setupRequirements: item.setupRequirements,
+        accessRequirements: item.accessRequirements,
+        depositInfo: item.depositInfo,
+        depositLabel: item.depositLabel,
+        cleaningFeeInfo: item.cleaningFeeInfo,
+        cleaningFeeLabel: item.cleaningFeeLabel,
+        dryingFeeInfo: item.dryingFeeInfo,
+        dryingFeeLabel: item.dryingFeeLabel,
+        deliveryAvailable: item.deliveryAvailable,
+        pickupAvailable: item.pickupAvailable,
+        requiresDeliveryAddress: item.requiresDeliveryAddress,
     };
 
     return <ProduktDetailClient item={mappedItem} />;

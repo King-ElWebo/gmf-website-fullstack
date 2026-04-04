@@ -1,9 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
-import storage from "@/lib/storage";
 import { revalidatePath } from "next/cache";
+import { DisplayArea } from "@prisma/client";
+import { getGlobalImageById, listGlobalImages, updateGlobalImage, deleteGlobalImage } from "@/lib/repositories/global-images";
+import storage from "@/lib/storage";
 
 export const runtime = "nodejs";
+
+function parseArea(value: string | null | undefined) {
+    if (value && Object.values(DisplayArea).includes(value as DisplayArea)) {
+        return value as DisplayArea;
+    }
+
+    return undefined;
+}
 
 export async function DELETE(
     _req: NextRequest,
@@ -12,23 +21,16 @@ export async function DELETE(
     const { id } = await params;
 
     try {
-        // 1. Bild aus DB holen um Dateipfad zu kennen
-        const image = await db.globalImage.findUnique({ where: { id } });
-        if (!image) return NextResponse.json({ error: "Nicht gefunden" }, { status: 404 });
+        await deleteGlobalImage(id);
 
-        // 2. Aus der Datenbank löschen
-        await db.globalImage.delete({ where: { id } });
-
-        // 3. Von der Festplatte löschen (verhindert Datenmüll)
-        await storage.delete(image.key).catch(e => console.warn("Festplatten-Löschen fehlgeschlagen:", e));
-
-        // 4. Cache leeren
         revalidatePath("/admin/images");
-        revalidatePath("/"); // Leert den Cache der Homepage, falls das Bild im Carousel war
+        revalidatePath("/");
 
-        return NextResponse.json({ ok: true });
-    } catch (e: unknown) {
-        return NextResponse.json({ error: e instanceof Error ? e.message : "Ein Fehler ist aufgetreten" }, { status: 500 });
+        const images = await listGlobalImages();
+        return NextResponse.json({ ok: true, images });
+    } catch (error) {
+        const message = error instanceof Error ? error.message : "Delete failed";
+        return NextResponse.json({ error: message }, { status: 500 });
     }
 }
 
@@ -39,57 +41,57 @@ export async function PATCH(
     const { id } = await params;
 
     try {
+        const existing = await getGlobalImageById(id);
+        if (!existing) {
+            return NextResponse.json({ error: "Nicht gefunden" }, { status: 404 });
+        }
+
         const contentType = req.headers.get("content-type") || "";
 
-        // FALL 1: Ein neues Bild wurde hochgeladen (FormData)
         if (contentType.includes("multipart/form-data")) {
             const formData = await req.formData();
-            const file = formData.get("file") as File;
+            const file = formData.get("file");
+            const alt = (formData.get("alt") as string | null) ?? "";
+            const area = parseArea(formData.get("area") as string | null) ?? existing.area;
+            const published = formData.get("published") === "true";
 
-            let url, key;
-            if (file) {
-                // Altes Bild löschen, um Platz zu sparen
-                const alterEintrag = await db.globalImage.findUnique({ where: { id } });
-                if (alterEintrag) {
-                    await storage.delete(alterEintrag.key).catch(() => { });
-                }
+            let nextUrl = existing.url;
+            let nextKey = existing.key;
 
-                // Neues Bild speichern
+            if (file instanceof File && file.size > 0) {
+                await storage.delete(existing.key).catch(() => undefined);
                 const saved = await storage.save(file);
-                url = saved.url;
-                key = saved.key;
+                nextUrl = saved.url;
+                nextKey = saved.key;
             }
 
-            const dataToUpdate = {
-                alt: formData.get("alt") as string,
-                area: formData.get("area") as import("@prisma/client").DisplayArea,
-                published: formData.get("published") === "true",
-                sortOrder: Number(formData.get("sortOrder") || 0),
-                ...(url && key ? { url, key } : {}) // URL/Key nur updaten, wenn ein Bild da war
+            await updateGlobalImage(id, {
+                alt,
+                area,
+                published,
+                url: nextUrl,
+                key: nextKey,
+            });
+        } else {
+            const body = (await req.json().catch(() => null)) as null | {
+                alt?: string;
+                area?: string;
+                published?: boolean;
             };
 
-            await db.globalImage.update({ where: { id }, data: dataToUpdate });
-
-        } else {
-            // FALL 2: Nur Text-Daten wurden geändert (JSON)
-            const body = await req.json();
-            await db.globalImage.update({
-                where: { id },
-                data: {
-                    alt: body.alt,
-                    area: body.area,
-                    published: body.published,
-                    sortOrder: Number(body.sortOrder),
-                }
+            await updateGlobalImage(id, {
+                alt: body?.alt ?? existing.alt ?? "",
+                area: parseArea(body?.area) ?? existing.area,
+                published: typeof body?.published === "boolean" ? body.published : existing.published,
             });
         }
 
-        // Cache überall leeren
         revalidatePath("/admin/images");
         revalidatePath("/");
 
         return NextResponse.json({ ok: true });
-    } catch (e: unknown) {
-        return NextResponse.json({ error: e instanceof Error ? e.message : "Ein Fehler ist aufgetreten" }, { status: 500 });
+    } catch (error) {
+        const message = error instanceof Error ? error.message : "Update failed";
+        return NextResponse.json({ error: message }, { status: 500 });
     }
 }

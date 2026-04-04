@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getCategoryById } from "@/lib/repositories/categories";
-import EditCategoryForm from "./ui";
+import { listCatalogTypes } from "@/lib/repositories/catalog-types";
+import CategoryForm from "../../_components/category-form";
 
 export default async function EditCategoryPage({
     params,
@@ -11,8 +12,27 @@ export default async function EditCategoryPage({
 
     if (!id || typeof id !== "string") return notFound();
 
-    const category = await getCategoryById(id);
+    const [category, catalogTypes] = await Promise.all([getCategoryById(id), listCatalogTypes()]);
     if (!category) return notFound();
 
-    return <EditCategoryForm category={category} />;
+    return (
+        <CategoryForm
+            mode="edit"
+            category={{
+                id: category.id,
+                name: category.name,
+                slug: category.slug,
+                description: category.description,
+                imageUrl: category.imageUrl,
+                imageKey: category.imageKey,
+                catalogTypeId: category.catalogTypeId,
+            }}
+            catalogTypes={catalogTypes.map((type) => ({
+                id: type.id,
+                name: type.name,
+                slug: type.slug,
+                isActive: type.isActive,
+            }))}
+        />
+    );
 }

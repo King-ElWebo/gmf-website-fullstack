@@ -22,7 +22,6 @@ export default async function EditFaqPage({
                 question: faq.question,
                 answer: faq.answer,
                 published: faq.published,
-                sortOrder: faq.sortOrder,
             }}
         />
     );

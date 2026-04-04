@@ -9,6 +9,7 @@ import { Check } from 'lucide-react';
 
 interface BuchungsItem {
     id: string;
+    slug: string;
     title: string;
     price: string | null;
     imageUrl: string;
@@ -70,7 +71,7 @@ export function BuchungsFormular({ item }: { item: BuchungsItem }) {
                         <span className="text-[#cbd5e1]">/</span>
                         <Link href="/produkte" className="font-['Inter'] text-[#64748b] hover:text-[#1a3a52]">Produkte</Link>
                         <span className="text-[#cbd5e1]">/</span>
-                        <Link href={`/produkt/${item.id}`} className="font-['Inter'] text-[#64748b] hover:text-[#1a3a52]">{item.title}</Link>
+                        <Link href={`/produkt/${item.slug}`} className="font-['Inter'] text-[#64748b] hover:text-[#1a3a52]">{item.title}</Link>
                         <span className="text-[#cbd5e1]">/</span>
                         <span className="font-['Inter'] text-[#1a202c]">Buchung</span>
                     </nav>
@@ -125,7 +126,7 @@ export function BuchungsFormular({ item }: { item: BuchungsItem }) {
 
                     <div className="flex flex-col sm:flex-row gap-4 pt-4">
                         <Button type="submit" variant="primary" disabled={!!dateError || !formData.date || !formData.name || !formData.email || !formData.phone} className="flex-1">Anfrage senden</Button>
-                        <Link href={`/produkt/${item.id}`} className="flex-1">
+                        <Link href={`/produkt/${item.slug}`} className="flex-1">
                             <Button type="button" variant="secondary" className="w-full">Zurück zum Produkt</Button>
                         </Link>
                     </div>

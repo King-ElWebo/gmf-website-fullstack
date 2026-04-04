@@ -7,7 +7,6 @@ type FaqFormState = {
     question: string;
     answer: string;
     published: boolean;
-    sortOrder: number;
 };
 
 export default function FaqForm(props: {
@@ -20,13 +19,7 @@ export default function FaqForm(props: {
 
     const [question, setQuestion] = useState(props.initial?.question ?? "");
     const [answer, setAnswer] = useState(props.initial?.answer ?? "");
-    const [sortOrder, setSortOrder] = useState<string>(
-        props.initial?.sortOrder?.toString() ?? "0"
-    );
-    const [published, setPublished] = useState(
-        Boolean(props.initial?.published ?? true)
-    );
-
+    const [published, setPublished] = useState(Boolean(props.initial?.published ?? true));
     const [saving, setSaving] = useState(false);
     const [deleting, setDeleting] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -44,11 +37,9 @@ export default function FaqForm(props: {
             question,
             answer,
             published,
-            sortOrder: parseInt(sortOrder) || 0,
         };
 
-        const url =
-            mode === "create" ? "/api/admin/faqs" : `/api/admin/faqs/${faqId}`;
+        const url = mode === "create" ? "/api/admin/faqs" : `/api/admin/faqs/${faqId}`;
         const method = mode === "create" ? "POST" : "PATCH";
 
         const res = await fetch(url, {
@@ -90,10 +81,8 @@ export default function FaqForm(props: {
     }
 
     return (
-        <div className="space-y-4 max-w-xl">
-            <h1 className="text-2xl font-semibold">
-                {mode === "create" ? "Neu FAQ" : "FAQ Bearbeiten"}
-            </h1>
+        <div className="max-w-xl space-y-4">
+            <h1 className="text-2xl font-semibold">{mode === "create" ? "Neue FAQ" : "FAQ bearbeiten"}</h1>
 
             <form onSubmit={onSave} className="space-y-4">
                 <div className="space-y-1">
@@ -116,33 +105,21 @@ export default function FaqForm(props: {
                     />
                 </div>
 
-                <div className="space-y-1">
-                    <label className="text-sm font-medium">Sortierreihenfolge</label>
-                    <input
-                        type="number"
-                        className="w-full rounded-md border px-3 py-2"
-                        value={sortOrder}
-                        onChange={(e) => setSortOrder(e.target.value)}
-                        min={0}
-                        step={1}
-                    />
-                </div>
-
                 <label className="flex items-center gap-2 text-sm">
-                    <input
-                        type="checkbox"
-                        checked={published}
-                        onChange={(e) => setPublished(e.target.checked)}
-                    />
+                    <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} />
                     Veröffentlicht
                 </label>
+
+                <p className="text-xs text-neutral-500">
+                    Die Reihenfolge wird in der FAQ-Übersicht per Drag-and-drop gepflegt.
+                </p>
 
                 {error && <p className="text-sm text-red-600">{error}</p>}
 
                 <div className="flex gap-2 pt-2">
                     <button
                         disabled={saving || !canSave}
-                        className="rounded-md bg-black text-white px-4 py-2 text-sm disabled:opacity-60"
+                        className="rounded-md bg-black px-4 py-2 text-sm text-white disabled:opacity-60"
                     >
                         {saving ? "Speichert..." : "Speichern"}
                     </button>
@@ -152,7 +129,7 @@ export default function FaqForm(props: {
                             type="button"
                             onClick={onDelete}
                             disabled={deleting}
-                            className="rounded-md border border-neutral-200 text-red-600 px-4 py-2 text-sm disabled:opacity-60 hover:bg-red-50"
+                            className="rounded-md border border-neutral-200 px-4 py-2 text-sm text-red-600 hover:bg-red-50 disabled:opacity-60"
                         >
                             {deleting ? "Löscht..." : "Löschen"}
                         </button>

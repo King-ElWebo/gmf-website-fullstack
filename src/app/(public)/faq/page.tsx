@@ -1,10 +1,12 @@
 import Link from 'next/link';
 import { listFaqs } from '@/lib/repositories/faqs';
+import { getPublicSiteSettings } from '@/lib/repositories/site-settings';
 import { FaqAccordion } from '@/components/public/FaqAccordion';
 
 export default async function FAQPage() {
-    const allFaqs = await listFaqs();
-    const publishedFaqs = allFaqs.filter((faq: any) => faq.published);
+    const [allFaqs, settings] = await Promise.all([listFaqs(), getPublicSiteSettings()]);
+    const publishedFaqs = allFaqs.filter((faq) => faq.published);
+    const phone = settings.phone?.trim() || '0123 456789';
 
     return (
         <div className="min-h-screen bg-white">
@@ -19,9 +21,9 @@ export default async function FAQPage() {
                 <FaqAccordion faqs={publishedFaqs} />
 
                 {publishedFaqs.length === 0 && (
-                     <div className="text-center py-8 text-neutral-500">
-                         Noch keine FAQs vorhanden.
-                     </div>
+                    <div className="text-center py-8 text-neutral-500">
+                        Noch keine FAQs vorhanden.
+                    </div>
                 )}
 
                 <div className="mt-12 bg-[#e2e8f0] rounded-[8px] p-8 text-center">
@@ -31,8 +33,8 @@ export default async function FAQPage() {
                         <Link href="/kontakt" className="inline-block bg-[#fbbf24] text-[#1a3a52] px-6 py-3 rounded-[8px] font-['Inter'] font-medium text-[16px] hover:opacity-90 transition-opacity">
                             Kontakt aufnehmen
                         </Link>
-                        <a href="tel:0123456789" className="inline-block bg-white border border-[#cbd5e1] text-[#2d3748] px-6 py-3 rounded-[8px] font-['Inter'] font-medium text-[16px] hover:border-[#1a3a52] transition-colors">
-                            0123 456789
+                        <a href={`tel:${phone.replace(/\s+/g, '')}`} className="inline-block bg-white border border-[#cbd5e1] text-[#2d3748] px-6 py-3 rounded-[8px] font-['Inter'] font-medium text-[16px] hover:border-[#1a3a52] transition-colors">
+                            {phone}
                         </a>
                     </div>
                 </div>
@@ -40,4 +42,3 @@ export default async function FAQPage() {
         </div>
     );
 }
-

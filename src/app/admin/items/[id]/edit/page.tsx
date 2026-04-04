@@ -23,13 +23,40 @@ export default async function EditItemPage({
         <ItemForm
             mode="edit"
             itemId={item.id}
-            categories={categories.map((c) => ({ id: c.id, name: c.name, slug: c.slug }))}
+            categories={categories.map((c) => ({
+                id: c.id,
+                name: c.name,
+                slug: c.slug,
+                catalogTypeName: c.catalogType.name,
+            }))}
             initialImages={images}
             initial={{
                 title: item.title,
                 slug: item.slug,
-                description: item.description ?? "",
-                priceCents: item.priceCents?.toString() ?? "",
+                shortDescription: item.shortDescription ?? "",
+                longDescription: item.longDescription ?? item.description ?? "",
+                videoUrl: item.videoUrl ?? "",
+                priceType: item.priceType,
+                basePriceCents: item.basePriceCents?.toString() ?? item.priceCents?.toString() ?? "",
+                priceLabel: item.priceLabel ?? "",
+                depositRequired: item.depositRequired,
+                depositLabel: item.depositLabel ?? "",
+                depositInfo: item.depositInfo ?? "",
+                cleaningFeeApplies: item.cleaningFeeApplies,
+                cleaningFeeLabel: item.cleaningFeeLabel ?? "",
+                cleaningFeeInfo: item.cleaningFeeInfo ?? "",
+                dryingFeeApplies: item.dryingFeeApplies,
+                dryingFeeLabel: item.dryingFeeLabel ?? "",
+                dryingFeeInfo: item.dryingFeeInfo ?? "",
+                additionalCostsInfo: item.additionalCostsInfo ?? "",
+                deliveryAvailable: item.deliveryAvailable,
+                pickupAvailable: item.pickupAvailable,
+                requiresDeliveryAddress: item.requiresDeliveryAddress,
+                deliveryInfo: item.deliveryInfo ?? "",
+                usageInfo: item.usageInfo ?? "",
+                rentalNotes: item.rentalNotes ?? "",
+                setupRequirements: item.setupRequirements ?? "",
+                accessRequirements: item.accessRequirements ?? "",
                 published: item.published,
                 categoryId: item.categoryId,
             }}

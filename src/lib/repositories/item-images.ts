@@ -1,27 +1,21 @@
 import { db } from "@/lib/db";
 
-export type ImageRow = {
-    id: string;
-    itemId: string;
-    url: string;
-    key: string;
-    alt: string | null;
-    sortOrder: number;
-    createdAt: Date;
-};
+import { type ItemImage as ImageRow } from "@prisma/client";
+
+export type { ImageRow };
 
 /** Return all images for an item, ordered by sortOrder ascending. */
 export async function listByItemId(itemId: string): Promise<ImageRow[]> {
     return db.itemImage.findMany({
         where: { itemId },
-        orderBy: { sortOrder: "asc" },
+        orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
     });
 }
 
 /** Append new images after the current highest sortOrder. */
 export async function addImages(
     itemId: string,
-    images: { url: string; key: string; alt?: string }[]
+    images: { url: string; key: string; alt?: string; type?: "IMAGE" | "VIDEO" }[]
 ): Promise<ImageRow[]> {
     // Find current max sortOrder
     const last = await db.itemImage.findFirst({
@@ -39,6 +33,7 @@ export async function addImages(
             key: img.key,
             alt: img.alt ?? null,
             sortOrder: baseOrder + i,
+            type: img.type ?? "IMAGE",
         })),
     });
 
@@ -70,6 +65,7 @@ export async function reorder(
         )
     );
 
+    await normalizeItemImageSortOrder(itemId);
     return listByItemId(itemId);
 }
 
@@ -108,5 +104,23 @@ export async function deleteImage(imageId: string): Promise<ImageRow> {
     const row = await db.itemImage.findUnique({ where: { id: imageId } });
     if (!row) throw new Error("Image not found");
     await db.itemImage.delete({ where: { id: imageId } });
+    await normalizeItemImageSortOrder(row.itemId);
     return row;
+}
+
+export async function normalizeItemImageSortOrder(itemId: string) {
+    const images = await db.itemImage.findMany({
+        where: { itemId },
+        select: { id: true },
+        orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }, { id: "asc" }],
+    });
+
+    await db.$transaction(
+        images.map((image, index) =>
+            db.itemImage.update({
+                where: { id: image.id },
+                data: { sortOrder: index },
+            })
+        )
+    );
 }

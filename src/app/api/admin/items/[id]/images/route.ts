@@ -5,6 +5,9 @@ import storage from "@/lib/storage";
 // Required for fs writes (local storage) and proper multipart/form-data handling
 export const runtime = "nodejs";
 
+// Raise the body size limit so large video files can be uploaded (default is 4.5 MB)
+export const maxDuration = 60; // seconds, for Vercel – ignored locally
+
 export async function GET(
     _req: NextRequest,
     { params }: { params: Promise<{ id: string }> }
@@ -40,7 +43,8 @@ export async function POST(
         const saved = await Promise.all(
             files.map(async (file) => {
                 const { url, key } = await storage.save(file);
-                return { url, key };
+                const type = file.type.startsWith("video/") ? "VIDEO" : "IMAGE";
+                return { url, key, type: type as "VIDEO" | "IMAGE" };
             })
         );
 

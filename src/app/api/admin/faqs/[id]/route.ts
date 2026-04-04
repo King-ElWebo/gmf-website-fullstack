@@ -31,7 +31,6 @@ export async function PATCH(
             question: body.question,
             answer: body.answer,
             published: body.published,
-            sortOrder: body.sortOrder,
         });
 
         return NextResponse.json({ faq: updated });

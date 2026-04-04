@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { deleteImage } from "@/lib/repositories/item-images";
+import { deleteImage, listByItemId } from "@/lib/repositories/item-images";
 import storage from "@/lib/storage";
 
 export async function DELETE(
@@ -14,7 +14,8 @@ export async function DELETE(
         await storage.delete(row.key).catch((e) =>
             console.warn("[image DELETE] storage.delete failed:", e)
         );
-        return NextResponse.json({ ok: true });
+        const images = await listByItemId(row.itemId);
+        return NextResponse.json({ ok: true, images });
     } catch (e: unknown) {
         const msg = e instanceof Error ? e.message : "Delete failed";
         return NextResponse.json({ error: msg }, { status: 400 });

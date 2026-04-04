@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
-import { getPublishedItemById } from '@/lib/repositories/catalog';
+import { getPublishedItemBySlug } from '@/lib/repositories/catalog';
+import { formatItemPrice, getPrimaryImageUrl } from '@/lib/public-catalog';
 import { BuchungsFormular } from '@/components/public/BuchungsFormular';
 
 interface PageProps {
@@ -7,8 +8,8 @@ interface PageProps {
 }
 
 export default async function BookingPage({ params }: PageProps) {
-    const { id } = await params;
-    const item = await getPublishedItemById(id);
+    const { id: slug } = await params;
+    const item = await getPublishedItemBySlug(slug);
 
     if (!item) {
         notFound();
@@ -16,11 +17,10 @@ export default async function BookingPage({ params }: PageProps) {
 
     const mappedItem = {
         id: item.id,
+        slug: item.slug,
         title: item.title,
-        price: item.priceCents != null
-            ? `ab ${(item.priceCents / 100).toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })} / Tag`
-            : null,
-        imageUrl: item.images[0]?.url ?? '',
+        price: formatItemPrice(item),
+        imageUrl: getPrimaryImageUrl(item),
     };
 
     return <BuchungsFormular item={mappedItem} />;

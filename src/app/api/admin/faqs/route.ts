@@ -26,7 +26,6 @@ export async function POST(request: NextRequest) {
             question: body.question,
             answer: body.answer,
             published: body.published,
-            sortOrder: body.sortOrder,
         });
 
         return NextResponse.json({ faq: newFaq });

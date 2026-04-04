@@ -8,14 +8,21 @@ export const runtime = "nodejs";
 export async function GET(req: NextRequest) {
     try {
         const { searchParams } = new URL(req.url);
-        const areaParam = searchParams.get('area');
+        const areaParam = searchParams.get("area");
+        const publishedParam = searchParams.get("published");
 
         let filterArea: DisplayArea | undefined;
         if (areaParam && Object.values(DisplayArea).includes(areaParam as DisplayArea)) {
             filterArea = areaParam as DisplayArea;
         }
 
-        const images = await listGlobalImages(filterArea);
+        const filterPublished =
+            publishedParam === "true" ? true : publishedParam === "false" ? false : undefined;
+
+        const images = await listGlobalImages({
+            area: filterArea,
+            published: filterPublished,
+        });
         return NextResponse.json({ images });
     } catch (err) {
         return new NextResponse(String(err), { status: 500 });

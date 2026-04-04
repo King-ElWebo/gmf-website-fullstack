@@ -1,0 +1,83 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+:root {
+  --public-background: #fffdf8;
+  --public-foreground: #1f2937;
+  --public-heading: #1f2937;
+  --public-body: #64748b;
+  --public-meta: #7c8aa5;
+  --public-font-sans: "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --public-h1-size: 32px;
+  --public-h1-line: 1.2;
+  --public-h1-weight: 600;
+  --public-h2-size: 24px;
+  --public-h2-line: 1.25;
+  --public-h2-weight: 600;
+  --public-h3-size: 18px;
+  --public-h3-line: 1.35;
+  --public-h3-weight: 500;
+  --public-body-size: 16px;
+  --public-body-line: 1.6;
+  --public-body-weight: 400;
+  --public-small-size: 14px;
+  --public-small-line: 1.45;
+  --public-small-weight: 400;
+  --public-meta-size: 12px;
+  --public-meta-line: 1.4;
+  --public-meta-weight: 400;
+}
+
+.public-site {
+  min-height: 100vh;
+  background: var(--public-background);
+  color: var(--public-foreground);
+  font-family: var(--public-font-sans);
+}
+
+.public-site [class*="font-['Inter']"] {
+  font-family: var(--public-font-sans) !important;
+}
+
+.public-site .type-h1 {
+  font-size: var(--public-h1-size);
+  line-height: var(--public-h1-line);
+  font-weight: var(--public-h1-weight);
+  letter-spacing: -0.03em;
+  color: var(--public-heading);
+}
+
+.public-site .type-h2 {
+  font-size: var(--public-h2-size);
+  line-height: var(--public-h2-line);
+  font-weight: var(--public-h2-weight);
+  letter-spacing: -0.02em;
+  color: var(--public-heading);
+}
+
+.public-site .type-h3 {
+  font-size: var(--public-h3-size);
+  line-height: var(--public-h3-line);
+  font-weight: var(--public-h3-weight);
+  color: var(--public-heading);
+}
+
+.public-site .type-body {
+  font-size: var(--public-body-size);
+  line-height: var(--public-body-line);
+  font-weight: var(--public-body-weight);
+  color: var(--public-body);
+}
+
+.public-site .type-small {
+  font-size: var(--public-small-size);
+  line-height: var(--public-small-line);
+  font-weight: var(--public-small-weight);
+  color: var(--public-body);
+}
+
+.public-site .type-meta {
+  font-size: var(--public-meta-size);
+  line-height: var(--public-meta-line);
+  font-weight: var(--public-meta-weight);
+  color: var(--public-meta);
+}

@@ -1,31 +1,61 @@
-import Image from 'next/image';
-import { HeroCarousel } from '@/components/public/HeroCarousel';
-import { CategoryCarousel } from '@/components/public/CategoryCarousel';
-import { Instagram, Facebook } from 'lucide-react';
-import { listGlobalImages } from '@/lib/repositories/global-images';
-import { DisplayArea } from '@prisma/client';
+import Image from "next/image";
+import { Instagram, Facebook } from "lucide-react";
+import { DisplayArea } from "@prisma/client";
+import { HeroCarousel } from "@/components/public/HeroCarousel";
+import { CategoryCarousel } from "@/components/public/CategoryCarousel";
+import { listGlobalImages } from "@/lib/repositories/global-images";
+import { listCategories } from "@/lib/repositories/catalog";
+import { getPublicSiteSettings } from "@/lib/repositories/site-settings";
 
 export default async function HomePage() {
-    const carouselImages = await listGlobalImages(DisplayArea.CAROUSEL);
+    const [carouselImages, socialImages, categories, settings] = await Promise.all([
+        listGlobalImages({ area: DisplayArea.CAROUSEL, published: true }),
+        listGlobalImages({ area: DisplayArea.SOCIAL, published: true }),
+        listCategories(),
+        getPublicSiteSettings(),
+    ]);
 
-    const heroCarouselImages = carouselImages
-        .filter(img => img.published)
-        .map(img => ({
-            url: img.url,
-            alt: img.alt,
-        }));
+    const heroCarouselImages = carouselImages.map((image) => ({
+        url: image.url,
+        alt: image.alt,
+    }));
 
-    const socialImages = (await listGlobalImages(DisplayArea.SOCIAL)).slice(0, 4);
+    const socialPreviewImages = socialImages.slice(0, 4);
+    const socialLinks = settings.socialLinks.filter((link: { platform: string; label: string | null; url: string }) =>
+        ["instagram", "facebook"].includes(link.platform.toLowerCase())
+    );
+    const instagramLink = socialLinks.find((link: { platform: string }) => link.platform.toLowerCase() === "instagram");
+    const facebookLink = socialLinks.find((link: { platform: string }) => link.platform.toLowerCase() === "facebook");
+
+    const heroTitle = settings.heroTitle?.trim() || "Unvergessliche Events für Groß und Klein";
+    const heroText =
+        settings.heroText?.trim() ||
+        "Hüpfburgen und Eventmodule für Ihre Feier. Einfach buchen, sicher aufbauen, Spaß haben.";
+    const locationInfo =
+        settings.additionalInfo?.trim() ||
+        "Wir liefern je nach Entfernung direkt zu Ihnen. Die Lieferkosten werden individuell anhand der Strecke berechnet und im Zuge der Anfrage bekanntgegeben.\n\nSelbstabholung ist nach Vereinbarung an unserem Standort möglich. Bitte beachten Sie, dass die gemieteten Produkte auch wieder selbstständig und termingerecht retourniert werden müssen.";
 
     return (
         <div className="min-h-screen">
-            {/* Hero Section with Carousel */}
-            <HeroCarousel images={heroCarouselImages} />
+            <HeroCarousel
+                images={heroCarouselImages}
+                title={heroTitle}
+                text={heroText}
+                noticeText={settings.noticeText?.trim() || null}
+            />
 
-            {/* Category Section */}
-            <CategoryCarousel />
+            <CategoryCarousel
+                categories={categories.map((category) => ({
+                    id: category.id,
+                    title: category.name,
+                    description: category.description,
+                    imageUrl: category.imageUrl,
+                    slug: category.slug,
+                    catalogTypeName: category.catalogType.name,
+                    catalogTypeSlug: category.catalogType.slug,
+                }))}
+            />
 
-            {/* How It Works Section */}
             <section className="py-16 bg-[#e2e8f0]">
                 <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
                     <h2 className="font-['Inter'] font-semibold text-[24px] md:text-[32px] text-[#1a202c] mb-12 text-center">
@@ -41,7 +71,7 @@ export default async function HomePage() {
                                 Produkt auswählen
                             </h3>
                             <p className="font-['Inter'] text-[14px] text-[#4a5568] leading-[20px]">
-                                Stöbern Sie durch unsere Auswahl und wählen Sie das passende Produkt für Ihr Event
+                                Stöbern Sie durch unsere Auswahl und wählen Sie das passende Produkt für Ihr Event.
                             </p>
                         </div>
 
@@ -50,10 +80,10 @@ export default async function HomePage() {
                                 <span className="font-['Inter'] font-semibold text-[24px] text-[#1a3a52]">2</span>
                             </div>
                             <h3 className="font-['Inter'] font-medium text-[18px] text-[#1a202c] mb-2">
-                                Datum wählen
+                                Anfrage absenden
                             </h3>
                             <p className="font-['Inter'] text-[14px] text-[#4a5568] leading-[20px]">
-                                Prüfen Sie die Verfügbarkeit und wählen Sie Ihr Wunschdatum
+                                Senden Sie Ihre Anfrage mit Datum und Details direkt über die Produktseite.
                             </p>
                         </div>
 
@@ -62,40 +92,46 @@ export default async function HomePage() {
                                 <span className="font-['Inter'] font-semibold text-[24px] text-[#1a3a52]">3</span>
                             </div>
                             <h3 className="font-['Inter'] font-medium text-[18px] text-[#1a202c] mb-2">
-                                Anfrage senden
+                                Lieferung oder Abholung
                             </h3>
                             <p className="font-['Inter'] text-[14px] text-[#4a5568] leading-[20px]">
-                                Senden Sie Ihre Buchungsanfrage und wir melden uns zeitnah bei Ihnen
+                                Wir stimmen Lieferung, Aufbau oder Abholung passend zu Ihrer Veranstaltung mit Ihnen ab.
                             </p>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* Location Section */}
-            <section className="py-16" style={{ backgroundColor: '#FFF9E6' }}>
+            <section className="py-16" style={{ backgroundColor: "#FFFfff" }}>
                 <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                         <div>
                             <h2 className="font-['Inter'] font-semibold text-[24px] md:text-[32px] text-[#1a202c] mb-4">
                                 Standort & Abholung
                             </h2>
-                            <p className="font-['Inter'] text-[16px] text-[#4a5568] leading-[25.6px] mb-6">
-                                Lieferung & Abholung
-
-                                Wir liefern je nach Entfernung direkt zu Ihnen. Die Lieferkosten werden individuell anhand der Strecke berechnet und im Zuge der Anfrage bekanntgegeben. <br /> <br />
-
-                                Selbstabholung ist nach Vereinbarung an unserem Standort möglich. Bitte beachten Sie, dass die gemieteten Produkte auch wieder selbstständig und termingerecht retourniert werden müssen.
+                            <p className="font-['Inter'] text-[16px] text-[#4a5568] leading-[25.6px] whitespace-pre-line mb-6">
+                                {locationInfo}
                             </p>
                             <div className="space-y-3">
                                 <p className="font-['Inter'] text-[14px] text-[#2d3748]">
-                                    <strong>Adresse:</strong> Spargelfeldgasse 22, 3702 Stranzendorf
+                                    <strong>Adresse:</strong> {settings.address?.trim() || "Spargelfeldgasse 22, 3702 Stranzendorf"}
                                 </p>
                                 <p className="font-['Inter'] text-[14px] text-[#2d3748]">
-                                    <strong>Öffnungszeiten:</strong> nach telefonischer Vereinbarung
+                                    <strong>Öffnungszeiten:</strong> {settings.openingHours?.trim() || "nach telefonischer Vereinbarung"}
                                 </p>
+                                {settings.phone && (
+                                    <p className="font-['Inter'] text-[14px] text-[#2d3748]">
+                                        <strong>Telefon:</strong> {settings.phone}
+                                    </p>
+                                )}
+                                {settings.email && (
+                                    <p className="font-['Inter'] text-[14px] text-[#2d3748]">
+                                        <strong>E-Mail:</strong> {settings.email}
+                                    </p>
+                                )}
                             </div>
                         </div>
+
                         <div className="bg-[#e2e8f0] rounded-[8px] h-[300px] flex items-center justify-center border border-[#cbd5e1] overflow-hidden">
                             <iframe
                                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2652.3718250777197!2d16.357130356852537!3d48.3341579974037!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x476d0fbf7cc77e57%3A0x6d03f6c40f987f39!2sSpargelfeldgasse%2022%2C%202102%20Bisamberg!5e0!3m2!1sde!2sat!4v1773320289705!5m2!1sde!2sat"
@@ -105,48 +141,69 @@ export default async function HomePage() {
                                 allowFullScreen
                                 loading="lazy"
                                 referrerPolicy="no-referrer-when-downgrade"
-                            ></iframe>
+                            />
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* Social Media Section */}
-            <section className="py-16 bg-[#e2e8f0]">
-                <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
-                    <h2 className="font-['Inter'] font-semibold text-[24px] md:text-[32px] text-[#1a202c] mb-4 text-center">
-                        Folgen Sie uns
-                    </h2>
-                    <p className="font-['Inter'] text-[16px] text-[#64748b] mb-8 text-center">
-                        Sehen Sie Impressionen von unseren Events auf Instagram und Facebook
-                    </p>
+            {(socialPreviewImages.length > 0 || socialLinks.length > 0) && (
+                <section className="py-16 bg-[#e2e8f0]">
+                    <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
+                        <h2 className="font-['Inter'] font-semibold text-[24px] md:text-[32px] text-[#1a202c] mb-4 text-center">
+                            Folgen Sie uns
+                        </h2>
+                        <p className="font-['Inter'] text-[16px] text-[#64748b] mb-8 text-center">
+                            Sehen Sie Impressionen von unseren Events auf Instagram und Facebook.
+                        </p>
 
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                        {socialImages.map((image) => (
-                            <div key={image.id} className="relative bg-white rounded-[8px] aspect-square border border-[#cbd5e1]">
-                                <Image
-                                    src={image.url}
-                                    alt={image.alt ?? 'Social Media Image'}
-                                    fill
-                                    className="object-cover rounded-[8px]"
-                                    sizes="(max-width: 768px) 50vw, 25vw"
-                                />
+                        {socialPreviewImages.length > 0 && (
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                                {socialPreviewImages.map((image) => (
+                                    <div key={image.id} className="relative bg-white rounded-[8px] aspect-square border border-[#cbd5e1]">
+                                        <Image
+                                            src={image.url}
+                                            alt={image.alt ?? "Social Media Image"}
+                                            fill
+                                            className="object-cover rounded-[8px]"
+                                            sizes="(max-width: 768px) 50vw, 25vw"
+                                        />
+                                    </div>
+                                ))}
                             </div>
-                        ))}
-                    </div>
+                        )}
 
-                    <div className="flex justify-center gap-4">
-                        <a href="#" className="flex items-center gap-2 bg-white px-6 py-3 rounded-[8px] border border-[#cbd5e1] hover:border-[#1a3a52] transition-colors">
-                            <Instagram size={20} className="text-[#1a3a52]" />
-                            <span className="font-['Inter'] font-medium text-[14px] text-[#2d3748]">Instagram</span>
-                        </a>
-                        <a href="#" className="flex items-center gap-2 bg-white px-6 py-3 rounded-[8px] border border-[#cbd5e1] hover:border-[#1a3a52] transition-colors">
-                            <Facebook size={20} className="text-[#1a3a52]" />
-                            <span className="font-['Inter'] font-medium text-[14px] text-[#2d3748]">Facebook</span>
-                        </a>
+                        <div className="flex justify-center gap-4">
+                            {instagramLink && (
+                                <a
+                                    href={instagramLink.url}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="flex items-center gap-2 bg-white px-6 py-3 rounded-[8px] border border-[#cbd5e1] hover:border-[#1a3a52] transition-colors"
+                                >
+                                    <Instagram size={20} className="text-[#1a3a52]" />
+                                    <span className="font-['Inter'] font-medium text-[14px] text-[#2d3748]">
+                                        {instagramLink.label?.trim() || "Instagram"}
+                                    </span>
+                                </a>
+                            )}
+                            {facebookLink && (
+                                <a
+                                    href={facebookLink.url}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="flex items-center gap-2 bg-white px-6 py-3 rounded-[8px] border border-[#cbd5e1] hover:border-[#1a3a52] transition-colors"
+                                >
+                                    <Facebook size={20} className="text-[#1a3a52]" />
+                                    <span className="font-['Inter'] font-medium text-[14px] text-[#2d3748]">
+                                        {facebookLink.label?.trim() || "Facebook"}
+                                    </span>
+                                </a>
+                            )}
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
+            )}
         </div>
     );
 }

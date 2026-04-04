@@ -1,73 +1,87 @@
 import Link from "next/link";
+import { DisplayArea } from "@prisma/client";
 import { listGlobalImages } from "@/lib/repositories/global-images";
+import AdminPageHeader from "../_components/admin-page-header";
+import ImagesSortableList from "./images-sortable-list";
 
-export default async function GlobalImagesPage() {
-    const images = await listGlobalImages();
+function parseArea(value?: string) {
+    if (value && Object.values(DisplayArea).includes(value as DisplayArea)) {
+        return value as DisplayArea;
+    }
+
+    return undefined;
+}
+
+function parsePublished(value?: string) {
+    if (value === "true") return true;
+    if (value === "false") return false;
+    return undefined;
+}
+
+export default async function GlobalImagesPage({
+    searchParams,
+}: {
+    searchParams?: Promise<Record<string, string | string[] | undefined>>;
+}) {
+    const resolvedSearchParams = (await searchParams) ?? {};
+    const areaParam = Array.isArray(resolvedSearchParams.area) ? resolvedSearchParams.area[0] : resolvedSearchParams.area;
+    const publishedParam = Array.isArray(resolvedSearchParams.published)
+        ? resolvedSearchParams.published[0]
+        : resolvedSearchParams.published;
+
+    const area = parseArea(areaParam);
+    const published = parsePublished(publishedParam);
+    const images = await listGlobalImages({ area, published });
 
     return (
-        <div className="space-y-4">
-            <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-semibold">Bilder</h1>
-                <Link className="rounded-md bg-white text-black hover:transform hover:translate-y-[-2px] px-3 py-2 text-sm border border-neutral-200 shadow-sm" href="/admin/images/new">
-                    Neues Bild
-                </Link>
-            </div>
+        <div className="space-y-6">
+            <AdminPageHeader
+                title="Bilder"
+                description="Drag-and-drop sortierbar, mit klaren Filtern fuer Bereich und Status."
+                action={{ href: "/admin/images/new", label: "Neues Bild" }}
+            />
 
-            <div className="rounded-xl border overflow-hidden">
-                <table className="w-full text-sm">
-                    <thead className="text-left">
-                        <tr>
-                            <th className="p-3 w-32">Vorschau</th>
-                            <th className="p-3">Bereich</th>
-                            <th className="p-3">Alt-Text</th>
-                            <th className="p-3">Status</th>
-                            <th className="p-3">Sortierung</th>
-                            <th className="p-3 w-32">Aktionen</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {images.map((image) => (
-                            <tr key={image.id} className="border-t">
-                                <td className="p-3">
-                                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                                    <img 
-                                        src={image.url} 
-                                        alt={image.alt ?? ""} 
-                                        className="w-16 h-16 object-cover rounded shadow-sm border"
-                                    />
-                                </td>
-                                <td className="p-3 text-neutral-600 font-medium">
-                                    {image.area}
-                                </td>
-                                <td className="p-3 text-neutral-600 max-w-xs truncate">
-                                    {image.alt || "-"}
-                                </td>
-                                <td className="p-3">
-                                    {image.published ? (
-                                        <span className="text-green-600 font-medium">Online</span>
-                                    ) : (
-                                        <span className="text-neutral-500 font-medium">Offline</span>
-                                    )}
-                                </td>
-                                <td className="p-3 text-neutral-600">
-                                    {image.sortOrder}
-                                </td>
-                                <td className="p-3">
-                                    <Link className="underline" href={`/admin/images/${image.id}/edit`}>
-                                        Bearbeiten
-                                    </Link>
-                                </td>
-                            </tr>
+            <form className="admin-surface rounded-[28px] p-4 sm:p-5 flex flex-wrap items-end gap-3">
+                <div className="space-y-1">
+                    <label className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Bereich</label>
+                    <select
+                        name="area"
+                        defaultValue={area ?? ""}
+                        className="min-w-44 rounded-xl px-3 py-2.5 text-sm"
+                    >
+                        <option value="">Alle Bereiche</option>
+                        {Object.values(DisplayArea).map((value) => (
+                            <option key={value} value={value}>
+                                {value}
+                            </option>
                         ))}
-                        {images.length === 0 && (
-                            <tr>
-                                <td className="p-3 text-center text-neutral-500" colSpan={6}>
-                                    Noch keine Bilder hochgeladen.
-                                </td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
+                    </select>
+                </div>
+
+                <div className="space-y-1">
+                    <label className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Status</label>
+                    <select
+                        name="published"
+                        defaultValue={
+                            typeof published === "boolean" ? (published ? "true" : "false") : ""
+                        }
+                        className="min-w-40 rounded-xl px-3 py-2.5 text-sm"
+                    >
+                        <option value="">Alle Status</option>
+                        <option value="true">Online</option>
+                        <option value="false">Offline</option>
+                    </select>
+                </div>
+
+                <button className="admin-action-primary px-4 py-2.5 text-sm">Filter anwenden</button>
+
+                <Link href="/admin/images" className="admin-action-secondary px-4 py-2.5 text-sm">
+                    Zuruecksetzen
+                </Link>
+            </form>
+
+            <div className="admin-surface rounded-[28px] p-4 sm:p-5">
+                <ImagesSortableList initialImages={images} />
             </div>
         </div>
     );

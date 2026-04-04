@@ -7,9 +7,21 @@ export default async function NewItemPage() {
     return (
         <ItemForm
             mode="create"
-            categories={categories.map((c) => ({ id: c.id, name: c.name, slug: c.slug }))}
+            categories={categories.map((c) => ({
+                id: c.id,
+                name: c.name,
+                slug: c.slug,
+                catalogTypeName: c.catalogType.name,
+            }))}
             initial={{
                 published: false,
+                priceType: "FIXED",
+                depositRequired: false,
+                cleaningFeeApplies: false,
+                dryingFeeApplies: false,
+                deliveryAvailable: false,
+                pickupAvailable: false,
+                requiresDeliveryAddress: false,
             }}
         />
     );

@@ -14,23 +14,32 @@ export type GlobalImageRow = {
     updatedAt: Date;
 };
 
-/** Return all global images, ordered by sortOrder ascending. Optionally filter by area. */
-export async function listGlobalImages(area?: DisplayArea): Promise<GlobalImageRow[]> {
-    const where = area ? { area } : {};
-    return (db as any).globalImage?.findMany({
+type ListGlobalImagesOptions = {
+    area?: DisplayArea;
+    published?: boolean;
+};
+
+/** Return all global images, ordered by saved sortOrder. */
+export async function listGlobalImages(options: ListGlobalImagesOptions = {}): Promise<GlobalImageRow[]> {
+    const where: Prisma.GlobalImageWhereInput = {
+        ...(options.area ? { area: options.area } : {}),
+        ...(typeof options.published === "boolean" ? { published: options.published } : {}),
+    };
+
+    return db.globalImage.findMany({
         where,
-        orderBy: { sortOrder: "asc" },
-    }) ?? [];
+        orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+    });
 }
 
 /** Retrieve a single global image by ID */
 export async function getGlobalImageById(id: string): Promise<GlobalImageRow | null> {
-    return (db as any).globalImage?.findUnique({
+    return db.globalImage.findUnique({
         where: { id },
-    }) ?? null;
+    });
 }
 
-/** Append a new global image after the current highest sortOrder in its area. */
+/** Append a new global image after the current highest global sortOrder. */
 export async function createGlobalImage(
     url: string,
     key: string,
@@ -38,9 +47,7 @@ export async function createGlobalImage(
     alt?: string,
     published: boolean = true
 ): Promise<GlobalImageRow> {
-    // Find current max sortOrder for this area
     const last = await db.globalImage.findFirst({
-        where: { area },
         orderBy: { sortOrder: "desc" },
         select: { sortOrder: true },
     });
@@ -73,6 +80,51 @@ export async function updateGlobalImage(
     });
 }
 
+export async function reorderGlobalImages(orderedIds: string[]) {
+    const images = await db.globalImage.findMany({
+        select: { id: true },
+        orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+    });
+
+    if (images.length !== orderedIds.length) {
+        throw new Error("orderedIds must include all images");
+    }
+
+    const existingIds = new Set(images.map((image) => image.id));
+    const uniqueIds = new Set(orderedIds);
+
+    if (uniqueIds.size !== orderedIds.length || orderedIds.some((id) => !existingIds.has(id))) {
+        throw new Error("orderedIds contains invalid image IDs");
+    }
+
+    await db.$transaction(
+        orderedIds.map((id, index) =>
+            db.globalImage.update({
+                where: { id },
+                data: { sortOrder: index },
+            })
+        )
+    );
+
+    return listGlobalImages();
+}
+
+export async function normalizeGlobalImageSortOrder() {
+    const images = await db.globalImage.findMany({
+        select: { id: true },
+        orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }, { id: "asc" }],
+    });
+
+    await db.$transaction(
+        images.map((image, index) =>
+            db.globalImage.update({
+                where: { id: image.id },
+                data: { sortOrder: index },
+            })
+        )
+    );
+}
+
 /**
  * Delete a global image from DB and its underlying file from storage.
  */
@@ -85,6 +137,8 @@ export async function deleteGlobalImage(id: string): Promise<GlobalImageRow> {
 
     // Remove from storage system
     await storage.delete(row.key);
+
+    await normalizeGlobalImageSortOrder();
 
     return row;
 }
