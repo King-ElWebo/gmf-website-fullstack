@@ -12,6 +12,7 @@ export function Header() {
   const navLinks = [
     { href: '/', label: 'Start' },
     { href: '/produkte', label: 'Produkte' },
+    { href: '/licht-tontechnik', label: 'Licht & Ton' },
     { href: '/faq', label: 'FAQ' },
     { href: '/kontakt', label: 'Kontakt' }
   ];

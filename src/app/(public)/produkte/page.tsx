@@ -1,6 +1,5 @@
-import { listPublishedItems, listCategories } from '@/lib/repositories/catalog';
-import { formatItemPrice, getItemSummary, getPrimaryImageUrl } from '@/lib/public-catalog';
 import { ProduktFilter } from '@/components/public/ProduktFilter';
+import { getProduktFilterData } from '@/lib/public-product-list';
 
 interface ProduktePageProps {
     searchParams: Promise<{
@@ -13,36 +12,7 @@ export default async function ProduktePage({ searchParams }: ProduktePageProps) 
     const resolvedSearchParams = await searchParams;
     const initialCategory = resolvedSearchParams.kategorie?.trim() || 'alle';
     const initialCatalogType = resolvedSearchParams.bereich?.trim() || 'alle';
-
-    const [items, categories] = await Promise.all([
-        listPublishedItems(),
-        listCategories(),
-    ]);
-
-    const mappedItems = items.map((item) => ({
-        id: item.id,
-        slug: item.slug,
-        title: item.title,
-        description: getItemSummary(item),
-        price: formatItemPrice(item),
-        priceType: item.priceType,
-        basePriceCents: item.basePriceCents ?? item.priceCents,
-        priceLabel: item.priceLabel,
-        trackInventory: item.trackInventory,
-        totalStock: item.totalStock,
-        imageUrl: getPrimaryImageUrl(item),
-        categoryName: item.category.name,
-        categorySlug: item.category.slug,
-        catalogTypeName: item.category.catalogType.name,
-        catalogTypeSlug: item.category.catalogType.slug,
-    }));
-
-    const mappedCategories = categories.map((category) => ({
-        name: category.name,
-        slug: category.slug,
-        catalogTypeName: category.catalogType.name,
-        catalogTypeSlug: category.catalogType.slug,
-    }));
+    const { items, categories } = await getProduktFilterData();
 
     return (
         <div className="min-h-screen" style={{ backgroundColor: '#ffffff' }}>
@@ -57,8 +27,8 @@ export default async function ProduktePage({ searchParams }: ProduktePageProps) 
                 </div>
 
                 <ProduktFilter
-                    items={mappedItems}
-                    categories={mappedCategories}
+                    items={items}
+                    categories={categories}
                     initialCategory={initialCategory}
                     initialCatalogType={initialCatalogType}
                 />

@@ -44,6 +44,9 @@ export function Footer({ phone, email, address, socialLinks = [] }: FooterProps)
                             <Link href="/produkte" className="font-['Inter'] text-[14px] text-[#e2e8f0] hover:text-white transition-colors">
                                 Produkte
                             </Link>
+                            <Link href="/licht-tontechnik" className="font-['Inter'] text-[14px] text-[#e2e8f0] hover:text-white transition-colors">
+                                Licht & Ton
+                            </Link>
                             <Link href="/faq" className="font-['Inter'] text-[14px] text-[#e2e8f0] hover:text-white transition-colors">
                                 FAQ
                             </Link>

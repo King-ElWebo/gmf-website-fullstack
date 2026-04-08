@@ -56,6 +56,15 @@ type ItemFormState = {
 const sectionClassName = "space-y-4 rounded-lg border p-4";
 const inputClassName = "w-full rounded-md border px-3 py-2";
 const textareaClassName = "w-full rounded-md border px-3 py-2";
+const CLEANING_DEFAULT_TEXT = "Reinigung 120 Euro";
+const DRYING_DEFAULT_TEXT = "Trocknung 190 Euro";
+
+function buildDefaultAdditionalCostsText(cleaningFeeApplies: boolean, dryingFeeApplies: boolean) {
+    const lines: string[] = [];
+    if (cleaningFeeApplies) lines.push(CLEANING_DEFAULT_TEXT);
+    if (dryingFeeApplies) lines.push(DRYING_DEFAULT_TEXT);
+    return lines.join("\n");
+}
 
 export default function ItemForm(props: {
     mode: "create" | "edit";
@@ -449,7 +458,37 @@ export default function ItemForm(props: {
                                     <input
                                         type="checkbox"
                                         checked={formState.cleaningFeeApplies}
-                                        onChange={(e) => updateField("cleaningFeeApplies", e.target.checked)}
+                                        onChange={(e) =>
+                                            setFormState((current) => {
+                                                const nextCleaningFeeApplies = e.target.checked;
+                                                const next = {
+                                                    ...current,
+                                                    cleaningFeeApplies: nextCleaningFeeApplies,
+                                                };
+
+                                                if (nextCleaningFeeApplies && !current.cleaningFeeLabel.trim()) {
+                                                    next.cleaningFeeLabel = CLEANING_DEFAULT_TEXT;
+                                                }
+
+                                                const autoBefore = buildDefaultAdditionalCostsText(
+                                                    current.cleaningFeeApplies,
+                                                    current.dryingFeeApplies
+                                                );
+                                                const autoAfter = buildDefaultAdditionalCostsText(
+                                                    nextCleaningFeeApplies,
+                                                    current.dryingFeeApplies
+                                                );
+                                                const currentAdditionalCosts = current.additionalCostsInfo.trim();
+                                                const shouldAutoUpdateAdditionalCosts =
+                                                    !currentAdditionalCosts || currentAdditionalCosts === autoBefore;
+
+                                                if (shouldAutoUpdateAdditionalCosts) {
+                                                    next.additionalCostsInfo = autoAfter;
+                                                }
+
+                                                return next;
+                                            })
+                                        }
                                     />
                                     Reinigungskosten relevant
                                 </label>
@@ -479,7 +518,37 @@ export default function ItemForm(props: {
                                     <input
                                         type="checkbox"
                                         checked={formState.dryingFeeApplies}
-                                        onChange={(e) => updateField("dryingFeeApplies", e.target.checked)}
+                                        onChange={(e) =>
+                                            setFormState((current) => {
+                                                const nextDryingFeeApplies = e.target.checked;
+                                                const next = {
+                                                    ...current,
+                                                    dryingFeeApplies: nextDryingFeeApplies,
+                                                };
+
+                                                if (nextDryingFeeApplies && !current.dryingFeeLabel.trim()) {
+                                                    next.dryingFeeLabel = DRYING_DEFAULT_TEXT;
+                                                }
+
+                                                const autoBefore = buildDefaultAdditionalCostsText(
+                                                    current.cleaningFeeApplies,
+                                                    current.dryingFeeApplies
+                                                );
+                                                const autoAfter = buildDefaultAdditionalCostsText(
+                                                    current.cleaningFeeApplies,
+                                                    nextDryingFeeApplies
+                                                );
+                                                const currentAdditionalCosts = current.additionalCostsInfo.trim();
+                                                const shouldAutoUpdateAdditionalCosts =
+                                                    !currentAdditionalCosts || currentAdditionalCosts === autoBefore;
+
+                                                if (shouldAutoUpdateAdditionalCosts) {
+                                                    next.additionalCostsInfo = autoAfter;
+                                                }
+
+                                                return next;
+                                            })
+                                        }
                                     />
                                     Trocknungskosten relevant
                                 </label>
