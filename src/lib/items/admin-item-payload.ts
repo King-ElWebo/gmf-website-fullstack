@@ -31,6 +31,12 @@ export function parseAdminItemPayload(body: Record<string, unknown> | null): Par
 
     const categoryId = asTrimmedText(body?.categoryId);
     const published = asBoolean(body?.published);
+    const trackInventory = asBoolean(body?.trackInventory ?? true);
+    const totalStockRaw = body?.totalStock;
+    const totalStock =
+        totalStockRaw === "" || totalStockRaw === null || totalStockRaw === undefined
+            ? 1
+            : Number(totalStockRaw);
     const priceType = typeof body?.priceType === "string" ? body.priceType.trim() : "FIXED";
     const priceLabel = asTrimmedText(body?.priceLabel);
 
@@ -53,6 +59,10 @@ export function parseAdminItemPayload(body: Record<string, unknown> | null): Par
         (!Number.isFinite(basePriceCents) || basePriceCents < 0 || basePriceCents > 2147483647)
     ) {
         return { ok: false, error: "basePriceCents must be a positive number up to 2147483647", status: 400 };
+    }
+
+    if (!Number.isFinite(totalStock) || totalStock < 0 || totalStock > 2147483647) {
+        return { ok: false, error: "totalStock must be a number between 0 and 2147483647", status: 400 };
     }
 
     if (priceType !== "ON_REQUEST" && basePriceCents === null) {
@@ -90,6 +100,8 @@ export function parseAdminItemPayload(body: Record<string, unknown> | null): Par
             rentalNotes: asTrimmedText(body?.rentalNotes),
             setupRequirements: asTrimmedText(body?.setupRequirements),
             accessRequirements: asTrimmedText(body?.accessRequirements),
+            trackInventory,
+            totalStock: Math.floor(totalStock),
             published,
             categoryId,
         },

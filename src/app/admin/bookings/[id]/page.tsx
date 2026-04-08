@@ -3,6 +3,7 @@ import { BookingStatusBadge } from '../../_components/BookingStatusBadge';
 import { ClientBookingActions } from '../../_components/ClientBookingActions';
 import { NotesSection } from '../../_components/NotesSection';
 import Link from 'next/link';
+import { formatPriceCents } from '@/lib/items/price';
 
 export const dynamic = 'force-dynamic';
 
@@ -58,15 +59,24 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
              <table className="w-full text-sm text-left">
                <thead className="bg-neutral-50/50 border-b border-neutral-100">
                  <tr>
-                    <th className="px-5 py-3 font-medium text-neutral-500">Ressource / Item-ID</th>
+                    <th className="px-5 py-3 font-medium text-neutral-500">Produkt</th>
                     <th className="px-5 py-3 font-medium text-neutral-500 text-right">Menge</th>
+                    <th className="px-5 py-3 font-medium text-neutral-500 text-right">Preisstatus</th>
                  </tr>
                </thead>
                <tbody className="divide-y divide-neutral-100">
                  {booking.items.map((item: any) => (
                    <tr key={item.id} className="hover:bg-neutral-50/50 transition-colors">
-                     <td className="px-5 py-4 font-medium text-neutral-800">{item.itemId}</td>
+                     <td className="px-5 py-4">
+                       <p className="font-medium text-neutral-800">{item.resourceTitle || item.item?.title || item.itemId}</p>
+                       <p className="text-xs text-neutral-500">ID: {item.itemId}</p>
+                     </td>
                      <td className="px-5 py-4 text-right font-medium text-neutral-800">{item.quantity}x</td>
+                     <td className="px-5 py-4 text-right text-sm text-neutral-700">
+                       {item.pricingMode === "auto" && typeof item.calculatedTotalPriceCents === "number"
+                         ? formatPriceCents(item.calculatedTotalPriceCents)
+                         : "Individuell / Anfrage"}
+                     </td>
                    </tr>
                  ))}
                </tbody>

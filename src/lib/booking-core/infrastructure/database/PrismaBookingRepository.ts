@@ -3,7 +3,45 @@ import { db } from "@/lib/db";
 import { BookingRepository, BookingFilters, Paginated } from "../../application/ports";
 import { Booking, BookingStatus, AdminDashboardStats, InternalNote } from "../../domain/models";
 
+const BOOKING_ITEM_SNAPSHOT_FIELDS = [
+  "resourceTitle",
+  "priceType",
+  "basePriceCents",
+  "priceLabel",
+  "displayPrice",
+  "pricingMode",
+  "pricingReason",
+  "bookingDays",
+  "calculatedUnitPriceCents",
+  "calculatedTotalPriceCents",
+] as const;
+
+function isUnknownBookingItemSnapshotArgument(error: unknown) {
+  if (!(error instanceof Error)) return false;
+  if (!error.message.includes("Unknown argument")) return false;
+  return BOOKING_ITEM_SNAPSHOT_FIELDS.some((field) => error.message.includes(`\`${field}\``));
+}
+
 export class PrismaBookingRepository implements BookingRepository {
+  async getResourceInventories(resourceIds: string[]): Promise<Array<{ resourceId: string; trackInventory: boolean; totalStock: number }>> {
+    if (!resourceIds.length) return [];
+
+    const rows = await db.item.findMany({
+      where: { id: { in: resourceIds } },
+      select: {
+        id: true,
+        trackInventory: true,
+        totalStock: true,
+      },
+    });
+
+    return rows.map((row) => ({
+      resourceId: row.id,
+      trackInventory: row.trackInventory,
+      totalStock: row.totalStock,
+    }));
+  }
+
   async findById(id: string): Promise<Booking | null> {
     const data = await db.booking.findUnique({
       where: { id },
@@ -52,43 +90,82 @@ export class PrismaBookingRepository implements BookingRepository {
   }
 
   async save(booking: Booking): Promise<Booking> {
-    const data = await db.booking.create({
-      data: {
-        referenceCode: booking.referenceCode,
-        status: booking.status,
-        startDate: booking.startDate,
-        endDate: booking.endDate,
-        deliveryType: booking.deliveryType,
-        customerMessage: booking.customerMessage,
-        customer: {
-          create: {
-            firstName: booking.customer.firstName,
-            lastName: booking.customer.lastName,
-            email: booking.customer.email,
-            phone: booking.customer.phone,
-            addressLine1: booking.customer.addressLine1,
-            zip: booking.customer.zip,
-            city: booking.customer.city
-          }
-        },
-        items: {
-          create: booking.items.map(i => ({
-            itemId: i.resourceId,
-            quantity: i.quantity
-          }))
+    const commonData = {
+      referenceCode: booking.referenceCode,
+      status: booking.status,
+      startDate: booking.startDate,
+      endDate: booking.endDate,
+      deliveryType: booking.deliveryType,
+      customerMessage: booking.customerMessage,
+      customer: {
+        create: {
+          firstName: booking.customer.firstName,
+          lastName: booking.customer.lastName,
+          email: booking.customer.email,
+          phone: booking.customer.phone,
+          addressLine1: booking.customer.addressLine1,
+          zip: booking.customer.zip,
+          city: booking.customer.city
         }
       },
-      include: {
-        customer: true,
-        items: {
-          include: {
-            item: true,
-          },
+    } as const;
+
+    const includeData = {
+      customer: true,
+      items: {
+        include: {
+          item: true,
         },
       }
-    });
+    } as const;
 
-    return data as unknown as Booking;
+    try {
+      const data = await db.booking.create({
+        data: {
+          ...commonData,
+          items: {
+            create: booking.items.map(i => ({
+              itemId: i.resourceId,
+              quantity: i.quantity,
+              resourceTitle: i.resourceTitle,
+              priceType: i.priceType,
+              basePriceCents: i.basePriceCents ?? null,
+              priceLabel: i.priceLabel ?? null,
+              displayPrice: i.displayPrice ?? null,
+              pricingMode: i.pricingMode ?? null,
+              pricingReason: i.pricingReason ?? null,
+              bookingDays: i.bookingDays ?? null,
+              calculatedUnitPriceCents: i.calculatedUnitPriceCents ?? null,
+              calculatedTotalPriceCents: i.calculatedTotalPriceCents ?? null,
+            }))
+          }
+        },
+        include: includeData
+      });
+
+      return data as unknown as Booking;
+    } catch (error) {
+      if (!isUnknownBookingItemSnapshotArgument(error)) {
+        throw error;
+      }
+
+      // Compatibility fallback: allows saving requests even if Prisma Client/schema is stale.
+      console.warn("[PrismaBookingRepository.save] Snapshot fields not available in Prisma Client yet. Falling back to legacy BookingItem create payload.");
+      const fallbackData = await db.booking.create({
+        data: {
+          ...commonData,
+          items: {
+            create: booking.items.map(i => ({
+              itemId: i.resourceId,
+              quantity: i.quantity,
+            }))
+          }
+        },
+        include: includeData
+      });
+
+      return fallbackData as unknown as Booking;
+    }
   }
 
   async updateStatus(id: string, status: BookingStatus): Promise<Booking> {

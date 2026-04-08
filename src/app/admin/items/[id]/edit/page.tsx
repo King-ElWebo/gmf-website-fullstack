@@ -6,10 +6,13 @@ import ItemForm from "../../_components/item-form";
 
 export default async function EditItemPage({
     params,
+    searchParams,
 }: {
     params: Promise<{ id: string }>;
+    searchParams: Promise<{ uploadError?: string }>;
 }) {
     const { id } = await params;
+    const { uploadError } = await searchParams;
     if (!id || typeof id !== "string") return notFound();
 
     const [categories, item, images] = await Promise.all([
@@ -23,6 +26,7 @@ export default async function EditItemPage({
         <ItemForm
             mode="edit"
             itemId={item.id}
+            initialError={typeof uploadError === "string" ? uploadError : undefined}
             categories={categories.map((c) => ({
                 id: c.id,
                 name: c.name,
@@ -57,6 +61,8 @@ export default async function EditItemPage({
                 rentalNotes: item.rentalNotes ?? "",
                 setupRequirements: item.setupRequirements ?? "",
                 accessRequirements: item.accessRequirements ?? "",
+                trackInventory: item.trackInventory,
+                totalStock: item.totalStock.toString(),
                 published: item.published,
                 categoryId: item.categoryId,
             }}

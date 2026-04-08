@@ -32,6 +32,9 @@ export interface AdminBookingDetail {
     resourceId: string;
     resourceName: string;
     quantity: number;
+    pricingMode?: "auto" | "individual";
+    pricingReason?: string | null;
+    calculatedTotalPriceCents?: number | null;
   }[];
   startDate: Date;
   endDate: Date;

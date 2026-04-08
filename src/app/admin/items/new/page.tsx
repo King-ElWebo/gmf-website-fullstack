@@ -15,6 +15,8 @@ export default async function NewItemPage() {
             }))}
             initial={{
                 published: false,
+                trackInventory: true,
+                totalStock: "1",
                 priceType: "FIXED",
                 depositRequired: false,
                 cleaningFeeApplies: false,

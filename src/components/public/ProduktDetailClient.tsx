@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { AddToInquiryCartButton } from '@/components/public/AddToInquiryCartButton';
 import { Button } from '@/components/public/Button';
+import type { InquiryCartPriceType } from '@/lib/inquiry-cart/pricing';
 
 interface ProduktDetailItem {
     id: string;
@@ -13,6 +14,11 @@ interface ProduktDetailItem {
     summary: string | null;
     description: string | null;
     price: string | null;
+    priceType: InquiryCartPriceType;
+    basePriceCents: number | null;
+    priceLabel: string | null;
+    trackInventory: boolean;
+    totalStock: number;
     images: string[];
     videoUrl: string | null;
     category: string;
@@ -233,6 +239,11 @@ export function ProduktDetailClient({ item }: { item: ProduktDetailItem }) {
                                     slug: item.slug,
                                     title: item.title,
                                     price: item.price,
+                                    priceType: item.priceType,
+                                    basePriceCents: item.basePriceCents,
+                                    priceLabel: item.priceLabel,
+                                    trackInventory: item.trackInventory,
+                                    totalStock: item.totalStock,
                                     imageUrl: item.images[0] ?? "",
                                     summary: item.summary,
                                 }}

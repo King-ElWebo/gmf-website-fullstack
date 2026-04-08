@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { ProductCard } from '@/components/public/ProductCard';
+import type { InquiryCartPriceType } from '@/lib/inquiry-cart/pricing';
 
 interface ProduktItem {
     id: string;
@@ -9,6 +10,11 @@ interface ProduktItem {
     title: string;
     description: string;
     price: string;
+    priceType: InquiryCartPriceType;
+    basePriceCents: number | null;
+    priceLabel: string | null;
+    trackInventory: boolean;
+    totalStock: number;
     imageUrl: string;
     categoryName: string;
     categorySlug: string;
@@ -115,6 +121,11 @@ export function ProduktFilter({
                         title={item.title}
                         description={item.description}
                         price={item.price}
+                        priceType={item.priceType}
+                        basePriceCents={item.basePriceCents}
+                        priceLabel={item.priceLabel}
+                        trackInventory={item.trackInventory}
+                        totalStock={item.totalStock}
                         imageUrl={item.imageUrl}
                         badge={catalogTypes.length > 1 ? item.catalogTypeName : undefined}
                         badgeColor="gray"

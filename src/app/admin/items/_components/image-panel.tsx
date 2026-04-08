@@ -16,6 +16,13 @@ import {
     useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { readErrorMessageFromResponse } from "@/lib/http/error-response";
+import {
+    ITEM_UPLOAD_MAX_BATCH_BYTES,
+    ITEM_UPLOAD_MAX_FILE_BYTES,
+    formatBytes,
+    validateItemUploadFiles,
+} from "@/lib/uploads/item-upload-limits";
 
 export type ImageRow = {
     id: string;
@@ -141,6 +148,24 @@ export default function ImagePanel({
             const files = Array.from(fileList);
             e.target.value = "";
 
+            const validationFiles = itemId
+                ? files
+                : [
+                    ...images
+                        .filter((image): image is ImageRow & { file: File } => image.file instanceof File)
+                        .map((image) => image.file),
+                    ...files,
+                ];
+
+            const validation = validateItemUploadFiles(
+                validationFiles.map((file) => ({ name: file.name, size: file.size }))
+            );
+
+            if (!validation.ok) {
+                setError(validation.message);
+                return;
+            }
+
             if (!itemId) {
                 const newLocal = files.map((file) => ({
                     id: `local-${Math.random().toString(36).slice(2)}`,
@@ -172,7 +197,8 @@ export default function ImagePanel({
             setUploading(false);
 
             if (!res.ok) {
-                setError("Upload fehlgeschlagen");
+                const message = await readErrorMessageFromResponse(res, "Upload fehlgeschlagen.");
+                setError(message);
                 return;
             }
 
@@ -287,7 +313,9 @@ export default function ImagePanel({
                         className="sr-only"
                     />
                 </label>
-                <span className="text-xs text-neutral-500">Mehrere Bilder gleichzeitig möglich. Drag-and-drop zum Sortieren.</span>
+                                <span className="text-xs text-neutral-500">
+                    Max. {formatBytes(ITEM_UPLOAD_MAX_FILE_BYTES)} pro Datei, max. {formatBytes(ITEM_UPLOAD_MAX_BATCH_BYTES)} pro Upload.
+                </span>
             </div>
 
             {error && <p className="text-sm text-red-600">{error}</p>}
@@ -314,3 +342,4 @@ export default function ImagePanel({
         </div>
     );
 }
+

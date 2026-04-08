@@ -1,12 +1,15 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Trash2, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/public/Button";
 import { Input } from "@/components/public/Input";
 import { Textarea } from "@/components/public/Textarea";
 import { useInquiryCart } from "@/components/public/InquiryCartProvider";
+import { formatPriceCents } from "@/lib/items/price";
+import { calculateInquiryCartItemPrice, getBookingDurationDays } from "@/lib/inquiry-cart/pricing";
+import type { InquiryBookingRequestPayload } from "@/lib/inquiry-cart/request-payload";
 
 type FormState = {
     startDate: string;
@@ -20,6 +23,15 @@ type FormState = {
     city: string;
     deliveryType: "pickup" | "delivery";
     message: string;
+};
+
+type AvailabilityItemDetail = {
+    resourceId: string;
+    requestedQuantity: number;
+    availableQuantity: number | null;
+    totalStock: number | null;
+    trackInventory: boolean;
+    isAvailable: boolean;
 };
 
 const initialFormState: FormState = {
@@ -36,24 +48,176 @@ const initialFormState: FormState = {
     message: "",
 };
 
+function formatDateKeyForDisplay(dateKey: string) {
+    const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateKey);
+    if (!match) return dateKey;
+
+    const year = Number(match[1]);
+    const month = Number(match[2]);
+    const day = Number(match[3]);
+    const date = new Date(Date.UTC(year, month - 1, day));
+
+    return new Intl.DateTimeFormat("de-AT", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        timeZone: "UTC",
+    }).format(date);
+}
+
+function getPricingReasonLabel(reason: string | null) {
+    if (!reason) return null;
+
+    switch (reason) {
+        case "missing_date_range":
+            return "Bitte zuerst den Zeitraum auswaehlen.";
+        case "invalid_date_range":
+            return "Ungueltiger Zeitraum.";
+        case "duration_over_limit":
+            return "Ab 4 Tagen wird ein individueller Preis angeboten.";
+        case "on_request_price":
+            return "Preis auf Anfrage.";
+        case "from_price":
+            return "Ab-Preis: wird individuell bestaetigt.";
+        case "missing_base_price":
+            return "Kein Basispreis hinterlegt.";
+        case "invalid_quantity":
+            return "Ungueltige Menge.";
+        default:
+            return "Preis wird individuell berechnet.";
+    }
+}
+
 export function InquiryCartPageClient() {
     const { items, removeItem, updateQuantity, clearCart, itemCount, hasHydrated } = useInquiryCart();
     const [formState, setFormState] = useState<FormState>(initialFormState);
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<{ bookingId: string } | null>(null);
+    const [availabilityByItemId, setAvailabilityByItemId] = useState<Record<string, AvailabilityItemDetail>>({});
+    const bookingDuration = useMemo(
+        () => getBookingDurationDays(formState.startDate, formState.endDate),
+        [formState.endDate, formState.startDate]
+    );
+
+    const pricingByItemId = useMemo(() => {
+        return new Map(
+            items.map((item) => [
+                item.id,
+                calculateInquiryCartItemPrice(
+                    {
+                        priceType: item.priceType,
+                        basePriceCents: item.basePriceCents,
+                        quantity: item.quantity,
+                    },
+                    formState.startDate,
+                    formState.endDate
+                ),
+            ])
+        );
+    }, [formState.endDate, formState.startDate, items]);
 
     const canSubmit = useMemo(() => {
+        const hasUnavailableItem = Object.values(availabilityByItemId).some((entry) => !entry.isAvailable);
         return (
             items.length > 0 &&
-            formState.startDate &&
-            formState.endDate &&
-            formState.endDate >= formState.startDate &&
+            bookingDuration.days != null &&
+            !hasUnavailableItem &&
             formState.firstName.trim() &&
             formState.lastName.trim() &&
             formState.email.trim()
         );
-    }, [formState, items.length]);
+    }, [availabilityByItemId, bookingDuration.days, formState, items.length]);
+
+    const pricingSummary = useMemo(() => {
+        let autoCalculatedTotalCents = 0;
+        let autoCalculatedItemCount = 0;
+        let individualItemCount = 0;
+
+        for (const item of items) {
+            const pricing = pricingByItemId.get(item.id);
+            if (!pricing) continue;
+
+            if (pricing.isAutoCalculated && pricing.calculatedTotalPriceCents != null) {
+                autoCalculatedTotalCents += pricing.calculatedTotalPriceCents;
+                autoCalculatedItemCount += 1;
+            } else {
+                individualItemCount += 1;
+            }
+        }
+
+        return {
+            autoCalculatedTotalCents,
+            autoCalculatedItemCount,
+            individualItemCount,
+            hasMixedPricing: autoCalculatedItemCount > 0 && individualItemCount > 0,
+        };
+    }, [items, pricingByItemId]);
+
+    const selectedRangeLabel = useMemo(() => {
+        if (!formState.startDate || !formState.endDate) return "Noch nicht ausgewaehlt";
+        return `${formatDateKeyForDisplay(formState.startDate)} - ${formatDateKeyForDisplay(formState.endDate)}`;
+    }, [formState.endDate, formState.startDate]);
+
+    useEffect(() => {
+        if (!formState.startDate || !formState.endDate || bookingDuration.days == null || items.length === 0) {
+            setAvailabilityByItemId({});
+            return;
+        }
+
+        let cancelled = false;
+
+        const run = async () => {
+            try {
+                const response = await fetch("/api/public/availability/check", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        items: items.map((item) => ({
+                            resourceId: item.id,
+                            quantity: item.quantity,
+                        })),
+                        startDate: formState.startDate,
+                        endDate: formState.endDate,
+                    }),
+                });
+
+                if (!response.ok) return;
+
+                const data = (await response.json()) as { items?: AvailabilityItemDetail[] };
+                if (cancelled || !Array.isArray(data.items)) return;
+
+                const nextMap: Record<string, AvailabilityItemDetail> = {};
+                for (const entry of data.items) {
+                    nextMap[entry.resourceId] = entry;
+                }
+                setAvailabilityByItemId(nextMap);
+            } catch {
+                if (!cancelled) {
+                    setAvailabilityByItemId({});
+                }
+            }
+        };
+
+        void run();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [bookingDuration.days, formState.endDate, formState.startDate, items]);
+
+    useEffect(() => {
+        for (const item of items) {
+            const availability = availabilityByItemId[item.id];
+            if (!availability) continue;
+            if (!availability.trackInventory || availability.availableQuantity == null) continue;
+
+            const maxAllowed = Math.max(0, availability.availableQuantity);
+            if (maxAllowed >= 1 && item.quantity > maxAllowed) {
+                updateQuantity(item.id, maxAllowed);
+            }
+        }
+    }, [availabilityByItemId, items, updateQuantity]);
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
@@ -62,13 +226,20 @@ export function InquiryCartPageClient() {
         setSubmitting(true);
         setError(null);
 
-        const payload = {
+        const payload: InquiryBookingRequestPayload = {
             items: items.map((item) => ({
                 resourceId: item.id,
                 quantity: item.quantity,
+                title: item.title,
+                priceType: item.priceType,
+                basePriceCents: item.basePriceCents,
+                priceLabel: item.priceLabel,
+                displayPrice: item.price,
+                pricing: pricingByItemId.get(item.id) ?? null,
             })),
             startDate: formState.startDate,
             endDate: formState.endDate,
+            bookingDays: bookingDuration.days,
             deliveryType: formState.deliveryType,
             customerMessage: formState.message,
             customer: {
@@ -122,7 +293,7 @@ export function InquiryCartPageClient() {
                         </div>
                         <h1 className="font-['Inter'] font-semibold text-[32px] text-[#1a202c] mb-4">Anfrage erfolgreich gesendet!</h1>
                         <p className="font-['Inter'] text-[16px] text-[#4a5568] leading-[25.6px] mb-4">
-                            Vielen Dank. Ihre Sammelanfrage wurde erfolgreich übermittelt.
+                            Vielen Dank. Ihre Sammelanfrage wurde erfolgreich uebermittelt.
                         </p>
                         <p className="font-['Inter'] text-[14px] text-[#64748b] mb-8">
                             Referenz: <strong>{success.bookingId}</strong>
@@ -154,11 +325,11 @@ export function InquiryCartPageClient() {
                     <div>
                         <h1 className="font-['Inter'] font-semibold text-[32px] text-[#1a202c] mb-3">Anfragekorb</h1>
                         <p className="font-['Inter'] text-[16px] text-[#64748b] leading-[25.6px] max-w-[700px]">
-                            Sammeln Sie mehrere Produkte und senden Sie anschließend eine gemeinsame Anfrage.
+                            Sammeln Sie mehrere Produkte und senden Sie anschliessend eine gemeinsame Anfrage.
                         </p>
                     </div>
                     <Link href="/produkte">
-                        <Button variant="secondary">Weitere Produkte hinzufügen</Button>
+                        <Button variant="secondary">Weitere Produkte hinzufuegen</Button>
                     </Link>
                 </div>
 
@@ -166,7 +337,7 @@ export function InquiryCartPageClient() {
                     <div className="rounded-[8px] border border-[#cbd5e1] bg-[#f7f8fa] p-10 text-center">
                         <p className="font-['Inter'] text-[18px] text-[#1a202c] mb-3">Ihr Anfragekorb ist leer.</p>
                         <p className="font-['Inter'] text-[14px] text-[#64748b] mb-6">
-                            Fügen Sie zuerst Produkte hinzu, bevor Sie eine Sammelanfrage absenden.
+                            Fuegen Sie zuerst Produkte hinzu, bevor Sie eine Sammelanfrage absenden.
                         </p>
                         <Link href="/produkte">
                             <Button variant="primary">Zu den Produkten</Button>
@@ -178,7 +349,7 @@ export function InquiryCartPageClient() {
                             <div className="rounded-[8px] border border-[#cbd5e1] bg-white p-6">
                                 <div className="mb-4 flex items-center justify-between gap-4">
                                     <h2 className="font-['Inter'] font-semibold text-[24px] text-[#1a202c]">
-                                        Ausgewählte Produkte ({itemCount})
+                                        Ausgewaehlte Produkte ({itemCount})
                                     </h2>
                                     <button
                                         type="button"
@@ -225,9 +396,72 @@ export function InquiryCartPageClient() {
                                                 </div>
 
                                                 <div className="flex flex-wrap items-center justify-between gap-3">
-                                                    <p className="font-['Inter'] font-semibold text-[16px] text-[#4a5568]">
-                                                        {item.price || "Preis auf Anfrage"}
-                                                    </p>
+                                                    <div className="space-y-1">
+                                                        <p className="font-['Inter'] font-semibold text-[16px] text-[#4a5568]">
+                                                            {item.price || "Preis auf Anfrage"}
+                                                        </p>
+                                                        {(() => {
+                                                            const pricing = pricingByItemId.get(item.id);
+                                                            if (!pricing) return null;
+                                                            const availability = availabilityByItemId[item.id];
+
+                                                            const periodText = pricing.bookingDays != null
+                                                                ? `${selectedRangeLabel} (${pricing.bookingDays} Tag${pricing.bookingDays === 1 ? "" : "e"})`
+                                                                : selectedRangeLabel;
+                                                            const stockLabel =
+                                                                availability && availability.trackInventory && availability.availableQuantity != null
+                                                                    ? availability.isAvailable
+                                                                        ? `Verfuegbar im Zeitraum: ${availability.availableQuantity}`
+                                                                        : `Nicht ausreichend verfuegbar im Zeitraum (max. ${availability.availableQuantity})`
+                                                                    : item.trackInventory
+                                                                        ? `Bestand: ${item.totalStock}`
+                                                                        : null;
+
+                                                            if (
+                                                                pricing.isAutoCalculated &&
+                                                                pricing.calculatedUnitPriceCents != null &&
+                                                                pricing.calculatedTotalPriceCents != null
+                                                            ) {
+                                                                return (
+                                                                    <div className="space-y-1">
+                                                                        <p className="font-['Inter'] text-[12px] text-[#64748b]">
+                                                                            Zeitraum: {periodText}
+                                                                        </p>
+                                                                        <p className="font-['Inter'] text-[13px] text-[#1a3a52]">
+                                                                            Berechnet: {formatPriceCents(pricing.calculatedUnitPriceCents)} x {item.quantity} ={" "}
+                                                                            <span className="font-semibold">{formatPriceCents(pricing.calculatedTotalPriceCents)}</span>
+                                                                        </p>
+                                                                        {stockLabel && (
+                                                                            <p className={`font-['Inter'] text-[12px] ${availability && !availability.isAvailable ? "text-[#dc2626]" : "text-[#64748b]"}`}>
+                                                                                {stockLabel}
+                                                                            </p>
+                                                                        )}
+                                                                    </div>
+                                                                );
+                                                            }
+
+                                                            const label = getPricingReasonLabel(pricing.reason);
+                                                            if (!label && !stockLabel) return null;
+
+                                                            return (
+                                                                <div className="space-y-1">
+                                                                    <p className="font-['Inter'] text-[12px] text-[#64748b]">
+                                                                        Zeitraum: {periodText}
+                                                                    </p>
+                                                                    {label && (
+                                                                        <p className="font-['Inter'] text-[13px] text-[#64748b]">
+                                                                            {label}
+                                                                        </p>
+                                                                    )}
+                                                                    {stockLabel && (
+                                                                        <p className={`font-['Inter'] text-[12px] ${availability && !availability.isAvailable ? "text-[#dc2626]" : "text-[#64748b]"}`}>
+                                                                            {stockLabel}
+                                                                        </p>
+                                                                    )}
+                                                                </div>
+                                                            );
+                                                        })()}
+                                                    </div>
                                                     <div className="flex items-center gap-3">
                                                         <span className="font-['Inter'] text-[14px] text-[#64748b]">Menge</span>
                                                         <div className="flex items-center rounded-[8px] border border-[#cbd5e1]">
@@ -243,8 +477,36 @@ export function InquiryCartPageClient() {
                                                             </span>
                                                             <button
                                                                 type="button"
-                                                                onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                                                onClick={() => {
+                                                                    const availability = availabilityByItemId[item.id];
+                                                                    const stockMaxFromAvailability =
+                                                                        availability && availability.trackInventory && availability.availableQuantity != null
+                                                                            ? Math.max(0, availability.availableQuantity)
+                                                                            : null;
+                                                                    const stockMax =
+                                                                        stockMaxFromAvailability ??
+                                                                        (item.trackInventory ? Math.max(0, item.totalStock) : null);
+
+                                                                    if (stockMax == null) {
+                                                                        updateQuantity(item.id, item.quantity + 1);
+                                                                        return;
+                                                                    }
+
+                                                                    if (stockMax === 0) return;
+                                                                    updateQuantity(item.id, Math.min(stockMax, item.quantity + 1));
+                                                                }}
                                                                 className="h-10 w-10 text-[#1a3a52]"
+                                                                disabled={(() => {
+                                                                    const availability = availabilityByItemId[item.id];
+                                                                    const stockMaxFromAvailability =
+                                                                        availability && availability.trackInventory && availability.availableQuantity != null
+                                                                            ? Math.max(0, availability.availableQuantity)
+                                                                            : null;
+                                                                    const stockMax =
+                                                                        stockMaxFromAvailability ??
+                                                                        (item.trackInventory ? Math.max(0, item.totalStock) : null);
+                                                                    return stockMax != null && item.quantity >= stockMax;
+                                                                })()}
                                                             >
                                                                 +
                                                             </button>
@@ -279,11 +541,56 @@ export function InquiryCartPageClient() {
                                     />
                                 </div>
 
-                                {formState.startDate && formState.endDate && formState.endDate < formState.startDate && (
+                                {formState.startDate && formState.endDate && bookingDuration.reason === "invalid_date_range" && (
                                     <p className="font-['Inter'] text-[14px] text-[#dc2626]">
                                         Das Enddatum darf nicht vor dem Startdatum liegen.
                                     </p>
                                 )}
+
+                                <div className="rounded-[8px] border border-[#e2e8f0] bg-[#f8fafc] p-4">
+                                    <h3 className="font-['Inter'] font-semibold text-[16px] text-[#1a202c] mb-2">Preisuebersicht</h3>
+                                    <div className="space-y-1">
+                                        <p className="font-['Inter'] text-[14px] text-[#4a5568]">
+                                            Zeitraum: <span className="font-medium">{selectedRangeLabel}</span>
+                                        </p>
+                                        <p className="font-['Inter'] text-[14px] text-[#4a5568]">
+                                            Buchungsdauer:{" "}
+                                            <span className="font-medium">
+                                                {bookingDuration.days != null ? `${bookingDuration.days} Tag${bookingDuration.days === 1 ? "" : "e"}` : "-"}
+                                            </span>
+                                        </p>
+                                        <p className="font-['Inter'] text-[14px] text-[#4a5568]">
+                                            Automatisch berechenbar:{" "}
+                                            <span className="font-medium">{pricingSummary.autoCalculatedItemCount}</span> Produkt
+                                            {pricingSummary.autoCalculatedItemCount === 1 ? "" : "e"}
+                                        </p>
+                                        <p className="font-['Inter'] text-[14px] text-[#4a5568]">
+                                            Individuell / auf Anfrage:{" "}
+                                            <span className="font-medium">{pricingSummary.individualItemCount}</span> Produkt
+                                            {pricingSummary.individualItemCount === 1 ? "" : "e"}
+                                        </p>
+                                    </div>
+
+                                    <div className="mt-3 border-t border-[#e2e8f0] pt-3">
+                                        <p className="font-['Inter'] text-[14px] text-[#4a5568]">Voraussichtliche Gesamtsumme</p>
+                                        <p className="font-['Inter'] text-[12px] text-[#64748b] mb-1">
+                                            Fuer automatisch berechenbare Produkte
+                                        </p>
+                                        <p className="font-['Inter'] font-semibold text-[28px] leading-[1.1] text-[#1a202c]">
+                                            {formatPriceCents(pricingSummary.autoCalculatedTotalCents)}
+                                        </p>
+                                        {pricingSummary.hasMixedPricing && (
+                                            <p className="mt-1 font-['Inter'] text-[12px] text-[#64748b]">
+                                                Hinweis: Individuelle Positionen sind in dieser Summe nicht enthalten.
+                                            </p>
+                                        )}
+                                        {Object.values(availabilityByItemId).some((entry) => !entry.isAvailable) && (
+                                            <p className="mt-1 font-['Inter'] text-[12px] text-[#dc2626]">
+                                                Fuer mindestens ein Produkt ist die gewuenschte Menge im gewaehlten Zeitraum nicht verfuegbar.
+                                            </p>
+                                        )}
+                                    </div>
+                                </div>
 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <Input
@@ -350,7 +657,7 @@ export function InquiryCartPageClient() {
 
                                 <Textarea
                                     label="Nachricht"
-                                    placeholder="Zusätzliche Infos zu Ihrer Anfrage..."
+                                    placeholder="Zusaetzliche Infos zu Ihrer Anfrage..."
                                     value={formState.message}
                                     onChange={(e) => setFormState((current) => ({ ...current, message: e.target.value }))}
                                     rows={6}
@@ -373,3 +680,4 @@ export function InquiryCartPageClient() {
         </div>
     );
 }
+

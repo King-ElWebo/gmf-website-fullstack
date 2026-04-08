@@ -1,12 +1,18 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import type { InquiryCartPriceType } from "@/lib/inquiry-cart/pricing";
 
 export type InquiryCartItem = {
     id: string;
     slug: string;
     title: string;
     price: string | null;
+    priceType: InquiryCartPriceType;
+    basePriceCents: number | null;
+    priceLabel: string | null;
+    trackInventory: boolean;
+    totalStock: number;
     imageUrl: string;
     summary?: string | null;
     quantity: number;
@@ -31,6 +37,76 @@ const STORAGE_KEY = "gmf-inquiry-cart";
 
 const InquiryCartContext = createContext<InquiryCartContextValue | null>(null);
 
+function parsePriceType(value: unknown): InquiryCartPriceType | null {
+    if (value === "FIXED" || value === "ON_REQUEST" || value === "FROM_PRICE") {
+        return value;
+    }
+
+    return null;
+}
+
+function inferPriceType(rawPrice: unknown, basePriceCents: number | null): InquiryCartPriceType {
+    if (basePriceCents != null) return "FIXED";
+
+    if (typeof rawPrice === "string") {
+        const normalized = rawPrice.trim().toLowerCase();
+        if (normalized.includes("anfrage")) return "ON_REQUEST";
+        if (normalized.startsWith("ab ")) return "FROM_PRICE";
+    }
+
+    return "ON_REQUEST";
+}
+
+function parseBasePriceCents(value: unknown): number | null {
+    if (typeof value !== "number" || !Number.isFinite(value) || value < 0) {
+        return null;
+    }
+
+    return Math.round(value);
+}
+
+function parseTotalStock(value: unknown) {
+    if (typeof value !== "number" || !Number.isFinite(value) || value < 0) {
+        return 0;
+    }
+
+    return Math.floor(value);
+}
+
+function normalizeInquiryCartItem(value: unknown): InquiryCartItem | null {
+    if (!value || typeof value !== "object") return null;
+
+    const raw = value as Record<string, unknown>;
+    if (typeof raw.id !== "string" || typeof raw.slug !== "string" || typeof raw.title !== "string") {
+        return null;
+    }
+
+    const quantity =
+        typeof raw.quantity === "number" && Number.isFinite(raw.quantity)
+            ? Math.max(1, Math.floor(raw.quantity))
+            : 1;
+
+    const basePriceCents = parseBasePriceCents(raw.basePriceCents);
+    const priceType = parsePriceType(raw.priceType) ?? inferPriceType(raw.price, basePriceCents);
+    const trackInventory = typeof raw.trackInventory === "boolean" ? raw.trackInventory : false;
+    const totalStock = parseTotalStock(raw.totalStock);
+
+    return {
+        id: raw.id,
+        slug: raw.slug,
+        title: raw.title,
+        price: typeof raw.price === "string" ? raw.price : null,
+        priceType,
+        basePriceCents,
+        priceLabel: typeof raw.priceLabel === "string" ? raw.priceLabel : null,
+        trackInventory,
+        totalStock,
+        imageUrl: typeof raw.imageUrl === "string" ? raw.imageUrl : "",
+        summary: typeof raw.summary === "string" ? raw.summary : null,
+        quantity,
+    };
+}
+
 export function InquiryCartProvider({ children }: { children: React.ReactNode }) {
     const [items, setItems] = useState<InquiryCartItem[]>([]);
     const [hasHydrated, setHasHydrated] = useState(false);
@@ -39,9 +115,9 @@ export function InquiryCartProvider({ children }: { children: React.ReactNode })
         try {
             const raw = window.localStorage.getItem(STORAGE_KEY);
             if (raw) {
-                const parsed = JSON.parse(raw) as InquiryCartItem[];
+                const parsed = JSON.parse(raw) as unknown;
                 if (Array.isArray(parsed)) {
-                    setItems(parsed.filter((item) => item && typeof item.id === "string" && typeof item.quantity === "number"));
+                    setItems(parsed.map(normalizeInquiryCartItem).filter((item): item is InquiryCartItem => item != null));
                 }
             }
         } catch {
@@ -58,16 +134,47 @@ export function InquiryCartProvider({ children }: { children: React.ReactNode })
 
     const addItem = useCallback((item: AddInquiryCartItemInput) => {
         setItems((current) => {
+            if (item.trackInventory && item.totalStock <= 0) {
+                return current;
+            }
+
             const existing = current.find((entry) => entry.id === item.id);
+            const requestedIncrease = Math.max(1, item.quantity ?? 1);
+
             if (existing) {
+                const nextQuantityRaw = existing.quantity + requestedIncrease;
+                const nextQuantity =
+                    item.trackInventory ? Math.min(item.totalStock, nextQuantityRaw) : nextQuantityRaw;
+
                 return current.map((entry) =>
                     entry.id === item.id
-                        ? { ...entry, quantity: entry.quantity + (item.quantity ?? 1) }
+                        ? {
+                            ...entry,
+                            slug: item.slug,
+                            title: item.title,
+                            price: item.price,
+                            priceType: item.priceType,
+                            basePriceCents: item.basePriceCents,
+                            priceLabel: item.priceLabel,
+                            trackInventory: item.trackInventory,
+                            totalStock: item.totalStock,
+                            imageUrl: item.imageUrl,
+                            summary: item.summary ?? entry.summary,
+                            quantity: nextQuantity,
+                        }
                         : entry
                 );
             }
 
-            return [...current, { ...item, quantity: item.quantity ?? 1 }];
+            const initialQuantityRaw = requestedIncrease;
+            const initialQuantity =
+                item.trackInventory ? Math.min(item.totalStock, initialQuantityRaw) : initialQuantityRaw;
+
+            if (initialQuantity <= 0) {
+                return current;
+            }
+
+            return [...current, { ...item, quantity: initialQuantity }];
         });
     }, []);
 

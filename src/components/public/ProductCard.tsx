@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { Button } from './Button';
 import { AddToInquiryCartButton } from './AddToInquiryCartButton';
+import type { InquiryCartPriceType } from '@/lib/inquiry-cart/pricing';
 
 interface ProductCardProps {
     id: string;
@@ -10,6 +11,11 @@ interface ProductCardProps {
     title: string;
     description: string;
     price?: string;
+    priceType: InquiryCartPriceType;
+    basePriceCents: number | null;
+    priceLabel: string | null;
+    trackInventory: boolean;
+    totalStock: number;
     imageUrl: string;
     badge?: string;
     badgeColor?: 'gray' | 'yellow';
@@ -21,6 +27,11 @@ export function ProductCard({
     title,
     description,
     price,
+    priceType,
+    basePriceCents,
+    priceLabel,
+    trackInventory,
+    totalStock,
     imageUrl,
     badge,
     badgeColor = 'gray'
@@ -77,6 +88,11 @@ export function ProductCard({
                             slug,
                             title,
                             price: price ?? null,
+                            priceType,
+                            basePriceCents,
+                            priceLabel,
+                            trackInventory,
+                            totalStock,
                             imageUrl,
                             summary: description,
                         }}

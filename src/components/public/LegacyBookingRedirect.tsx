@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useInquiryCart } from "@/components/public/InquiryCartProvider";
+import type { InquiryCartPriceType } from "@/lib/inquiry-cart/pricing";
 
 type LegacyBookingRedirectProps = {
     item: {
@@ -10,6 +11,11 @@ type LegacyBookingRedirectProps = {
         slug: string;
         title: string;
         price: string | null;
+        priceType: InquiryCartPriceType;
+        basePriceCents: number | null;
+        priceLabel: string | null;
+        trackInventory: boolean;
+        totalStock: number;
         imageUrl: string;
     };
 };

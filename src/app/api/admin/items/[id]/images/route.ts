@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { addImages, listByItemId } from "@/lib/repositories/item-images";
 import storage from "@/lib/storage";
+import { ITEM_UPLOAD_MAX_BATCH_BYTES, validateItemUploadFiles } from "@/lib/uploads/item-upload-limits";
 
 // Required for fs writes (local storage) and proper multipart/form-data handling
 export const runtime = "nodejs";
@@ -23,12 +24,30 @@ export async function POST(
 ) {
     const { id } = await params;
 
+    const contentLength = req.headers.get("content-length");
+    if (contentLength && Number.isFinite(Number(contentLength))) {
+        const requestSize = Number(contentLength);
+        if (requestSize > ITEM_UPLOAD_MAX_BATCH_BYTES + 1024 * 1024) {
+            return NextResponse.json(
+                {
+                    error: `Upload ist zu groß. Bitte maximal ${Math.round(ITEM_UPLOAD_MAX_BATCH_BYTES / (1024 * 1024))} MB pro Upload senden.`,
+                },
+                { status: 413 }
+            );
+        }
+    }
+
     let formData: FormData;
     try {
         formData = await req.formData();
     } catch (e) {
         console.error("[images POST] formData parse error:", e);
-        return NextResponse.json({ error: "Invalid form data" }, { status: 400 });
+        return NextResponse.json(
+            {
+                error: "Upload konnte nicht verarbeitet werden. Bitte Dateigröße reduzieren und erneut versuchen.",
+            },
+            { status: 400 }
+        );
     }
 
     const entries = formData.getAll("files");
@@ -37,6 +56,11 @@ export async function POST(
     if (!files.length) {
         console.error("[images POST] No valid files in formData. Keys:", [...formData.keys()]);
         return NextResponse.json({ error: "No files provided" }, { status: 400 });
+    }
+
+    const validation = validateItemUploadFiles(files.map((file) => ({ name: file.name, size: file.size })));
+    if (!validation.ok) {
+        return NextResponse.json({ error: validation.message, code: validation.code }, { status: validation.status });
     }
 
     try {

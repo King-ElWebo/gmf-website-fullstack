@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { slugify } from "@/lib/slug";
 import { getItemPriceDisplay } from "@/lib/items/price";
 import ImagePanel from "./image-panel";
+import { readErrorMessageFromResponse } from "@/lib/http/error-response";
+import { validateItemUploadFiles } from "@/lib/uploads/item-upload-limits";
 
 type CategoryOption = { id: string; name: string; slug: string; catalogTypeName?: string };
 type PriceType = "FIXED" | "ON_REQUEST" | "FROM_PRICE";
@@ -45,6 +47,8 @@ type ItemFormState = {
     rentalNotes: string;
     setupRequirements: string;
     accessRequirements: string;
+    trackInventory: boolean;
+    totalStock: string;
     published: boolean;
     categoryId: string;
 };
@@ -59,6 +63,7 @@ export default function ItemForm(props: {
     categories: CategoryOption[];
     initial?: Partial<ItemFormState>;
     initialImages?: ImageRow[];
+    initialError?: string;
 }) {
     const router = useRouter();
     const { mode, itemId, categories } = props;
@@ -90,13 +95,15 @@ export default function ItemForm(props: {
         rentalNotes: props.initial?.rentalNotes ?? "",
         setupRequirements: props.initial?.setupRequirements ?? "",
         accessRequirements: props.initial?.accessRequirements ?? "",
+        trackInventory: Boolean(props.initial?.trackInventory ?? true),
+        totalStock: props.initial?.totalStock ?? "1",
         published: Boolean(props.initial?.published ?? false),
         categoryId: props.initial?.categoryId ?? (categories[0]?.id ?? ""),
     });
     const [slugTouched, setSlugTouched] = useState(mode === "edit");
     const [saving, setSaving] = useState(false);
     const [deleting, setDeleting] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(props.initialError ?? null);
     const [localImages, setLocalImages] = useState<ImageRow[]>([]);
 
     const slug = useMemo(
@@ -105,10 +112,13 @@ export default function ItemForm(props: {
     );
     const numericPriceRequired = formState.priceType !== "ON_REQUEST";
     const hasNumericPrice = formState.basePriceCents.trim().length > 0;
+    const parsedTotalStock = Number(formState.totalStock);
+    const hasValidTotalStock = Number.isFinite(parsedTotalStock) && parsedTotalStock >= 0;
     const canSave =
         formState.title.trim().length > 0 &&
         slug.trim().length > 0 &&
         formState.categoryId.trim().length > 0 &&
+        (!formState.trackInventory || hasValidTotalStock) &&
         (!numericPriceRequired || hasNumericPrice);
 
     const previewPrice = getItemPriceDisplay({
@@ -125,8 +135,23 @@ export default function ItemForm(props: {
         e.preventDefault();
         if (!canSave) return;
 
-        setSaving(true);
         setError(null);
+
+        const pendingLocalFiles = localImages
+            .filter((image): image is ImageRow & { file: File } => image.file instanceof File)
+            .map((image) => image.file);
+
+        if (mode === "create" && pendingLocalFiles.length > 0) {
+            const validation = validateItemUploadFiles(
+                pendingLocalFiles.map((file) => ({ name: file.name, size: file.size }))
+            );
+            if (!validation.ok) {
+                setError(validation.message);
+                return;
+            }
+        }
+
+        setSaving(true);
 
         const payload = {
             title: formState.title,
@@ -156,6 +181,8 @@ export default function ItemForm(props: {
             rentalNotes: formState.rentalNotes,
             setupRequirements: formState.setupRequirements,
             accessRequirements: formState.accessRequirements,
+            trackInventory: formState.trackInventory,
+            totalStock: hasValidTotalStock ? Math.floor(parsedTotalStock) : 0,
             published: formState.published,
             categoryId: formState.categoryId,
         };
@@ -191,10 +218,19 @@ export default function ItemForm(props: {
                     body: fd,
                 });
                 if (!imgRes.ok) {
-                    console.error("Image upload failed post-creation:", await imgRes.text());
+                    const message = await readErrorMessageFromResponse(
+                        imgRes,
+                        "Bilder konnten nicht hochgeladen werden."
+                    );
+                    router.push(`/admin/items/${targetId}/edit?uploadError=${encodeURIComponent(message)}`);
+                    router.refresh();
+                    return;
                 }
             } catch (err) {
                 console.error("Image upload exception post-creation:", err);
+                router.push(`/admin/items/${targetId}/edit?uploadError=${encodeURIComponent("Bilder konnten nicht hochgeladen werden. Bitte erneut versuchen.")}`);
+                router.refresh();
+                return;
             }
         }
 
@@ -570,6 +606,44 @@ export default function ItemForm(props: {
                                     onChange={(e) => updateField("accessRequirements", e.target.value)}
                                     placeholder="Lift, Einfahrt, Traglast, Anlieferung etc."
                                 />
+                            </div>
+                        </div>
+                    </section>
+
+                    <section className={sectionClassName}>
+                        <div>
+                            <h2 className="text-base font-semibold">Bestand</h2>
+                            <p className="text-sm text-neutral-600">
+                                Definiert, wie viele Einheiten dieses Produkts gleichzeitig für denselben Zeitraum angefragt werden dürfen.
+                            </p>
+                        </div>
+
+                        <div className="grid gap-4 md:grid-cols-2">
+                            <label className="flex items-center gap-2 rounded-md border px-3 py-3 text-sm">
+                                <input
+                                    type="checkbox"
+                                    checked={formState.trackInventory}
+                                    onChange={(e) => updateField("trackInventory", e.target.checked)}
+                                />
+                                Bestand aktiv verwalten
+                            </label>
+
+                            <div className="space-y-1">
+                                <label className="text-sm font-medium">Maximaler Bestand</label>
+                                <input
+                                    type="number"
+                                    min={0}
+                                    step={1}
+                                    className={inputClassName}
+                                    value={formState.totalStock}
+                                    onChange={(e) => updateField("totalStock", e.target.value)}
+                                    disabled={!formState.trackInventory}
+                                />
+                                <p className="text-xs text-neutral-500">
+                                    {formState.trackInventory
+                                        ? "0 bedeutet: aktuell keine verfügbare Einheit."
+                                        : "Wenn deaktiviert, wird die Menge nicht bestandsbegrenzt."}
+                                </p>
                             </div>
                         </div>
                     </section>

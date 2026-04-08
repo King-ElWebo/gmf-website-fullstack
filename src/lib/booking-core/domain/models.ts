@@ -40,6 +40,16 @@ export interface BookingItem {
   bookingId: string;
   resourceId: string;
   quantity: number;
+  resourceTitle?: string;
+  priceType?: "FIXED" | "FROM_PRICE" | "ON_REQUEST";
+  basePriceCents?: number | null;
+  priceLabel?: string | null;
+  displayPrice?: string | null;
+  pricingMode?: "auto" | "individual";
+  pricingReason?: string | null;
+  bookingDays?: number | null;
+  calculatedUnitPriceCents?: number | null;
+  calculatedTotalPriceCents?: number | null;
 }
 
 export interface Booking {

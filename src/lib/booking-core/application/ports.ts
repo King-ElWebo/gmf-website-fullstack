@@ -15,6 +15,7 @@ export interface BookingFilters {
 export interface BookingRepository {
   findById(id: string): Promise<Booking | null>;
   findOverlapping(resourceId: string, start: Date, end: Date, blockingStatuses: BookingStatus[]): Promise<Booking[]>;
+  getResourceInventories(resourceIds: string[]): Promise<Array<{ resourceId: string; trackInventory: boolean; totalStock: number }>>;
   save(booking: Booking): Promise<Booking>;
   updateStatus(id: string, status: BookingStatus): Promise<Booking>;
   findForAdminView(filters: BookingFilters, page?: number, limit?: number): Promise<Paginated<any>>;

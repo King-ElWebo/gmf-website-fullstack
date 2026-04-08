@@ -187,12 +187,22 @@ model Booking {
 }
 
 model BookingItem {
-  id        String  @id @default(cuid())
-  bookingId String
-  itemId    String
-  quantity  Int     @default(1)
-  booking   Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-  item      Item    @relation(fields: [itemId], references: [id])
+  id                       String        @id @default(cuid())
+  bookingId                String
+  itemId                   String
+  quantity                 Int           @default(1)
+  resourceTitle            String?
+  priceType                ItemPriceType?
+  basePriceCents           Int?
+  priceLabel               String?
+  displayPrice             String?
+  pricingMode              String?
+  pricingReason            String?
+  bookingDays              Int?
+  calculatedUnitPriceCents Int?
+  calculatedTotalPriceCents Int?
+  booking                  Booking       @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  item                     Item          @relation(fields: [itemId], references: [id])
 }
 
 model InternalNote {

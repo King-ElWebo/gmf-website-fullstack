@@ -29,6 +29,8 @@ export type ItemInput = {
     rentalNotes?: string | null;
     setupRequirements?: string | null;
     accessRequirements?: string | null;
+    trackInventory: boolean;
+    totalStock: number;
     published: boolean;
     categoryId: string;
 };
@@ -44,6 +46,7 @@ function buildItemPersistenceData(data: ItemInput) {
         longDescription: syncedLongDescription,
         priceCents: syncedPriceCents,
         basePriceCents: syncedPriceCents,
+        totalStock: Math.max(0, Math.floor(data.totalStock)),
     };
 }
 
