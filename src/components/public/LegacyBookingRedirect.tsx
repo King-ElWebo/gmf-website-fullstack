@@ -33,9 +33,9 @@ export function LegacyBookingRedirect({ item }: LegacyBookingRedirectProps) {
     }, [addItem, item, router]);
 
     return (
-        <div className="min-h-screen bg-white">
+        <div className="min-h-screen bg-[#fefce8]">
             <div className="max-w-[900px] mx-auto px-4 sm:px-6 lg:px-8 py-16">
-                <p className="font-['Inter'] text-[16px] text-[#64748b]">
+                <p className="font-['Nunito'] text-[16px] text-[#64748b]">
                     Produkt wird zum Anfragekorb hinzugefügt...
                 </p>
             </div>

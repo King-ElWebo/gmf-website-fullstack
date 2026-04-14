@@ -23,7 +23,7 @@ export function Input({
 }: InputProps) {
     return (
         <div className="flex flex-col gap-[8px] w-full">
-            <label className="font-['Inter'] font-medium text-[14px] leading-[21px] text-[#1a202c]">
+            <label className="font-['Nunito'] font-medium text-[14px] leading-[21px] text-[#1a202c]">
                 {label}
                 {required && <span className="text-[#dc2626] ml-1">*</span>}
             </label>
@@ -33,10 +33,10 @@ export function Input({
                 placeholder={placeholder}
                 value={value}
                 onChange={onChange}
-                className="bg-white h-[50px] rounded-[8px] px-[16px] py-[12px] font-['Inter'] text-[16px] text-[#2d3748] border border-[#cbd5e1] focus:outline-none focus:border-[#1a3a52] placeholder:text-[rgba(45,55,72,0.5)]"
+                className={`bg-white h-[50px] rounded-[16px] px-[16px] py-[12px] font-['Nunito'] text-[16px] text-[#2d3748] border ${error ? 'border-[#dc2626] focus:border-[#dc2626] focus:ring-[#dc2626]/20' : 'border-[#cbd5e1] focus:border-[#1a3a52] focus:ring-[#1a3a52]/20'} focus:outline-none focus:ring-2 transition-all placeholder:text-[#94a3b8]`}
             />
             {error && (
-                <p className="font-['Inter'] text-[14px] leading-[20px] text-[#dc2626]">
+                <p className="font-['Nunito'] text-[13px] leading-[20px] text-[#dc2626] mt-1">
                     {error}
                 </p>
             )}

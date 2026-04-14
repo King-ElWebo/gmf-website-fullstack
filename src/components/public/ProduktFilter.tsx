@@ -83,7 +83,7 @@ export function ProduktFilter({
                             <button
                                 key={catalogType.slug}
                                 onClick={() => setSelectedCatalogType(catalogType.slug)}
-                                className={`px-6 py-3 rounded-[8px] font-['Inter'] font-medium text-[14px] transition-colors border ${selectedCatalogType === catalogType.slug
+                                className={`px-6 py-3 rounded-[16px] font-['Nunito'] font-medium text-[14px] transition-colors border ${selectedCatalogType === catalogType.slug
                                     ? 'bg-[#1a3a52] text-white border-[#1a3a52]'
                                     : 'bg-white text-[#2d3748] border-[#cbd5e1] hover:border-[#1a3a52]'
                                     }`}
@@ -101,7 +101,7 @@ export function ProduktFilter({
                         <button
                             key={`${category.catalogTypeSlug}-${category.slug}`}
                             onClick={() => setSelectedCategory(category.slug)}
-                            className={`px-6 py-3 rounded-[8px] font-['Inter'] font-medium text-[14px] transition-colors border ${selectedCategory === category.slug
+                            className={`px-6 py-3 rounded-[16px] font-['Nunito'] font-medium text-[14px] transition-colors border ${selectedCategory === category.slug
                                 ? 'bg-[#1a3a52] text-white border-[#1a3a52]'
                                 : 'bg-white text-[#2d3748] border-[#cbd5e1] hover:border-[#1a3a52]'
                                 }`}
@@ -135,7 +135,7 @@ export function ProduktFilter({
 
             {filteredItems.length === 0 && (
                 <div className="text-center py-12">
-                    <p className="font-['Inter'] text-[16px] text-[#64748b]">
+                    <p className="font-['Nunito'] text-[16px] text-[#64748b]">
                         Keine Produkte in diesem Bereich gefunden.
                     </p>
                 </div>

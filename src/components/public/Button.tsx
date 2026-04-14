@@ -17,11 +17,11 @@ export function Button({
     type = 'button',
     className = ''
 }: ButtonProps) {
-    const baseStyles = "h-[48px] rounded-[8px] px-6 font-['Inter'] font-medium text-[16px] leading-[24px] transition-opacity hover:opacity-90";
+    const baseStyles = "h-[50px] inline-flex items-center justify-center rounded-[16px] px-6 font-['Nunito'] font-medium text-[16px] leading-[24px] transition-all focus:outline-none focus:ring-2 focus:ring-offset-2";
 
     const variantStyles = {
-        primary: "bg-[#fbbf24] text-[#1a3a52] shadow-[0px_1px_3px_0px_rgba(0,0,0,0.1),0px_1px_2px_0px_rgba(0,0,0,0.1)]",
-        secondary: "bg-[#1a3a52] text-white border border-[#1a3a52]"
+        primary: "bg-[#3b82f6] text-white hover:bg-[#2563eb] focus:ring-[#3b82f6] shadow-sm",
+        secondary: "bg-[#1a3a52] text-white border border-[#1a3a52] hover:bg-[#0f2434] focus:ring-[#1a3a52]"
     };
 
     return (

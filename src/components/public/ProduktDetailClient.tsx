@@ -45,8 +45,8 @@ function InfoSection({ title, content }: { title: string; content?: string | nul
 
     return (
         <div className="mb-8">
-            <h2 className="font-['Inter'] font-medium text-[18px] text-[#1a202c] mb-3">{title}</h2>
-            <p className="font-['Inter'] text-[16px] text-[#4a5568] leading-[25.6px] whitespace-pre-line">
+            <h2 className="font-['Nunito'] font-medium text-[18px] text-[#1a202c] mb-3">{title}</h2>
+            <p className="font-['Nunito'] text-[16px] text-[#4a5568] leading-[25.6px] whitespace-pre-line">
                 {content}
             </p>
         </div>
@@ -87,19 +87,19 @@ export function ProduktDetailClient({ item }: { item: ProduktDetailItem }) {
     };
 
     return (
-        <div className="min-h-screen bg-white">
+        <div className="min-h-screen bg-[#fefce8]">
             <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <div className="mb-8">
                     <nav className="flex items-center gap-2 text-[14px]">
-                        <Link href="/" className="font-['Inter'] text-[#64748b] hover:text-[#1a3a52]">
+                        <Link href="/" className="font-['Nunito'] text-[#64748b] hover:text-[#1a3a52]">
                             Start
                         </Link>
                         <span className="text-[#cbd5e1]">/</span>
-                        <Link href="/produkte" className="font-['Inter'] text-[#64748b] hover:text-[#1a3a52]">
+                        <Link href="/produkte" className="font-['Nunito'] text-[#64748b] hover:text-[#1a3a52]">
                             Produkte
                         </Link>
                         <span className="text-[#cbd5e1]">/</span>
-                        <span className="font-['Inter'] text-[#1a202c]">{item.title}</span>
+                        <span className="font-['Nunito'] text-[#1a202c]">{item.title}</span>
                     </nav>
                 </div>
 
@@ -107,7 +107,7 @@ export function ProduktDetailClient({ item }: { item: ProduktDetailItem }) {
                     <div>
                         {item.images.length > 0 ? (
                             <>
-                                <div className="relative bg-[#e2e8f0] rounded-[8px] overflow-hidden mb-4 aspect-[4/3]">
+                                <div className="relative bg-[#fef9c3] rounded-[16px] overflow-hidden mb-4 aspect-[4/3]">
                                     <img
                                         src={item.images[currentImageIndex]}
                                         alt={item.title}
@@ -138,7 +138,7 @@ export function ProduktDetailClient({ item }: { item: ProduktDetailItem }) {
                                             <button
                                                 key={index}
                                                 onClick={() => setCurrentImageIndex(index)}
-                                                className={`aspect-[4/3] rounded-[8px] overflow-hidden border-2 transition-colors ${currentImageIndex === index ? 'border-[#1a3a52]' : 'border-[#cbd5e1]'}`}
+                                                className={`aspect-[4/3] rounded-[16px] overflow-hidden border-2 transition-colors ${currentImageIndex === index ? 'border-[#1a3a52]' : 'border-[#cbd5e1]'}`}
                                             >
                                                 <img
                                                     src={image}
@@ -151,22 +151,22 @@ export function ProduktDetailClient({ item }: { item: ProduktDetailItem }) {
                                 )}
                             </>
                         ) : (
-                            <div className="bg-[#e2e8f0] rounded-[8px] aspect-[4/3] flex items-center justify-center">
-                                <p className="font-['Inter'] text-[14px] text-[#64748b]">Kein Bild vorhanden</p>
+                            <div className="bg-[#fef9c3] rounded-[16px] aspect-[4/3] flex items-center justify-center">
+                                <p className="font-['Nunito'] text-[14px] text-[#64748b]">Kein Bild vorhanden</p>
                             </div>
                         )}
 
                         {item.videoUrl && (
-                            <div className="mt-6 rounded-[8px] border border-[#cbd5e1] bg-white p-4">
-                                <h2 className="font-['Inter'] font-medium text-[18px] text-[#1a202c] mb-3">Video</h2>
+                            <div className="mt-6 rounded-[16px] border border-[#cbd5e1] bg-white p-4">
+                                <h2 className="font-['Nunito'] font-medium text-[18px] text-[#1a202c] mb-3">Video</h2>
                                 {canRenderVideoPlayer ? (
-                                    <video src={item.videoUrl} controls className="w-full rounded-[8px]" />
+                                    <video src={item.videoUrl} controls className="w-full rounded-[16px]" />
                                 ) : (
                                     <a
                                         href={item.videoUrl}
                                         target="_blank"
                                         rel="noreferrer"
-                                        className="font-['Inter'] text-[16px] text-[#1a3a52] hover:underline"
+                                        className="font-['Nunito'] text-[16px] text-[#1a3a52] hover:underline"
                                     >
                                         Video ansehen
                                     </a>
@@ -185,18 +185,18 @@ export function ProduktDetailClient({ item }: { item: ProduktDetailItem }) {
                             </span>
                         </div>
 
-                        <h1 className="font-['Inter'] font-semibold text-[32px] text-[#1a202c] mb-4">
+                        <h1 className="font-['Nunito'] font-semibold text-[32px] text-[#1a202c] mb-4">
                             {item.title}
                         </h1>
 
                         {item.summary && (
-                            <p className="font-['Inter'] text-[16px] text-[#4a5568] leading-[25.6px] mb-6">
+                            <p className="font-['Nunito'] text-[16px] text-[#4a5568] leading-[25.6px] mb-6">
                                 {item.summary}
                             </p>
                         )}
 
                         {item.price && (
-                            <p className="font-['Inter'] font-semibold text-[24px] text-[#4a5568] mb-6">
+                            <p className="font-['Nunito'] font-semibold text-[24px] text-[#4a5568] mb-6">
                                 {item.price}
                             </p>
                         )}
@@ -204,7 +204,7 @@ export function ProduktDetailClient({ item }: { item: ProduktDetailItem }) {
                         {operationalHighlights.length > 0 && (
                             <div className="mb-6 flex flex-wrap gap-2">
                                 {operationalHighlights.map((entry) => (
-                                    <span key={entry} className="rounded-full bg-[#e2e8f0] px-3 py-1 text-[13px] text-[#1a3a52]">
+                                    <span key={entry} className="rounded-full bg-[#fef9c3] px-3 py-1 text-[13px] text-[#1a3a52]">
                                         {entry}
                                     </span>
                                 ))}

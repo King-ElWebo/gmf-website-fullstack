@@ -69,10 +69,10 @@ export function HeroCarousel({ images = [], title, text, noticeText }: HeroCarou
             <div className="relative z-10 h-full flex items-center">
                 <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 w-full">
                     <div className="max-w-[620px]">
-                        <h1 className="font-['Inter'] font-semibold text-[32px] md:text-[56px] leading-[1.1] text-white mb-4">
+                        <h1 className="font-['Nunito'] font-semibold text-[32px] md:text-[56px] leading-[1.1] text-white mb-4">
                             {title}
                         </h1>
-                        <p className="font-['Inter'] text-[16px] md:text-[18px] leading-[1.6] text-white mb-8">
+                        <p className="font-['Nunito'] text-[16px] md:text-[18px] leading-[1.6] text-white mb-8">
                             {text}
                         </p>
                         {noticeText && (

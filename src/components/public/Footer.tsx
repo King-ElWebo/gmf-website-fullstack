@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Instagram, Facebook } from 'lucide-react';
+import { CopyableContact } from '@/components/public/CopyableContact';
 
 type FooterLink = {
     platform: string;
@@ -29,39 +30,47 @@ export function Footer({ phone, email, address, socialLinks = [] }: FooterProps)
             <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     <div>
-                        <h3 className="font-['Inter'] font-semibold text-[18px] mb-4">Event-Vermietung</h3>
-                        <p className="font-['Inter'] text-[14px] text-[#e2e8f0] leading-[20px]">
+                        <h3 className="font-['Nunito'] font-semibold text-[18px] mb-4">Event-Vermietung</h3>
+                        <p className="font-['Nunito'] text-[14px] text-[#e2e8f0] leading-[20px]">
                             Ihre Experten für Hüpfburgen und Eventmodule
                         </p>
                     </div>
 
                     <div>
-                        <h3 className="font-['Inter'] font-semibold text-[18px] mb-4">Navigation</h3>
+                        <h3 className="font-['Nunito'] font-semibold text-[18px] mb-4">Navigation</h3>
                         <nav className="flex flex-col gap-2">
-                            <Link href="/" className="font-['Inter'] text-[14px] text-[#e2e8f0] hover:text-white transition-colors">
+                            <Link href="/" className="font-['Nunito'] text-[14px] text-[#e2e8f0] hover:text-white transition-colors">
                                 Startseite
                             </Link>
-                            <Link href="/produkte" className="font-['Inter'] text-[14px] text-[#e2e8f0] hover:text-white transition-colors">
+                            <Link href="/produkte" className="font-['Nunito'] text-[14px] text-[#e2e8f0] hover:text-white transition-colors">
                                 Produkte
                             </Link>
-                            <Link href="/licht-tontechnik" className="font-['Inter'] text-[14px] text-[#e2e8f0] hover:text-white transition-colors">
+                            <Link href="/licht-tontechnik" className="font-['Nunito'] text-[14px] text-[#e2e8f0] hover:text-white transition-colors">
                                 Licht & Ton
                             </Link>
-                            <Link href="/faq" className="font-['Inter'] text-[14px] text-[#e2e8f0] hover:text-white transition-colors">
+                            <Link href="/faq" className="font-['Nunito'] text-[14px] text-[#e2e8f0] hover:text-white transition-colors">
                                 FAQ
                             </Link>
-                            <Link href="/kontakt" className="font-['Inter'] text-[14px] text-[#e2e8f0] hover:text-white transition-colors">
+                            <Link href="/kontakt" className="font-['Nunito'] text-[14px] text-[#e2e8f0] hover:text-white transition-colors">
                                 Kontakt
                             </Link>
                         </nav>
                     </div>
 
                     <div>
-                        <h3 className="font-['Inter'] font-semibold text-[18px] mb-4">Kontakt</h3>
-                        <div className="font-['Inter'] text-[14px] text-[#e2e8f0] leading-[20px] mb-4 space-y-1">
+                        <h3 className="font-['Nunito'] font-semibold text-[18px] mb-4">Kontakt</h3>
+                        <div className="font-['Nunito'] text-[14px] text-[#e2e8f0] leading-[20px] mb-4 space-y-1">
                             {address && <p className="whitespace-pre-line">{address}</p>}
-                            {email && <p>Mail: {email}</p>}
-                            {phone && <p>Tel: {phone}</p>}
+                            {email && (
+                                <div className="flex items-center gap-1">
+                                    <span>Mail:</span> <CopyableContact value={email} type="email" textClassName="text-[#e2e8f0] hover:text-[#93c5fd]" />
+                                </div>
+                            )}
+                            {phone && (
+                                <div className="flex items-center gap-1">
+                                    <span>Tel:</span> <CopyableContact value={phone} type="phone" textClassName="text-[#e2e8f0] hover:text-[#93c5fd]" />
+                                </div>
+                            )}
                         </div>
                         {socialLinks.length > 0 && (
                             <div className="flex gap-4">
@@ -88,7 +97,7 @@ export function Footer({ phone, email, address, socialLinks = [] }: FooterProps)
                 </div>
 
                 <div className="border-t border-[#64748b] mt-8 pt-8 text-center">
-                    <p className="font-['Inter'] text-[12px] text-[#e2e8f0]">
+                    <p className="font-['Nunito'] text-[12px] text-[#e2e8f0]">
                         © 2026 Event-Vermietung. Alle Rechte vorbehalten.
                     </p>
                 </div>

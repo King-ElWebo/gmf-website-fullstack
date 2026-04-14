@@ -99,10 +99,10 @@ export function CategoryCarousel({ categories }: { categories: CategoryCard[] })
             <section className="py-16" style={{ backgroundColor: '#FFFfff' }}>
                 <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-12">
-                        <h2 className="font-['Inter'] font-semibold text-[24px] md:text-[32px] text-[#1a202c] mb-4">
+                        <h2 className="font-['Nunito'] font-semibold text-[24px] md:text-[32px] text-[#1a202c] mb-4">
                             Unsere Kategorien
                         </h2>
-                        <p className="font-['Inter'] text-[16px] text-[#64748b]">
+                        <p className="font-['Nunito'] text-[16px] text-[#64748b]">
                             Entdecken Sie unsere große Auswahl an Eventmodulen für Ihre Veranstaltung.
                         </p>
                     </div>
@@ -111,9 +111,9 @@ export function CategoryCarousel({ categories }: { categories: CategoryCard[] })
                         {categories.map((category) => (
                             <div
                                 key={category.id}
-                                className="h-full bg-white rounded-[8px] border border-[#cbd5e1] shadow-[0px_1px_3px_0px_rgba(0,0,0,0.1),0px_1px_2px_0px_rgba(0,0,0,0.1)] overflow-hidden flex flex-col group hover:shadow-md transition-shadow duration-300"
+                                className="h-full bg-white rounded-[16px] border border-[#cbd5e1] shadow-sm hover:shadow-xl hover:border-[#94a3b8] transition-all duration-300 transform hover:-translate-y-1 overflow-hidden flex flex-col group"
                             >
-                                <div className="relative w-full shrink-0 bg-[#e2e8f0]" style={{ paddingBottom: '62%' }}>
+                                <div className="relative w-full shrink-0 bg-[#fef9c3]" style={{ paddingBottom: '62%' }}>
                                     {category.imageUrl ? (
                                         <>
                                             <Image
@@ -137,17 +137,17 @@ export function CategoryCarousel({ categories }: { categories: CategoryCard[] })
                                             {category.catalogTypeName}
                                         </span>
                                     </div>
-                                    <h3 className="font-['Inter'] font-semibold text-[18px] text-[#1a202c] mb-2">
+                                    <h3 className="font-['Nunito'] font-semibold text-[18px] text-[#1a202c] mb-2">
                                         {category.title}
                                     </h3>
-                                    <p className="font-['Inter'] text-[14px] text-[#64748b] leading-[22px] flex-1 mb-6">
+                                    <p className="font-['Nunito'] text-[14px] text-[#64748b] leading-[22px] flex-1 mb-6">
                                         {category.description?.trim() || 'Produkte und Eventmodule aus dieser Kategorie ansehen.'}
                                     </p>
                                     <Link
                                         href={`/produkte?bereich=${encodeURIComponent(category.catalogTypeSlug)}&kategorie=${encodeURIComponent(category.slug)}`}
                                         className="block shrink-0"
                                     >
-                                        <span className="flex items-center justify-center w-full h-[48px] rounded-[8px] bg-[#1a3a52] text-white font-['Inter'] font-medium text-[16px] hover:opacity-90 transition-opacity">
+                                        <span className="flex items-center justify-center w-full h-[50px] rounded-[16px] bg-[#1a3a52] text-white font-['Nunito'] font-medium text-[16px] transition-all hover:bg-[#0f2434] focus:ring-2 focus:ring-[#1a3a52] focus:outline-none">
                                             Produkte ansehen
                                         </span>
                                     </Link>
@@ -169,10 +169,10 @@ export function CategoryCarousel({ categories }: { categories: CategoryCard[] })
                 <div className="flex justify-between items-center mb-12">
                     <div className="w-[83px] shrink-0" />
                     <div className="text-center">
-                        <h2 className="font-['Inter'] font-semibold text-[24px] md:text-[32px] text-[#1a202c] mb-4">
+                        <h2 className="font-['Nunito'] font-semibold text-[24px] md:text-[32px] text-[#1a202c] mb-4">
                             Unsere Kategorien
                         </h2>
-                        <p className="font-['Inter'] text-[16px] text-[#64748b]">
+                        <p className="font-['Nunito'] text-[16px] text-[#64748b]">
                             Entdecken Sie unsere große Auswahl an Eventmodulen für Ihre Veranstaltung.
                         </p>
                     </div>
@@ -214,8 +214,8 @@ export function CategoryCarousel({ categories }: { categories: CategoryCard[] })
                                 style={{ width: `${100 / total}%` }}
                                 className="px-3"
                             >
-                                <div className="h-full bg-white rounded-[8px] border border-[#cbd5e1] shadow-[0px_1px_3px_0px_rgba(0,0,0,0.1),0px_1px_2px_0px_rgba(0,0,0,0.1)] overflow-hidden flex flex-col group hover:shadow-md transition-shadow duration-300">
-                                    <div className="relative w-full shrink-0 bg-[#e2e8f0]" style={{ paddingBottom: '62%' }}>
+                                <div className="h-full bg-white rounded-[16px] border border-[#cbd5e1] shadow-sm hover:shadow-xl hover:border-[#94a3b8] transition-all duration-300 transform hover:-translate-y-1 overflow-hidden flex flex-col group">
+                                    <div className="relative w-full shrink-0 bg-[#fef9c3]" style={{ paddingBottom: '62%' }}>
                                         {category.imageUrl ? (
                                             <>
                                                 <Image
@@ -239,17 +239,17 @@ export function CategoryCarousel({ categories }: { categories: CategoryCard[] })
                                                 {category.catalogTypeName}
                                             </span>
                                         </div>
-                                        <h3 className="font-['Inter'] font-semibold text-[18px] text-[#1a202c] mb-2">
+                                        <h3 className="font-['Nunito'] font-semibold text-[18px] text-[#1a202c] mb-2">
                                             {category.title}
                                         </h3>
-                                        <p className="font-['Inter'] text-[14px] text-[#64748b] leading-[22px] flex-1 mb-6">
+                                        <p className="font-['Nunito'] text-[14px] text-[#64748b] leading-[22px] flex-1 mb-6">
                                             {category.description?.trim() || 'Produkte und Eventmodule aus dieser Kategorie ansehen.'}
                                         </p>
                                         <Link
                                             href={`/produkte?bereich=${encodeURIComponent(category.catalogTypeSlug)}&kategorie=${encodeURIComponent(category.slug)}`}
                                             className="block shrink-0"
                                         >
-                                            <span className="flex items-center justify-center w-full h-[48px] rounded-[8px] bg-[#1a3a52] text-white font-['Inter'] font-medium text-[16px] hover:opacity-90 transition-opacity">
+                                            <span className="flex items-center justify-center w-full h-[50px] rounded-[16px] bg-[#1a3a52] text-white font-['Nunito'] font-medium text-[16px] transition-all hover:bg-[#0f2434] focus:ring-2 focus:ring-[#1a3a52] focus:outline-none">
                                                 Produkte ansehen
                                             </span>
                                         </Link>
