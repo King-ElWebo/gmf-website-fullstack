@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Instagram, Facebook } from "lucide-react";
-import { DisplayArea } from "@prisma/client";
+import { DisplayArea } from "@/lib/display-area";
 import { HeroCarousel } from "@/components/public/HeroCarousel";
 import { CategoryCarousel } from "@/components/public/CategoryCarousel";
 import { CopyableContact } from "@/components/public/CopyableContact";
@@ -49,8 +49,8 @@ export default async function HomePage() {
                 categories={categories.map((category) => ({
                     id: category.id,
                     title: category.name,
-                    description: category.description,
-                    imageUrl: category.imageUrl,
+                    description: (category as any).description,
+                    imageUrl: (category as any).imageUrl,
                     slug: category.slug,
                     catalogTypeName: category.catalogType.name,
                     catalogTypeSlug: category.catalogType.slug,

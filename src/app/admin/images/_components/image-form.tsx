@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { DisplayArea } from "@prisma/client";
+import { DisplayArea } from "@/lib/display-area";
 
 type ImageFormProps = {
     mode: "create" | "edit";

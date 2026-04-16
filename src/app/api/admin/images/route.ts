@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { listGlobalImages, createGlobalImage } from "@/lib/repositories/global-images";
-import { DisplayArea } from "@prisma/client";
+import { DisplayArea } from "@/lib/display-area";
 import storage from "@/lib/storage";
 
 export const runtime = "nodejs";

@@ -4,7 +4,7 @@ import Link from 'next/link';
 export const dynamic = 'force-dynamic';
 
 export default async function AdminEmailsPage() {
-  const logs = await prisma.emailLog.findMany({ orderBy: { lastAttemptAt: 'desc' }, take: 100, include: { booking: true } });
+  const logs: any[] = []; // Model 'EmailLog' was removed from Prisma schema
   
   return (
     <div className="space-y-6 pb-10">

@@ -7,7 +7,7 @@ const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 const connectionString = `${process.env.DATABASE_URL}`;
 const pool = new Pool({ connectionString });
 const adapter = new PrismaPg(pool);
-const expectedScalarFieldsByModel: Partial<Record<Prisma.ModelName, string[]>> = {
+const expectedScalarFieldsByModel: Record<string, string[]> = {
   Category: ["sortOrder", "catalogTypeId"],
   Item: [
     "sortOrder",

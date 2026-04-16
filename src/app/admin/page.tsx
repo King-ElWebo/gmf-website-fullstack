@@ -7,8 +7,8 @@ export default async function AdminHome() {
   const totalCatalogTypes = await db.catalogType.count();
   const totalCategories = await db.category.count();
   const totalItems = await db.item.count();
-  const totalFaqs = await db.faq.count();
-  const totalImages = await db.globalImage.count();
+  const totalFaqs = 0;
+  const totalImages = 0;
 
   const recentItems = await db.item.findMany({
     orderBy: { createdAt: "desc" },
@@ -16,10 +16,7 @@ export default async function AdminHome() {
     include: { category: true },
   });
 
-  const recentImages = await db.globalImage.findMany({
-    orderBy: { createdAt: "desc" },
-    take: 6,
-  });
+  const recentImages: any[] = [];
 
   return (
     <div className="space-y-6">

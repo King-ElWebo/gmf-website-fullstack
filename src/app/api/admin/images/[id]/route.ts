@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
-import { DisplayArea } from "@prisma/client";
+import { DisplayArea } from "@/lib/display-area";
 import { getGlobalImageById, listGlobalImages, updateGlobalImage, deleteGlobalImage } from "@/lib/repositories/global-images";
 import storage from "@/lib/storage";
 

@@ -71,6 +71,8 @@ model Item {
   rentalNotes             String?
   setupRequirements       String?
   accessRequirements      String?
+  trackInventory          Boolean               @default(true)
+  totalStock              Int                   @default(1)
   calendarBlockerItems    CalendarBlockerItem[]
   category                Category              @relation(fields: [categoryId], references: [id])
   images                  ItemImage[]

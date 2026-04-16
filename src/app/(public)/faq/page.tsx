@@ -6,7 +6,7 @@ import { FaqAccordion } from '@/components/public/FaqAccordion';
 
 export default async function FAQPage() {
     const [allFaqs, settings] = await Promise.all([listFaqs(), getPublicSiteSettings()]);
-    const publishedFaqs = allFaqs.filter((faq) => faq.published);
+    const publishedFaqs = allFaqs.filter((faq: any) => faq.published);
     const phone = settings.phone?.trim() || '0123 456789';
 
     return (

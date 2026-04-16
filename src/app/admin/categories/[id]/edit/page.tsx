@@ -22,9 +22,9 @@ export default async function EditCategoryPage({
                 id: category.id,
                 name: category.name,
                 slug: category.slug,
-                description: category.description,
-                imageUrl: category.imageUrl,
-                imageKey: category.imageKey,
+                description: (category as any).description,
+                imageUrl: (category as any).imageUrl,
+                imageKey: (category as any).imageKey,
                 catalogTypeId: category.catalogTypeId,
             }}
             catalogTypes={catalogTypes.map((type) => ({

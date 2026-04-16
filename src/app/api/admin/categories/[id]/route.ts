@@ -23,9 +23,9 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
 
         let name = "";
         let slug = "";
-        let description: string | null = existing.description ?? null;
-        let imageUrl: string | null = existing.imageUrl ?? null;
-        let imageKey: string | null = existing.imageKey ?? null;
+        let description: string | null = (existing as any).description ?? null;
+        let imageUrl: string | null = (existing as any).imageUrl ?? null;
+        let imageKey: string | null = (existing as any).imageKey ?? null;
         let catalogTypeId = existing.catalogTypeId;
 
         if (contentType.includes("multipart/form-data")) {
@@ -35,12 +35,12 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
             catalogTypeId = ((formData.get("catalogTypeId") as string | null) ?? existing.catalogTypeId).trim();
 
             const descRaw = formData.get("description") as string | null;
-            description = descRaw !== null ? descRaw || null : existing.description ?? null;
+            description = descRaw !== null ? descRaw || null : (existing as any).description ?? null;
 
             // Handle image removal
             const removeImage = formData.get("removeImage") === "true";
-            if (removeImage && existing.imageKey) {
-                await storage.delete(existing.imageKey).catch(() => {});
+            if (removeImage && (existing as any).imageKey) {
+                await storage.delete((existing as any).imageKey).catch(() => {});
                 imageUrl = null;
                 imageKey = null;
             }
@@ -49,8 +49,8 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
             const file = formData.get("image");
             if (file instanceof File && file.size > 0) {
                 // Delete old image if present
-                if (existing.imageKey) {
-                    await storage.delete(existing.imageKey).catch(() => {});
+                if ((existing as any).imageKey) {
+                    await storage.delete((existing as any).imageKey).catch(() => {});
                 }
                 const saved = await storage.save(file);
                 imageUrl = saved.url;
@@ -104,8 +104,8 @@ export async function DELETE(_: Request, ctx: { params: Promise<{ id: string }> 
 
         // Remove associated image from storage if present
         const existing = await getCategoryById(id);
-        if (existing?.imageKey) {
-            await storage.delete(existing.imageKey).catch(() => {});
+        if ((existing as any)?.imageKey) {
+            await storage.delete((existing as any).imageKey).catch(() => {});
         }
 
         await deleteCategory(id);

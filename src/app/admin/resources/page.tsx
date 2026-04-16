@@ -38,7 +38,7 @@ export default async function AdminResourcesPage() {
                   </Link>
                 </td>
                 <td className="p-4 text-slate-500">{item.category?.name || "-"}</td>
-                <td className="p-4 text-slate-500 capitalize">{item.type}</td>
+                <td className="p-4 text-slate-500 capitalize">{(item as any).type || "-"}</td>
                 <td className="p-4 text-center">
                   {item.trackInventory ? <span className="admin-badge admin-badge-green">Aktiv</span> : <span className="admin-badge admin-badge-neutral">Aus</span>}
                 </td>

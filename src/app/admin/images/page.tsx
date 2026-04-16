@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { DisplayArea } from "@prisma/client";
+import { DisplayArea } from "@/lib/display-area";
 import { listGlobalImages } from "@/lib/repositories/global-images";
 import AdminPageHeader from "../_components/admin-page-header";
 import ImagesSortableList from "./images-sortable-list";
