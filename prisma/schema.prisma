@@ -13,9 +13,6 @@ model Category {
   slug          String      @unique
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
-  description   String?
-  imageKey      String?
-  imageUrl      String?
   catalogTypeId String
   sortOrder     Int         @default(0)
   catalogType   CatalogType @relation(fields: [catalogTypeId], references: [id])
@@ -49,37 +46,31 @@ model Item {
   categoryId              String
   createdAt               DateTime              @default(now())
   updatedAt               DateTime              @updatedAt
-  bufferTimeAfterMin      Int                   @default(0)
-  bufferTimeBeforeMin     Int                   @default(0)
-  totalStock              Int                   @default(1)
-  trackInventory          Boolean               @default(true)
-  type                    String                @default("rental")
   sortOrder               Int                   @default(0)
   priceType               ItemPriceType         @default(FIXED)
   basePriceCents          Int?
   priceLabel              String?
-  accessRequirements      String?
-  additionalCostsInfo     String?
-  cleaningFeeApplies      Boolean               @default(false)
-  cleaningFeeInfo         String?
-  cleaningFeeLabel        String?
-  deliveryAvailable       Boolean               @default(false)
-  deliveryInfo            String?
-  depositInfo             String?
-  depositLabel            String?
-  depositRequired         Boolean               @default(false)
-  dryingFeeApplies        Boolean               @default(false)
-  dryingFeeInfo           String?
-  dryingFeeLabel          String?
-  longDescription         String?
-  pickupAvailable         Boolean               @default(false)
-  rentalNotes             String?
-  requiresDeliveryAddress Boolean               @default(false)
-  setupRequirements       String?
   shortDescription        String?
-  usageInfo               String?
+  longDescription         String?
   videoUrl                String?
-  bookingItems            BookingItem[]
+  depositRequired         Boolean               @default(false)
+  depositLabel            String?
+  depositInfo             String?
+  cleaningFeeApplies      Boolean               @default(false)
+  cleaningFeeLabel        String?
+  cleaningFeeInfo         String?
+  dryingFeeApplies        Boolean               @default(false)
+  dryingFeeLabel          String?
+  dryingFeeInfo           String?
+  additionalCostsInfo     String?
+  deliveryAvailable       Boolean               @default(false)
+  pickupAvailable         Boolean               @default(false)
+  requiresDeliveryAddress Boolean               @default(false)
+  deliveryInfo            String?
+  usageInfo               String?
+  rentalNotes             String?
+  setupRequirements       String?
+  accessRequirements      String?
   calendarBlockerItems    CalendarBlockerItem[]
   category                Category              @relation(fields: [categoryId], references: [id])
   images                  ItemImage[]
@@ -89,39 +80,16 @@ model Item {
 }
 
 model ItemImage {
-  id        String    @id @default(cuid())
+  id        String   @id @default(cuid())
   url       String
   alt       String?
-  sortOrder Int       @default(0)
+  sortOrder Int      @default(0)
   itemId    String
-  createdAt DateTime  @default(now())
+  createdAt DateTime @default(now())
   key       String
-  type      MediaType @default(IMAGE)
-  item      Item      @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  item      Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
 
   @@index([itemId])
-}
-
-model Faq {
-  id        String   @id @default(cuid())
-  question  String
-  answer    String
-  published Boolean  @default(true)
-  sortOrder Int      @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model GlobalImage {
-  id        String      @id @default(cuid())
-  url       String
-  key       String
-  alt       String?
-  area      DisplayArea @default(OTHER)
-  published Boolean     @default(true)
-  sortOrder Int         @default(0)
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
 }
 
 model SiteSettings {
@@ -156,86 +124,6 @@ model SiteSocialLink {
   @@index([sortOrder])
 }
 
-model BookingCustomer {
-  id           String    @id @default(cuid())
-  firstName    String
-  lastName     String
-  email        String
-  phone        String?
-  addressLine1 String?
-  zip          String?
-  city         String?
-  bookings     Booking[]
-}
-
-model Booking {
-  id              String              @id @default(cuid())
-  referenceCode   String              @unique
-  status          String
-  customerId      String
-  startDate       DateTime
-  endDate         DateTime
-  deliveryType    String
-  customerMessage String?
-  createdAt       DateTime            @default(now())
-  updatedAt       DateTime            @updatedAt
-  customer        BookingCustomer     @relation(fields: [customerId], references: [id])
-  items           BookingItem[]
-  calendarSync    CalendarSyncRecord?
-  emailLogs       EmailLog[]
-  notes           InternalNote[]
-}
-
-model BookingItem {
-  id                       String        @id @default(cuid())
-  bookingId                String
-  itemId                   String
-  quantity                 Int           @default(1)
-  resourceTitle            String?
-  priceType                ItemPriceType?
-  basePriceCents           Int?
-  priceLabel               String?
-  displayPrice             String?
-  pricingMode              String?
-  pricingReason            String?
-  bookingDays              Int?
-  calculatedUnitPriceCents Int?
-  calculatedTotalPriceCents Int?
-  booking                  Booking       @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-  item                     Item          @relation(fields: [itemId], references: [id])
-}
-
-model InternalNote {
-  id        String   @id @default(cuid())
-  bookingId String
-  authorId  String
-  content   String
-  createdAt DateTime @default(now())
-  booking   Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-}
-
-model EmailLog {
-  id             String   @id @default(cuid())
-  bookingId      String
-  templateType   String
-  status         String
-  recipientEmail String
-  errorText      String?
-  retryCount     Int      @default(0)
-  lastAttemptAt  DateTime @default(now())
-  booking        Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-}
-
-model CalendarSyncRecord {
-  id              String    @id @default(cuid())
-  bookingId       String    @unique
-  externalEventId String?
-  syncStatus      String
-  lastSyncedAt    DateTime?
-  syncError       String?
-  booking         Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-}
-
 model CalendarBlocker {
   id                String                @id @default(cuid())
   title             String
@@ -266,20 +154,8 @@ model CalendarBlockerItem {
   @@index([itemId])
 }
 
-enum MediaType {
-  IMAGE
-  VIDEO
-}
-
 enum ItemPriceType {
   FIXED
   ON_REQUEST
   FROM_PRICE
-}
-
-enum DisplayArea {
-  CAROUSEL
-  GALLERY
-  SOCIAL
-  OTHER
 }
