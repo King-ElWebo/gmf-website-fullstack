@@ -23,7 +23,7 @@ export default async function BookingPage({ params }: PageProps) {
         priceType: item.priceType,
         basePriceCents: item.basePriceCents ?? item.priceCents,
         priceLabel: item.priceLabel,
-        trackInventory: item.trackInventory,
+        trackInventory: item.trackInventory ?? false,
         totalStock: item.totalStock,
         imageUrl: getPrimaryImageUrl(item),
     };
