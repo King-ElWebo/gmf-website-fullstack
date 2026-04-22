@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { Button } from '@/components/public/Button';
 import { Input } from '@/components/public/Input';
 import { Textarea } from '@/components/public/Textarea';
@@ -152,7 +153,8 @@ export function ContactClient({ settings }: ContactClientProps) {
                         </form>
                         <div className="mt-6 bg-[#f7f8fa] rounded-[16px] p-4">
                             <p className="font-['Nunito'] text-[12px] text-[#64748b] leading-[18px]">
-                                Mit dem Absenden des Formulars stimmen Sie zu, dass Ihre Daten zur Bearbeitung Ihrer Anfrage verwendet werden. Weitere Informationen finden Sie in unserer Datenschutzerklärung.
+                                Mit dem Absenden des Formulars stimmen Sie zu, dass Ihre Daten zur Bearbeitung Ihrer Anfrage verwendet werden. Weitere Informationen finden Sie in unserer{" "}
+                                <Link href="/datenschutz" className="text-[#1a3a52] underline hover:text-[#0f2434]">Datenschutzerklärung</Link>.
                             </p>
                         </div>
                     </div> {/* ENDE RECHTE SPALTE */}

@@ -27,6 +27,12 @@ export default async function PublicLayout({
         { href: '/faq', label: 'FAQ' },
         { href: '/kontakt', label: 'Kontakt' },
     ];
+    const footerLegalLinks = [
+        { href: '/impressum', label: 'Impressum' },
+        { href: '/datenschutz', label: 'Datenschutz' },
+        { href: '/agb', label: 'AGB' },
+        { href: '/widerruf', label: 'Widerruf' },
+    ];
 
     return (
         <InquiryCartProvider>
@@ -42,6 +48,7 @@ export default async function PublicLayout({
                     address={settings.address}
                     socialLinks={settings.socialLinks}
                     navLinks={footerNavLinks}
+                    legalLinks={footerLegalLinks}
                 />
             </div>
         </InquiryCartProvider>
