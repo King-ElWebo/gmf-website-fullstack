@@ -8,7 +8,7 @@ const connectionString = `${process.env.DATABASE_URL}`;
 const pool = new Pool({ connectionString });
 const adapter = new PrismaPg(pool);
 const expectedScalarFieldsByModel: Record<string, string[]> = {
-  Category: ["sortOrder", "catalogTypeId"],
+  Category: ["sortOrder", "catalogTypeId", "description", "imageUrl", "imageKey"],
   Item: [
     "sortOrder",
     "categoryId",
