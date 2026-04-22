@@ -24,12 +24,12 @@ export function ContactClient({ settings }: ContactClientProps) {
     if (isSubmitted) {
         return (
             <div className="min-h-screen bg-[#fefce8]">
-                <div className="max-w-[800px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                    <div className="bg-white rounded-[16px] border border-[#cbd5e1] p-8 md:p-12 text-center">
+                <div className="max-w-[800px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+                    <div className="bg-white rounded-[16px] border border-[#cbd5e1] p-6 sm:p-8 md:p-12 text-center">
                         <div className="w-16 h-16 bg-[#3b82f6] rounded-full flex items-center justify-center mx-auto mb-6">
                             <Mail size={32} className="text-[#1a3a52]" />
                         </div>
-                        <h1 className="font-['Nunito'] font-semibold text-[32px] text-[#1a202c] mb-4">Nachricht erfolgreich gesendet!</h1>
+                        <h1 className="font-['Nunito'] font-semibold text-[26px] sm:text-[32px] text-[#1a202c] mb-4">Nachricht erfolgreich gesendet!</h1>
                         <p className="font-['Nunito'] text-[16px] text-[#4a5568] leading-[25.6px] mb-8">Vielen Dank für Ihre Nachricht. Wir melden uns schnellstmöglich bei Ihnen.</p>
                         <Button variant="primary" onClick={() => setIsSubmitted(false)}>Weitere Nachricht senden</Button>
                     </div>
@@ -53,18 +53,18 @@ export function ContactClient({ settings }: ContactClientProps) {
 
     return (
         <div className="min-h-screen bg-[#fefce8]">
-            <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <div className="mb-12 text-center">
-                    <h1 className="font-['Nunito'] font-semibold text-[32px] text-[#1a202c] mb-4">Kontakt</h1>
-                    <p className="font-['Nunito'] text-[16px] text-[#64748b] leading-[25.6px] max-w-[600px] mx-auto">
+            <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+                <div className="mb-8 sm:mb-12 text-center">
+                    <h1 className="font-['Nunito'] font-semibold text-[28px] sm:text-[32px] text-[#1a202c] mb-3 sm:mb-4">Kontakt</h1>
+                    <p className="font-['Nunito'] text-[15px] sm:text-[16px] text-[#64748b] leading-[1.6] sm:leading-[25.6px] max-w-[600px] mx-auto">
                         Haben Sie Fragen oder möchten Sie ein Angebot einholen? Wir sind gerne für Sie da!
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12">
                     {/* LINKE SPALTE: Infos & Karte */}
                     <div>
-                        <h2 className="font-['Nunito'] font-semibold text-[24px] text-[#1a202c] mb-6">Kontaktinformationen</h2>
+                        <h2 className="font-['Nunito'] font-semibold text-[22px] sm:text-[24px] text-[#1a202c] mb-5 sm:mb-6">Kontaktinformationen</h2>
                         <div className="space-y-6 mb-8">
                             <div className="flex items-start gap-4">
                                 <div className="w-10 h-10 bg-[#fef9c3] rounded-full flex items-center justify-center shrink-0"><MapPin size={20} className="text-[#1a3a52]" /></div>
@@ -96,7 +96,7 @@ export function ContactClient({ settings }: ContactClientProps) {
                             </div>
                         </div>
 
-                        <div className="bg-[#fef9c3] rounded-[16px] p-6 mb-8">
+                        <div className="bg-[#fef9c3] rounded-[16px] p-5 sm:p-6 mb-8">
                             <h3 className="font-['Nunito'] font-medium text-[18px] text-[#1a202c] mb-3">Lieferung & Abholung</h3>
                             <p className="font-['Nunito'] text-[14px] text-[#4a5568] leading-[20px] mb-3">{additionalInfo || "Wir liefern je nach Entfernung direkt zu Ihnen. Die Lieferkosten werden individuell anhand der Strecke berechnet und im Zuge der Anfrage bekanntgegeben."}</p>
                             <p className="font-['Nunito'] text-[14px] text-[#4a5568] leading-[20px]">Selbstabholung ist nach Vereinbarung an unserem Standort möglich. Bitte beachten Sie, dass die gemieteten Produkte auch wieder selbstständig und termingerecht retourniert werden müssen.</p>
@@ -125,7 +125,7 @@ export function ContactClient({ settings }: ContactClientProps) {
                         {/* MAP BEREICH */}
                         <div className="mt-8">
                             <h3 className="font-['Nunito'] font-medium text-[18px] text-[#1a202c] mb-4">Standort</h3>
-                            <div className="bg-[#fef9c3] rounded-[16px] h-[300px] flex items-center justify-center border border-[#cbd5e1] overflow-hidden">
+                            <div className="bg-[#fef9c3] rounded-[16px] h-[240px] sm:h-[300px] flex items-center justify-center border border-[#cbd5e1] overflow-hidden">
                                 <iframe
                                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2652.3718250777197!2d16.357130356852537!3d48.3341579974037!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x476d0fbf7cc77e57%3A0x6d03f6c40f987f39!2sSpargelfeldgasse%2022%2C%202102%20Bisamberg!5e0!3m2!1sde!2sat!4v1773320289705!5m2!1sde!2sat"
                                     width="100%"
@@ -141,7 +141,7 @@ export function ContactClient({ settings }: ContactClientProps) {
 
                     {/* RECHTE SPALTE: Formular */}
                     <div>
-                        <h2 className="font-['Nunito'] font-semibold text-[24px] text-[#1a202c] mb-6">Schreiben Sie uns</h2>
+                        <h2 className="font-['Nunito'] font-semibold text-[22px] sm:text-[24px] text-[#1a202c] mb-5 sm:mb-6">Schreiben Sie uns</h2>
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <Input label="Name" type="text" name="name" placeholder="Max Mustermann" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
                             <Input label="E-Mail" type="email" name="email" placeholder="max@beispiel.de" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} required />

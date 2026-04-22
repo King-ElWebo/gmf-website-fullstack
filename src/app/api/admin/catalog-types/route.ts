@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { createCatalogType, listCatalogTypes } from "@/lib/repositories/catalog-types";
 
 function parseSortOrder(value: string | number | null | undefined) {
@@ -29,6 +30,9 @@ export async function POST(req: NextRequest) {
         let name = "";
         let slug = "";
         let description: string | null = null;
+        let navLabel: string | null = null;
+        let showInNav = false;
+        let isDefault = false;
         let sortOrder = 0;
         let isActive = true;
 
@@ -37,6 +41,9 @@ export async function POST(req: NextRequest) {
             name = ((formData.get("name") as string | null) ?? "").trim();
             slug = ((formData.get("slug") as string | null) ?? "").trim();
             description = ((formData.get("description") as string | null) ?? "").trim() || null;
+            navLabel = ((formData.get("navLabel") as string | null) ?? "").trim() || null;
+            showInNav = parseBoolean(formData.get("showInNav"), true);
+            isDefault = parseBoolean(formData.get("isDefault"), false);
             sortOrder = parseSortOrder(formData.get("sortOrder") as string | null);
             isActive = parseBoolean(formData.get("isActive"), true);
         } else {
@@ -44,12 +51,18 @@ export async function POST(req: NextRequest) {
                 name?: string;
                 slug?: string;
                 description?: string | null;
+                navLabel?: string | null;
+                showInNav?: boolean;
+                isDefault?: boolean;
                 sortOrder?: number | string | null;
                 isActive?: boolean;
             };
             name = (body?.name ?? "").trim();
             slug = (body?.slug ?? "").trim();
             description = (body?.description ?? "").trim() || null;
+            navLabel = (body?.navLabel ?? "").trim() || null;
+            showInNav = parseBoolean(body?.showInNav, true);
+            isDefault = parseBoolean(body?.isDefault, false);
             sortOrder = parseSortOrder(body?.sortOrder);
             isActive = parseBoolean(body?.isActive, true);
         }
@@ -66,9 +79,14 @@ export async function POST(req: NextRequest) {
             name,
             slug,
             description,
+            navLabel,
+            showInNav,
+            isDefault,
             sortOrder,
             isActive,
         });
+
+        revalidatePath("/", "layout");
 
         return NextResponse.json({ catalogType }, { status: 201 });
     } catch (err) {

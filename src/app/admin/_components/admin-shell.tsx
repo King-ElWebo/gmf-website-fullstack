@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 type NavItem = {
     href: string;
@@ -88,11 +88,39 @@ function NavGroup({
 
 export default function AdminShell({ children }: { children: ReactNode }) {
     const pathname = usePathname();
+    const [mobileNavOpen, setMobileNavOpen] = useState(false);
+
+    useEffect(() => {
+        setMobileNavOpen(false);
+    }, [pathname]);
 
     return (
-        <div data-admin-shell className="admin-app-shell lg:grid lg:grid-cols-[280px_minmax(0,1fr)]">
-            <aside className="admin-sidebar border-b px-4 py-4 lg:sticky lg:top-0 lg:h-screen lg:border-b-0 lg:border-r lg:px-5 lg:py-6">
+        <div data-admin-shell className="admin-app-shell relative lg:grid lg:grid-cols-[280px_minmax(0,1fr)]">
+            {mobileNavOpen && (
+                <button
+                    type="button"
+                    aria-label="Navigation schliessen"
+                    onClick={() => setMobileNavOpen(false)}
+                    className="fixed inset-0 z-40 bg-slate-900/35 backdrop-blur-[1px] lg:hidden"
+                />
+            )}
+
+            <aside
+                className={`admin-sidebar fixed inset-y-0 left-0 z-50 w-[86vw] max-w-[320px] border-r px-4 py-4 transition-transform duration-300 lg:sticky lg:top-0 lg:h-screen lg:w-auto lg:max-w-none lg:translate-x-0 lg:border-r lg:px-5 lg:py-6 ${
+                    mobileNavOpen ? "translate-x-0" : "-translate-x-full"
+                }`}
+            >
                 <div className="admin-surface rounded-[28px] p-4 lg:p-5">
+                    <div className="mb-3 flex justify-end lg:hidden">
+                        <button
+                            type="button"
+                            onClick={() => setMobileNavOpen(false)}
+                            className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700"
+                            aria-label="Navigation schliessen"
+                        >
+                            <CloseIcon />
+                        </button>
+                    </div>
                     <div className="mb-6 flex items-center gap-3 border-b border-slate-200/70 pb-5">
                         <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-500/20">
                             <SparkIcon />
@@ -118,9 +146,19 @@ export default function AdminShell({ children }: { children: ReactNode }) {
             <div className="min-w-0">
                 <header className="sticky top-0 z-30 border-b border-slate-200/70 bg-white/75 backdrop-blur-xl">
                     <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 lg:px-8">
-                        <div>
-                            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">Workspace</p>
-                            <p className="text-sm text-slate-500">Professionelles Admin-Backend fuer Katalog, Inhalte und Prozesse</p>
+                        <div className="flex min-w-0 items-center gap-3">
+                            <button
+                                type="button"
+                                onClick={() => setMobileNavOpen(true)}
+                                className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 shadow-sm lg:hidden"
+                                aria-label="Navigation oeffnen"
+                            >
+                                <MenuBarsIcon />
+                            </button>
+                            <div className="min-w-0">
+                                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">Workspace</p>
+                                <p className="hidden truncate text-sm text-slate-500 sm:block">Professionelles Admin-Backend fuer Katalog, Inhalte und Prozesse</p>
+                            </div>
                         </div>
 
                         <div className="flex items-center gap-3">
@@ -186,4 +224,10 @@ function ScheduleIcon() {
 }
 function SparkIcon() {
     return <SvgWrap><path d="m12 3 1.8 4.2L18 9l-4.2 1.8L12 15l-1.8-4.2L6 9l4.2-1.8z" /><path d="M5 19h.01" /><path d="M19 5h.01" /><path d="M19 19h.01" /></SvgWrap>;
+}
+function MenuBarsIcon() {
+    return <SvgWrap><path d="M4 7h16" /><path d="M4 12h16" /><path d="M4 17h16" /></SvgWrap>;
+}
+function CloseIcon() {
+    return <SvgWrap><path d="m7 7 10 10" /><path d="m17 7-10 10" /></SvgWrap>;
 }

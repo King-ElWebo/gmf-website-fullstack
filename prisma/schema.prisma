@@ -30,6 +30,9 @@ model CatalogType {
   name        String
   slug        String     @unique
   description String?
+  navLabel    String?
+  showInNav   Boolean    @default(true)
+  isDefault   Boolean    @default(false)
   sortOrder   Int        @default(0)
   isActive    Boolean    @default(true)
   createdAt   DateTime   @default(now())

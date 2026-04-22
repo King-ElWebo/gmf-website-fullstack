@@ -37,6 +37,7 @@ export default async function LichtTontechnikPage({ searchParams }: LichtTontech
                     categories={categories}
                     initialCategory={initialCategory}
                     initialCatalogType={catalogTypeSlug ?? 'alle'}
+                    variant="classic"
                 />
             </div>
         </div>

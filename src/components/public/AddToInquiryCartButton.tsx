@@ -45,9 +45,9 @@ export function AddToInquiryCartButton({ item, iconOnly = false, className = "" 
                 onClick={handleClick}
                 disabled={isSoldOut}
                 aria-label={inCart ? `${item.title} erneut zum Anfragekorb hinzufuegen` : `${item.title} zum Anfragekorb hinzufuegen`}
-                className={`inline-flex h-[50px] w-[50px] shrink-0 items-center justify-center rounded-[16px] border border-[#cbd5e1] bg-white text-[#1a3a52] transition-all hover:border-[#1a3a52] hover:bg-[#f7f8fa] focus:outline-none focus:ring-2 focus:ring-[#1a3a52] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+                className={`inline-flex h-[50px] w-[50px] shrink-0 items-center justify-center rounded-full border-b-4 border-yellow-600 bg-yellow-400 text-red-600 font-bold shadow-[0_4px_0_#ca8a04] hover:-translate-y-1 hover:shadow-[0_6px_0_#ca8a04] hover:bg-yellow-300 transition-all focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
             >
-                {justAdded ? <Check size={20} /> : <ShoppingCart size={20} />}
+                {justAdded ? <Check size={24} className="stroke-[3]" /> : <ShoppingCart size={24} className="stroke-[3]" />}
             </button>
         );
     }
@@ -57,10 +57,11 @@ export function AddToInquiryCartButton({ item, iconOnly = false, className = "" 
             type="button"
             onClick={handleClick}
             disabled={isSoldOut}
-            className={`inline-flex h-[50px] shrink-0 items-center justify-center gap-2 rounded-[16px] bg-[#3b82f6] px-6 font-['Nunito'] font-medium text-[16px] text-[#1a3a52] shadow-sm transition-all hover:bg-[#2563eb] focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+            style={{ fontFamily: 'var(--font-fredoka), sans-serif' }}
+            className={`inline-flex h-[54px] shrink-0 items-center justify-center gap-2 rounded-full border-b-4 border-yellow-600 bg-yellow-400 px-6 font-bold text-[18px] text-red-600 shadow-[0_4px_0_#ca8a04] hover:-translate-y-1 hover:shadow-[0_6px_0_#ca8a04] hover:bg-yellow-300 transition-all focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
         >
-            {justAdded ? <Check size={18} /> : <ShoppingCart size={18} />}
-            <span>{isSoldOut ? "Nicht verfuegbar" : justAdded ? "Hinzugefuegt" : inCart ? "Nochmals hinzufuegen" : "In Anfragekorb"}</span>
+            {justAdded ? <Check size={20} className="stroke-[3]" /> : <ShoppingCart size={20} className="stroke-[3]" />}
+            <span>{isSoldOut ? "Nicht verfuegbar" : justAdded ? "Hinzugefuegt!" : inCart ? "Nochmals" : "In Anfragekorb"}</span>
         </button>
     );
 }

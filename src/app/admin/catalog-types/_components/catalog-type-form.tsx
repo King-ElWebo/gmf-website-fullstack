@@ -9,6 +9,9 @@ type CatalogTypeData = {
     name: string;
     slug: string;
     description: string | null;
+    navLabel: string | null;
+    showInNav: boolean;
+    isDefault: boolean;
     sortOrder: number;
     isActive: boolean;
     categoryCount?: number;
@@ -26,6 +29,9 @@ export default function CatalogTypeForm({
     const [slugManual, setSlugManual] = useState(catalogType?.slug ?? "");
     const [slugTouched, setSlugTouched] = useState(mode === "edit");
     const [description, setDescription] = useState(catalogType?.description ?? "");
+    const [navLabel, setNavLabel] = useState(catalogType?.navLabel ?? "");
+    const [showInNav, setShowInNav] = useState(catalogType?.showInNav ?? true);
+    const [isDefault, setIsDefault] = useState(catalogType?.isDefault ?? false);
     const [sortOrder, setSortOrder] = useState(String(catalogType?.sortOrder ?? 0));
     const [isActive, setIsActive] = useState(catalogType?.isActive ?? true);
     const [error, setError] = useState<string | null>(null);
@@ -46,6 +52,9 @@ export default function CatalogTypeForm({
             name,
             slug,
             description,
+            navLabel: navLabel.trim() || null,
+            showInNav,
+            isDefault,
             sortOrder: sortOrder.trim() === "" ? 0 : Number(sortOrder),
             isActive,
         };
@@ -127,6 +136,33 @@ export default function CatalogTypeForm({
                         onChange={(e) => setDescription(e.target.value)}
                         placeholder="Optionale Beschreibung dieses Katalogtyps..."
                     />
+                </div>
+
+                <div className="rounded-md border bg-neutral-50 p-4 space-y-3">
+                    <h3 className="text-sm font-semibold text-neutral-800">Navigation & Frontend</h3>
+
+                    <div className="space-y-1">
+                        <label className="text-sm font-medium">Navbar-Linkname</label>
+                        <input
+                            className="w-full rounded-md border px-3 py-2"
+                            value={navLabel}
+                            onChange={(e) => setNavLabel(e.target.value)}
+                            placeholder={name || "z.B. Licht & Ton"}
+                        />
+                        <p className="text-xs text-neutral-600">
+                            Wird als Linktext in der Navigation angezeigt. Wenn leer, wird der Name verwendet.
+                        </p>
+                    </div>
+
+                    <label className="flex items-center gap-2 text-sm">
+                        <input type="checkbox" checked={showInNav} onChange={(e) => setShowInNav(e.target.checked)} />
+                        In der Navigation anzeigen
+                    </label>
+
+                    <label className="flex items-center gap-2 text-sm">
+                        <input type="checkbox" checked={isDefault} onChange={(e) => setIsDefault(e.target.checked)} />
+                        Standard-Produktseite (Produkte-Hauptseite zeigt nur diesen Typ)
+                    </label>
                 </div>
 
                 <div className="space-y-1">

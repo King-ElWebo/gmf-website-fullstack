@@ -52,6 +52,9 @@ async function main() {
     update: {
       name: "Eventbedarf & Module",
       description: "Alle unsere Mietartikel von Hüpfburgen bis zu Partyzelten.",
+      navLabel: "Produkte",
+      showInNav: true,
+      isDefault: true,
       isActive: true,
       sortOrder: 1,
     },
@@ -59,32 +62,61 @@ async function main() {
       name: "Eventbedarf & Module",
       slug: "eventbedarf",
       description: "Alle unsere Mietartikel von Hüpfburgen bis zu Partyzelten.",
+      navLabel: "Produkte",
+      showInNav: true,
+      isDefault: true,
       isActive: true,
       sortOrder: 1,
+    },
+  });
+
+  const lichtTonType = await db.catalogType.upsert({
+    where: { slug: "licht-tontechnik" },
+    update: {
+      name: "Licht- & Tontechnik",
+      description: "Professionelle Licht- und Tontechnik zum Mieten für Ihre Veranstaltung.",
+      navLabel: "Licht & Ton",
+      showInNav: true,
+      isDefault: false,
+      isActive: true,
+      sortOrder: 2,
+    },
+    create: {
+      name: "Licht- & Tontechnik",
+      slug: "licht-tontechnik",
+      description: "Professionelle Licht- und Tontechnik zum Mieten für Ihre Veranstaltung.",
+      navLabel: "Licht & Ton",
+      showInNav: true,
+      isDefault: false,
+      isActive: true,
+      sortOrder: 2,
     },
   });
 
   // 3. Categories
   console.log("Seeding Categories...");
   const categoriesData = [
-    { name: "Hüpfburgen", slug: "huepfburgen" },
-    { name: "Audio", slug: "audio" },
-    { name: "Lichttechnik", slug: "lichttechnik" },
-    { name: "Partyzelte", slug: "partyzelte" },
-    { name: "Möbel", slug: "moebel" },
-    { name: "Deko", slug: "deko" },
-    { name: "Catering Zubehör", slug: "catering-zubehoer" },
-    { name: "Transport / Anhänger", slug: "transport-anhaenger" },
+    // Eventbedarf categories
+    { name: "Hüpfburgen", slug: "huepfburgen", typeId: catalogType.id },
+    { name: "Partyzelte", slug: "partyzelte", typeId: catalogType.id },
+    { name: "Möbel", slug: "moebel", typeId: catalogType.id },
+    { name: "Deko", slug: "deko", typeId: catalogType.id },
+    { name: "Catering Zubehör", slug: "catering-zubehoer", typeId: catalogType.id },
+    { name: "Transport / Anhänger", slug: "transport-anhaenger", typeId: catalogType.id },
+    // Licht- & Tontechnik categories
+    { name: "Audio", slug: "audio", typeId: lichtTonType.id },
+    { name: "Lichttechnik", slug: "lichttechnik", typeId: lichtTonType.id },
   ];
 
   const categoryMap = new Map<string, string>();
 
   let catSortOrder = 1;
   for (const c of categoriesData) {
+    const { typeId, ...rest } = c;
     const category = await db.category.upsert({
       where: { slug: c.slug },
-      update: { name: c.name, catalogTypeId: catalogType.id, sortOrder: catSortOrder },
-      create: { ...c, catalogTypeId: catalogType.id, sortOrder: catSortOrder },
+      update: { name: c.name, catalogTypeId: typeId, sortOrder: catSortOrder },
+      create: { ...rest, catalogTypeId: typeId, sortOrder: catSortOrder },
     });
     categoryMap.set(c.slug, category.id);
     catSortOrder++;

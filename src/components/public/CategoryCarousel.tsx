@@ -96,22 +96,22 @@ export function CategoryCarousel({ categories }: { categories: CategoryCard[] })
 
     if (categoryCount <= itemsPerView) {
         return (
-            <section className="py-16" style={{ backgroundColor: '#FFFfff' }}>
+            <section className="py-14 sm:py-20 relative bg-white">
                 <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-12">
-                        <h2 className="font-['Nunito'] font-semibold text-[24px] md:text-[32px] text-[#1a202c] mb-4">
+                    <div className="text-center mb-8 sm:mb-12">
+                        <h2 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[clamp(1.85rem,8vw,2.6rem)] text-blue-600 mb-3 sm:mb-4 drop-shadow-sm">
                             Unsere Kategorien
                         </h2>
-                        <p className="font-['Nunito'] text-[16px] text-[#64748b]">
+                        <p className="font-['Nunito'] text-[15px] sm:text-[16px] text-[#64748b]">
                             Entdecken Sie unsere große Auswahl an Eventmodulen für Ihre Veranstaltung.
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8">
                         {categories.map((category) => (
                             <div
                                 key={category.id}
-                                className="h-full bg-white rounded-[16px] border border-[#cbd5e1] shadow-sm hover:shadow-xl hover:border-[#94a3b8] transition-all duration-300 transform hover:-translate-y-1 overflow-hidden flex flex-col group"
+                                className="h-full bg-white rounded-[32px] border-4 border-blue-200 shadow-[6px_6px_0_#bfdbfe] hover:shadow-[8px_8px_0_#60a5fa] hover:border-blue-400 transition-all duration-300 transform hover:-translate-y-2 overflow-hidden flex flex-col group"
                             >
                                 <div className="relative w-full shrink-0 bg-[#fef9c3]" style={{ paddingBottom: '62%' }}>
                                     {category.imageUrl ? (
@@ -131,24 +131,24 @@ export function CategoryCarousel({ categories }: { categories: CategoryCard[] })
                                     )}
                                 </div>
 
-                                <div className="p-6 flex flex-col flex-1">
-                                    <div className="mb-3">
-                                        <span className="inline-flex rounded-full bg-[#f7f8fa] px-3 py-1 text-[12px] font-medium text-[#1a3a52]">
+                                <div className="p-5 sm:p-8 flex flex-col flex-1 bg-[#f8fafc]">
+                                    <div className="mb-4 text-center">
+                                        <span className="inline-flex rounded-full bg-yellow-300 px-4 py-1 text-[13px] font-bold text-red-600 shadow-sm border-2 border-yellow-400 uppercase tracking-wide">
                                             {category.catalogTypeName}
                                         </span>
                                     </div>
-                                    <h3 className="font-['Nunito'] font-semibold text-[18px] text-[#1a202c] mb-2">
+                                    <h3 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[20px] sm:text-[24px] text-[#1e293b] mb-2 sm:mb-3 text-center">
                                         {category.title}
                                     </h3>
-                                    <p className="font-['Nunito'] text-[14px] text-[#64748b] leading-[22px] flex-1 mb-6">
+                                    <p className="font-['Nunito'] text-[14px] sm:text-[15px] text-[#64748b] leading-[22px] flex-1 mb-6 sm:mb-8 text-center">
                                         {category.description?.trim() || 'Produkte und Eventmodule aus dieser Kategorie ansehen.'}
                                     </p>
                                     <Link
                                         href={`/produkte?bereich=${encodeURIComponent(category.catalogTypeSlug)}&kategorie=${encodeURIComponent(category.slug)}`}
                                         className="block shrink-0"
                                     >
-                                        <span className="flex items-center justify-center w-full h-[50px] rounded-[16px] bg-[#1a3a52] text-white font-['Nunito'] font-medium text-[16px] transition-all hover:bg-[#0f2434] focus:ring-2 focus:ring-[#1a3a52] focus:outline-none">
-                                            Produkte ansehen
+                                        <span style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="flex items-center justify-center w-full h-[48px] sm:h-[54px] rounded-full bg-red-500 border-b-4 border-red-700 text-white text-[16px] sm:text-[18px] transition-all hover:bg-red-400 hover:border-red-600 focus:outline-none">
+                                            Entdecken! 🚀
                                         </span>
                                     </Link>
                                 </div>
@@ -164,34 +164,33 @@ export function CategoryCarousel({ categories }: { categories: CategoryCard[] })
     const translatePct = -(currentIndex * (100 / total));
 
     return (
-        <section className="py-16" style={{ backgroundColor: '#FFFfff' }}>
+        <section className="py-14 sm:py-20 relative bg-white">
             <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex justify-between items-center mb-12">
-                    <div className="w-[83px] shrink-0" />
-                    <div className="text-center">
-                        <h2 className="font-['Nunito'] font-semibold text-[24px] md:text-[32px] text-[#1a202c] mb-4">
+                <div className="mb-8 sm:mb-12 flex flex-col gap-4 sm:gap-6 md:flex-row md:items-center md:justify-between">
+                    <div className="text-center md:text-left">
+                        <h2 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[clamp(1.85rem,8vw,2.6rem)] text-blue-600 mb-3 sm:mb-4 drop-shadow-sm">
                             Unsere Kategorien
                         </h2>
-                        <p className="font-['Nunito'] text-[16px] text-[#64748b]">
+                        <p className="font-['Nunito'] text-[15px] sm:text-[16px] text-[#64748b]">
                             Entdecken Sie unsere große Auswahl an Eventmodulen für Ihre Veranstaltung.
                         </p>
                     </div>
-                    <div className="flex gap-3 shrink-0">
+                    <div className="flex gap-3 sm:gap-4 shrink-0 self-center md:self-auto">
                         <button
                             onClick={() => navigate(-1)}
-                            className="w-10 h-10 rounded-full border border-[#cbd5e1] bg-[#FFEC8B] flex items-center justify-center text-[#1a202c] hover:bg-[#1a3a52] hover:text-white hover:border-[#1a3a52] transition-colors disabled:opacity-50"
+                            className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-4 border-yellow-400 bg-yellow-300 flex items-center justify-center text-red-600 hover:bg-yellow-400 hover:scale-110 transition-transform disabled:opacity-30 shadow-[0_4px_0_#facc15]"
                             aria-label="Vorherige Kategorie"
                             disabled={categoryCount <= 1}
                         >
-                            <ChevronLeft size={20} />
+                            <ChevronLeft size={20} className="stroke-[3]" />
                         </button>
                         <button
                             onClick={() => navigate(1)}
-                            className="w-10 h-10 rounded-full border border-[#cbd5e1] bg-[#FFEC8B] flex items-center justify-center text-[#1a202c] hover:bg-[#1a3a52] hover:text-white hover:border-[#1a3a52] transition-colors disabled:opacity-50"
+                            className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-4 border-yellow-400 bg-yellow-300 flex items-center justify-center text-red-600 hover:bg-yellow-400 hover:scale-110 transition-transform disabled:opacity-30 shadow-[0_4px_0_#facc15]"
                             aria-label="Nächste Kategorie"
                             disabled={categoryCount <= 1}
                         >
-                            <ChevronRight size={20} />
+                            <ChevronRight size={20} className="stroke-[3]" />
                         </button>
                     </div>
                 </div>
@@ -212,9 +211,9 @@ export function CategoryCarousel({ categories }: { categories: CategoryCard[] })
                             <div
                                 key={`${category.id}-${idx}`}
                                 style={{ width: `${100 / total}%` }}
-                                className="px-3"
+                                className="px-2 sm:px-3"
                             >
-                                <div className="h-full bg-white rounded-[16px] border border-[#cbd5e1] shadow-sm hover:shadow-xl hover:border-[#94a3b8] transition-all duration-300 transform hover:-translate-y-1 overflow-hidden flex flex-col group">
+                                <div className="h-full bg-white rounded-[32px] border-4 border-blue-200 shadow-[6px_6px_0_#bfdbfe] hover:shadow-[8px_8px_0_#60a5fa] hover:border-blue-400 transition-all duration-300 transform hover:-translate-y-2 overflow-hidden flex flex-col group mx-1 sm:mx-2">
                                     <div className="relative w-full shrink-0 bg-[#fef9c3]" style={{ paddingBottom: '62%' }}>
                                         {category.imageUrl ? (
                                             <>
@@ -233,24 +232,24 @@ export function CategoryCarousel({ categories }: { categories: CategoryCard[] })
                                         )}
                                     </div>
 
-                                    <div className="p-6 flex flex-col flex-1">
-                                        <div className="mb-3">
-                                            <span className="inline-flex rounded-full bg-[#f7f8fa] px-3 py-1 text-[12px] font-medium text-[#1a3a52]">
+                                    <div className="p-5 sm:p-8 flex flex-col flex-1 bg-[#f8fafc]">
+                                        <div className="mb-4 text-center">
+                                            <span className="inline-flex rounded-full bg-yellow-300 px-4 py-1 text-[13px] font-bold text-red-600 shadow-sm border-2 border-yellow-400 uppercase tracking-wide">
                                                 {category.catalogTypeName}
                                             </span>
                                         </div>
-                                        <h3 className="font-['Nunito'] font-semibold text-[18px] text-[#1a202c] mb-2">
+                                        <h3 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[20px] sm:text-[24px] text-[#1e293b] mb-2 sm:mb-3 text-center">
                                             {category.title}
                                         </h3>
-                                        <p className="font-['Nunito'] text-[14px] text-[#64748b] leading-[22px] flex-1 mb-6">
+                                        <p className="font-['Nunito'] text-[14px] sm:text-[15px] text-[#64748b] leading-[22px] flex-1 mb-6 sm:mb-8 text-center">
                                             {category.description?.trim() || 'Produkte und Eventmodule aus dieser Kategorie ansehen.'}
                                         </p>
                                         <Link
                                             href={`/produkte?bereich=${encodeURIComponent(category.catalogTypeSlug)}&kategorie=${encodeURIComponent(category.slug)}`}
                                             className="block shrink-0"
                                         >
-                                            <span className="flex items-center justify-center w-full h-[50px] rounded-[16px] bg-[#1a3a52] text-white font-['Nunito'] font-medium text-[16px] transition-all hover:bg-[#0f2434] focus:ring-2 focus:ring-[#1a3a52] focus:outline-none">
-                                                Produkte ansehen
+                                            <span style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="flex items-center justify-center w-full h-[48px] sm:h-[54px] rounded-full bg-red-500 border-b-4 border-red-700 text-white text-[16px] sm:text-[18px] transition-all hover:bg-red-400 hover:border-red-600 focus:outline-none">
+                                                Entdecken! 🚀
                                             </span>
                                         </Link>
                                     </div>
@@ -261,7 +260,7 @@ export function CategoryCarousel({ categories }: { categories: CategoryCard[] })
                 </div>
 
                 {categoryCount > 1 && (
-                    <div className="flex justify-center gap-[6px] mt-8">
+                    <div className="flex justify-center gap-[6px] mt-6 sm:mt-8">
                         {categories.map((_, idx) => (
                             <button
                                 key={idx}
@@ -271,7 +270,7 @@ export function CategoryCarousel({ categories }: { categories: CategoryCard[] })
                                     isJumping.current = false;
                                 }}
                                 aria-label={`Kategorie ${idx + 1}`}
-                                className={`rounded-full transition-all duration-300 ${activeDot === idx ? 'w-6 h-2 bg-[#1a3a52]' : 'w-2 h-2 bg-[#cbd5e1] hover:bg-[#94a3b8]'}`}
+                                className={`rounded-full transition-all duration-300 border-2 border-white shadow-sm ${activeDot === idx ? 'w-8 h-4 bg-red-500' : 'w-4 h-4 bg-blue-300 hover:bg-blue-400'}`}
                             />
                         ))}
                     </div>

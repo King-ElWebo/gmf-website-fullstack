@@ -9,6 +9,7 @@ const pool = new Pool({ connectionString });
 const adapter = new PrismaPg(pool);
 const expectedScalarFieldsByModel: Record<string, string[]> = {
   Category: ["sortOrder", "catalogTypeId", "description", "imageUrl", "imageKey"],
+  CatalogType: ["navLabel", "showInNav", "isDefault"],
   Item: [
     "sortOrder",
     "categoryId",

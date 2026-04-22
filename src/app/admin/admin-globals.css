@@ -242,3 +242,24 @@ textarea {
   background: rgba(148, 163, 184, 0.16);
   color: #475569;
 }
+
+@media (max-width: 1024px) {
+  .admin-page-title {
+    font-size: 1.5rem;
+    line-height: 1.9rem;
+  }
+
+  .admin-page-description {
+    max-width: 100%;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-action-primary,
+  .admin-action-secondary {
+    width: 100%;
+    min-height: 44px;
+    justify-content: center;
+  }
+}

@@ -20,7 +20,7 @@ export default function AdminPageHeader({
             </div>
 
             {action ? (
-                <Link href={action.href} className="admin-action-primary">
+                <Link href={action.href} className="admin-action-primary w-full sm:w-auto">
                     <span className="text-base leading-none">+</span>
                     <span>{action.label}</span>
                 </Link>
