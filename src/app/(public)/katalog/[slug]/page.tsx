@@ -32,6 +32,12 @@ export default async function KatalogPage({ params, searchParams }: KatalogPageP
     // Use navLabel or name as the page title
     const pageTitle = catalogType.name;
     const pageDescription = catalogType.description;
+    const normalizedSlug = slug.toLowerCase();
+    const isLightingAudioCatalog =
+        (normalizedSlug.includes('licht') && normalizedSlug.includes('ton')) ||
+        (normalizedSlug.includes('licht') && normalizedSlug.includes('audio')) ||
+        (normalizedSlug.includes('licht') && normalizedSlug.includes('sound'));
+    const filterVariant = isLightingAudioCatalog ? 'classic' : 'playful';
 
     return (
         <div className="min-h-screen bg-[#ffffff]">
@@ -52,6 +58,7 @@ export default async function KatalogPage({ params, searchParams }: KatalogPageP
                     categories={categories}
                     initialCategory={initialCategory}
                     initialCatalogType={slug}
+                    variant={filterVariant}
                 />
             </div>
         </div>

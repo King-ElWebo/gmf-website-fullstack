@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
 
 export type ItemInput = {
@@ -35,6 +36,32 @@ export type ItemInput = {
     categoryId: string;
 };
 
+export type ItemListSort =
+    | "manual"
+    | "title_asc"
+    | "title_desc"
+    | "category_asc"
+    | "published_first"
+    | "newest";
+
+const ITEM_LIST_SORT_VALUES: ItemListSort[] = [
+    "manual",
+    "title_asc",
+    "title_desc",
+    "category_asc",
+    "published_first",
+    "newest",
+];
+
+export function parseItemListSort(value?: string): ItemListSort {
+    if (!value) return "manual";
+    if (ITEM_LIST_SORT_VALUES.includes(value as ItemListSort)) {
+        return value as ItemListSort;
+    }
+
+    return "manual";
+}
+
 function buildItemPersistenceData(data: ItemInput) {
     const syncedPriceCents =
         data.priceType === "ON_REQUEST" ? null : data.basePriceCents ?? data.priceCents ?? null;
@@ -50,9 +77,30 @@ function buildItemPersistenceData(data: ItemInput) {
     };
 }
 
-export async function listItems() {
+function getItemOrderBy(sort: ItemListSort): Prisma.ItemOrderByWithRelationInput[] {
+    switch (sort) {
+        case "title_asc":
+            return [{ title: "asc" }, { createdAt: "desc" }];
+        case "title_desc":
+            return [{ title: "desc" }, { createdAt: "desc" }];
+        case "category_asc":
+            return [{ category: { name: "asc" } }, { title: "asc" }];
+        case "published_first":
+            return [{ published: "desc" }, { title: "asc" }];
+        case "newest":
+            return [{ createdAt: "desc" }, { title: "asc" }];
+        case "manual":
+        default:
+            return [{ sortOrder: "asc" }, { title: "asc" }];
+    }
+}
+
+export async function listItems(options: { sort?: ItemListSort; categoryId?: string } = {}) {
+    const sort = options.sort ?? "manual";
+
     return db.item.findMany({
-        orderBy: [{ sortOrder: "asc" }, { title: "asc" }],
+        where: options.categoryId ? { categoryId: options.categoryId } : undefined,
+        orderBy: getItemOrderBy(sort),
         include: { category: { include: { catalogType: true } } },
     });
 }

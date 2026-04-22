@@ -92,6 +92,7 @@ export function ProductCard({
                         </Link>
                         <AddToInquiryCartButton
                             iconOnly
+                            variant="classic"
                             item={{
                                 id,
                                 slug,
@@ -158,6 +159,7 @@ export function ProductCard({
                     </Link>
                     <AddToInquiryCartButton
                         iconOnly
+                        variant="playful"
                         item={{
                             id,
                             slug,

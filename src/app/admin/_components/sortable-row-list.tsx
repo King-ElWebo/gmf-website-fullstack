@@ -144,12 +144,14 @@ export default function SortableRowList<TItem extends SortableItemBase>({
     emptyText,
     renderActions,
     onReorder,
+    reorderEnabled = true,
 }: {
     items: TItem[];
     columns: ColumnDefinition<TItem>[];
     emptyText: string;
     renderActions?: (item: TItem) => React.ReactNode;
     onReorder: (orderedIds: string[]) => Promise<TItem[]>;
+    reorderEnabled?: boolean;
 }) {
     const [rows, setRows] = useState(items);
     const [mounted, setMounted] = useState(false);
@@ -168,6 +170,8 @@ export default function SortableRowList<TItem extends SortableItemBase>({
     const rowIds = useMemo(() => rows.map((item) => item.id), [rows]);
 
     async function handleDragEnd(event: DragEndEvent) {
+        if (!reorderEnabled) return;
+
         const { active, over } = event;
         if (!over || active.id === over.id) return;
 
@@ -202,8 +206,8 @@ export default function SortableRowList<TItem extends SortableItemBase>({
         <div className="space-y-3">
             <div className="admin-surface rounded-[22px] px-4 py-3">
                 <div className="flex items-center justify-between text-xs font-medium text-slate-500">
-                    <span>Per Drag-and-drop sortierbar</span>
-                    {saving && <span className="admin-badge admin-badge-blue">Speichert...</span>}
+                    <span>{reorderEnabled ? "Per Drag-and-drop sortierbar" : "Sortieransicht aktiv (Drag-and-drop nur bei manueller Reihenfolge ohne aktive Filter)"}</span>
+                    {reorderEnabled && saving && <span className="admin-badge admin-badge-blue">Speichert...</span>}
                 </div>
             </div>
             {error && <p className="text-sm text-red-600">{error}</p>}
@@ -217,7 +221,7 @@ export default function SortableRowList<TItem extends SortableItemBase>({
                     ))}
                     <div>Actions</div>
                 </div>
-                {!mounted ? (
+                {!mounted || !reorderEnabled ? (
                     <div>
                         {rows.map((item) => (
                             <StaticRow key={item.id} item={item} columns={columns} renderActions={renderActions} />

@@ -76,7 +76,11 @@ export async function POST(
         return NextResponse.json({ images }, { status: 201 });
     } catch (e) {
         console.error("[images POST] save/db error:", e);
-        return NextResponse.json({ error: "Upload failed" }, { status: 500 });
+        const message = e instanceof Error ? e.message : "Upload failed";
+        return NextResponse.json(
+            { error: process.env.NODE_ENV === "development" ? message : "Upload failed" },
+            { status: 500 }
+        );
     }
 }
 

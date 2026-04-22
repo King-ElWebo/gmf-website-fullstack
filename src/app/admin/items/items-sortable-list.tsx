@@ -20,10 +20,17 @@ type ItemRow = {
     } | null;
 };
 
-export default function ItemsSortableList({ initialItems }: { initialItems: ItemRow[] }) {
+export default function ItemsSortableList({
+    initialItems,
+    reorderEnabled = true,
+}: {
+    initialItems: ItemRow[];
+    reorderEnabled?: boolean;
+}) {
     return (
         <SortableRowList
             items={initialItems}
+            reorderEnabled={reorderEnabled}
             emptyText="No items yet."
             columns={[
                 {

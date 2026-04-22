@@ -4,6 +4,17 @@ import { type ItemImage as ImageRow } from "@prisma/client";
 
 export type { ImageRow };
 
+function itemImageSupportsTypeField() {
+    const runtimeClient = db as unknown as {
+        _runtimeDataModel?: {
+            models?: Record<string, { fields?: Array<{ name?: string }> }>;
+        };
+    };
+
+    const fields = runtimeClient._runtimeDataModel?.models?.ItemImage?.fields ?? [];
+    return fields.some((field) => field.name === "type");
+}
+
 /** Return all images for an item, ordered by sortOrder ascending. */
 export async function listByItemId(itemId: string): Promise<ImageRow[]> {
     return db.itemImage.findMany({
@@ -25,6 +36,7 @@ export async function addImages(
     });
 
     const baseOrder = (last?.sortOrder ?? -1) + 1;
+    const supportsTypeField = itemImageSupportsTypeField();
 
     await db.itemImage.createMany({
         data: images.map((img, i) => ({
@@ -33,7 +45,7 @@ export async function addImages(
             key: img.key,
             alt: img.alt ?? null,
             sortOrder: baseOrder + i,
-            type: img.type ?? "IMAGE",
+            ...(supportsTypeField && img.type ? { type: img.type } : {}),
         })),
     });
 
