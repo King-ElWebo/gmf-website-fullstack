@@ -167,3 +167,15 @@ enum ItemPriceType {
   ON_REQUEST
   FROM_PRICE
 }
+
+model Faq {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String
+  published Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([sortOrder])
+}
