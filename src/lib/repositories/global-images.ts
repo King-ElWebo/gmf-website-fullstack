@@ -136,7 +136,8 @@ export async function createGlobalImage(
             "alt",
             "area",
             "published",
-            "sortOrder"
+            "sortOrder",
+            "updatedAt"
         )
         VALUES (
             ${id},
@@ -145,7 +146,8 @@ export async function createGlobalImage(
             ${alt ?? null},
             ${area},
             ${published},
-            ${nextSortOrder}
+            ${nextSortOrder},
+            NOW()
         )
         RETURNING
             "id",

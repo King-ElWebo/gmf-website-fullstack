@@ -48,41 +48,60 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Ein oder mehrere Produkte sind nicht mehr verfügbar. Bitte Anfragekorb aktualisieren.' }, { status: 400 });
     }
 
+
+    const serverItems = parsed.value.items.map((item) => {
+      const catalogItem = catalogItemById.get(item.resourceId)!;
+      const basePriceCents = catalogItem.basePriceCents ?? catalogItem.priceCents ?? null;
+      const displayPrice = getItemPriceDisplay({
+        priceType: catalogItem.priceType,
+        basePriceCents,
+        priceLabel: catalogItem.priceLabel,
+      });
+      const serverPricing = calculateInquiryCartItemPrice(
+        {
+          priceType: catalogItem.priceType,
+          basePriceCents,
+          quantity: item.quantity,
+        },
+        parsed.value.startDate,
+        parsed.value.endDate
+      );
+
+      return {
+        resourceId: item.resourceId,
+        quantity: item.quantity,
+        resourceTitle: catalogItem.title,
+        priceType: catalogItem.priceType,
+        basePriceCents,
+        priceLabel: catalogItem.priceLabel,
+        displayPrice,
+        pricingMode: (serverPricing.isAutoCalculated ? "auto" : "individual") as "auto" | "individual",
+        pricingReason: serverPricing.reason,
+        bookingDays: serverPricing.bookingDays,
+        calculatedUnitPriceCents: serverPricing.calculatedUnitPriceCents,
+        calculatedTotalPriceCents: serverPricing.calculatedTotalPriceCents,
+      };
+    });
+
+    let totalPriceCents = 0;
+    let hasIndividualPricing = false;
+
+    for (const item of serverItems) {
+      if (item.calculatedTotalPriceCents != null) {
+        totalPriceCents += item.calculatedTotalPriceCents;
+      }
+      if (item.pricingMode === "individual" || item.priceType === "ON_REQUEST") {
+        hasIndividualPricing = true;
+      }
+    }
+
     const booking = await publicUseCases.createBookingRequest({
       customer: parsed.value.customer,
-      items: parsed.value.items.map((item) => {
-        const catalogItem = catalogItemById.get(item.resourceId)!;
-        const basePriceCents = catalogItem.basePriceCents ?? catalogItem.priceCents ?? null;
-        const displayPrice = getItemPriceDisplay({
-          priceType: catalogItem.priceType,
-          basePriceCents,
-          priceLabel: catalogItem.priceLabel,
-        });
-        const serverPricing = calculateInquiryCartItemPrice(
-          {
-            priceType: catalogItem.priceType,
-            basePriceCents,
-            quantity: item.quantity,
-          },
-          parsed.value.startDate,
-          parsed.value.endDate
-        );
-
-        return {
-          resourceId: item.resourceId,
-          quantity: item.quantity,
-          resourceTitle: catalogItem.title,
-          priceType: catalogItem.priceType,
-          basePriceCents,
-          priceLabel: catalogItem.priceLabel,
-          displayPrice,
-          pricingMode: serverPricing.isAutoCalculated ? "auto" : "individual",
-          pricingReason: serverPricing.reason,
-          bookingDays: serverPricing.bookingDays,
-          calculatedUnitPriceCents: serverPricing.calculatedUnitPriceCents,
-          calculatedTotalPriceCents: serverPricing.calculatedTotalPriceCents,
-        };
-      }),
+      billingAddressSameAsDelivery: parsed.value.billingAddressSameAsDelivery,
+      billingAddress: parsed.value.billingAddress,
+      totalPriceCents: totalPriceCents > 0 ? totalPriceCents : null,
+      hasIndividualPricing,
+      items: serverItems,
       startDate: new Date(`${parsed.value.startDate}T00:00:00.000Z`),
       endDate: new Date(`${parsed.value.endDate}T00:00:00.000Z`),
       deliveryType: parsed.value.deliveryType,
@@ -108,7 +127,7 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json(
-      { error: "Die Anfrage konnte aktuell nicht gespeichert werden. Bitte versuchen Sie es erneut." },
+      { error: "Die Anfrage konnte aktuell nicht gespeichert werden. Bitte versuchen Sie es erneut.", detail: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }

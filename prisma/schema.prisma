@@ -4,7 +4,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model Category {
@@ -79,6 +78,7 @@ model Item {
   accessRequirements      String?
   trackInventory          Boolean               @default(true)
   totalStock              Int                   @default(1)
+  bookingItems            BookingItem[]
   calendarBlockerItems    CalendarBlockerItem[]
   category                Category              @relation(fields: [categoryId], references: [id])
   images                  ItemImage[]
@@ -151,6 +151,21 @@ model CalendarBlocker {
   @@index([status])
 }
 
+model GlobalImage {
+  id        String   @id @default(cuid())
+  url       String
+  key       String
+  alt       String?
+  area      String   @default("OTHER")
+  published Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([sortOrder])
+  @@index([area, published])
+}
+
 model CalendarBlockerItem {
   id        String          @id @default(cuid())
   blockerId String
@@ -178,4 +193,89 @@ model Faq {
   updatedAt DateTime @updatedAt
 
   @@index([sortOrder])
+}
+
+model Booking {
+  id                           String              @id @default(cuid())
+  referenceCode                String              @unique
+  status                       String              @default("requested")
+  startDate                    DateTime
+  endDate                      DateTime
+  deliveryType                 String
+  customerMessage              String?
+  billingAddressSameAsDelivery Boolean             @default(true)
+  billingAddress               Json?
+  totalPriceCents              Int?
+  hasIndividualPricing         Boolean             @default(false)
+  createdAt                    DateTime            @default(now())
+  updatedAt                    DateTime            @updatedAt
+  customer                     BookingCustomer?
+  items                        BookingItem[]
+  notes                        InternalNote[]
+  calendarSync                 CalendarSyncRecord?
+
+  @@index([status])
+  @@index([startDate, endDate])
+}
+
+model BookingCustomer {
+  id           String  @id @default(cuid())
+  bookingId    String  @unique
+  firstName    String
+  lastName     String
+  email        String
+  phone        String?
+  addressLine1 String?
+  zip          String?
+  city         String?
+  booking      Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@index([email])
+}
+
+model BookingItem {
+  id                         String   @id @default(cuid())
+  bookingId                  String
+  itemId                     String
+  quantity                   Int      @default(1)
+  resourceTitle              String?
+  priceType                  String?
+  basePriceCents             Int?
+  priceLabel                 String?
+  displayPrice               String?
+  pricingMode                String?
+  pricingReason              String?
+  bookingDays                Int?
+  calculatedUnitPriceCents   Int?
+  calculatedTotalPriceCents  Int?
+  booking                    Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  item                       Item     @relation(fields: [itemId], references: [id])
+
+  @@index([bookingId])
+  @@index([itemId])
+}
+
+model InternalNote {
+  id        String   @id @default(cuid())
+  bookingId String
+  authorId  String
+  content   String
+  createdAt DateTime @default(now())
+  booking   Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@index([bookingId])
+}
+
+model CalendarSyncRecord {
+  id              String    @id @default(cuid())
+  bookingId       String    @unique
+  externalEventId String?
+  syncStatus      String    @default("pending")
+  lastSyncedAt    DateTime?
+  syncError       String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  booking         Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@index([syncStatus])
 }

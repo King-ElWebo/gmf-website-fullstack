@@ -21,9 +21,12 @@ export function HeaderClient({ navCatalogTypes }: HeaderClientProps) {
   const pathname = usePathname();
   const { itemCount, hasHydrated } = useInquiryCart();
 
-  useEffect(() => {
+  const [prevPathname, setPrevPathname] = useState(pathname);
+
+  if (pathname !== prevPathname) {
+    setPrevPathname(pathname);
     setMobileMenuOpen(false);
-  }, [pathname]);
+  }
 
   useEffect(() => {
     if (!mobileMenuOpen) return;
@@ -54,29 +57,37 @@ export function HeaderClient({ navCatalogTypes }: HeaderClientProps) {
 
   const navLinks = [...staticLinksBefore, ...catalogLinks, ...staticLinksAfter];
 
+  const navColors = [
+    { active: "bg-[#f13c20] border-2 border-black text-white shadow-[3px_3px_0_#000]", hover: "hover:border-black hover:bg-[#f13c20]/10 hover:text-black hover:shadow-[3px_3px_0_#000]" },
+    { active: "bg-[#fcd01b] border-2 border-black text-black shadow-[3px_3px_0_#000]", hover: "hover:border-black hover:bg-[#fcd01b]/20 hover:text-black hover:shadow-[3px_3px_0_#000]" },
+    { active: "bg-[#066bb7] border-2 border-black text-white shadow-[3px_3px_0_#000]", hover: "hover:border-black hover:bg-[#066bb7]/10 hover:text-black hover:shadow-[3px_3px_0_#000]" },
+    { active: "bg-[#619a45] border-2 border-black text-white shadow-[3px_3px_0_#000]", hover: "hover:border-black hover:bg-[#619a45]/10 hover:text-black hover:shadow-[3px_3px_0_#000]" },
+    { active: "bg-[#a43292] border-2 border-black text-white shadow-[3px_3px_0_#000]", hover: "hover:border-black hover:bg-[#a43292]/10 hover:text-black hover:shadow-[3px_3px_0_#000]" },
+  ];
+
   return (
-    <header className="sticky top-0 z-50 border-b border-[#dbe3ee] bg-white/95 shadow-[0_1px_0_#eef2f7] backdrop-blur">
+    <header className="sticky top-0 z-50 border-b-4 border-black bg-[#e7ff19] shadow-[0_4px_0_rgba(0,0,0,0.1)]">
       <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-[72px] sm:h-[80px]">
           {/* Logo */}
           <Link href="/" className="flex items-center">
-            <h1 className="font-['Nunito'] font-semibold text-[clamp(1.05rem,4.8vw,1.5rem)] text-[#1a3a52]">
-              Event-Vermietung
-            </h1>
+            <img src="/Logo.png" alt="Logo" className="h-[70px]" />
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-5 xl:gap-7">
-            {navLinks.map(link => {
+          <nav className="hidden lg:flex items-center gap-4 xl:gap-6">
+            {navLinks.map((link, index) => {
               const isActive = pathname === link.href || (link.href !== '/' && pathname?.startsWith(link.href));
+              const color = navColors[index % navColors.length];
               const linkClassName = isActive
-                ? "font-semibold text-[#16324a] bg-[#e8f1ff] border border-[#bfd3f4]"
-                : "font-medium text-[#40566f] border border-transparent hover:text-[#16324a] hover:bg-[#f5f8fc] hover:border-[#d8e2ef]";
+                ? `font-bold ${color.active}`
+                : `font-bold text-[#1a202c] border-2 border-transparent ${color.hover}`;
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`font-['Nunito'] rounded-full px-3.5 py-2 text-[16px] transition-colors ${linkClassName}`}
+                  style={{ fontFamily: 'var(--font-fredoka), sans-serif' }}
+                  className={`rounded-full px-4 py-2 text-[17px] transition-all duration-200 ${linkClassName}`}
                 >
                   {link.label}
                 </Link>
@@ -84,12 +95,12 @@ export function HeaderClient({ navCatalogTypes }: HeaderClientProps) {
             })}
             <Link
               href="/anfragekorb"
-              className="relative inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#bfd3f4] bg-[#f7fbff] text-[#1a3a52] transition-colors hover:bg-[#e8f1ff]"
+              className="relative inline-flex h-[46px] w-[46px] items-center justify-center rounded-full border-2 border-black bg-[#f13c20] text-white shadow-[3px_3px_0_#000] hover:-translate-y-1 hover:shadow-[4px_4px_0_#000] transition-all"
               aria-label="Anfragekorb"
             >
-              <ShoppingCart size={20} />
+              <ShoppingCart size={22} />
               {hasHydrated && itemCount > 0 && (
-                <span className="absolute -right-1 -top-1 inline-flex min-h-[20px] min-w-[20px] items-center justify-center rounded-full bg-[#3b82f6] px-1 text-[11px] font-semibold text-white">
+                <span className="absolute -right-2 -top-2 inline-flex min-h-[24px] min-w-[24px] items-center justify-center rounded-full border-2 border-black bg-[#fcd01b] px-1 text-[13px] font-bold text-black shadow-[2px_2px_0_#000]">
                   {itemCount}
                 </span>
               )}
@@ -99,7 +110,7 @@ export function HeaderClient({ navCatalogTypes }: HeaderClientProps) {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden rounded-full border border-[#dbe3ee] p-2 text-[#2d3748]"
+            className="lg:hidden rounded-full border-2 border-black bg-white p-2 text-[#2d3748] shadow-[3px_3px_0_#000]"
             aria-expanded={mobileMenuOpen}
             aria-label={mobileMenuOpen ? "Menue schliessen" : "Menue oeffnen"}
           >
@@ -109,18 +120,20 @@ export function HeaderClient({ navCatalogTypes }: HeaderClientProps) {
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <nav className="lg:hidden border-t border-[#e2e8f0] bg-white py-4 flex max-h-[calc(100vh-72px)] flex-col gap-3 overflow-y-auto">
-            {navLinks.map(link => {
+          <nav className="lg:hidden border-t-4 border-black bg-[#e7ff19] py-4 flex max-h-[calc(100vh-72px)] flex-col gap-3 overflow-y-auto px-4 shadow-inner">
+            {navLinks.map((link, index) => {
               const isActive = pathname === link.href || (link.href !== '/' && pathname?.startsWith(link.href));
+              const color = navColors[index % navColors.length];
               const mobileLinkClassName = isActive
-                ? "font-semibold text-[#16324a] bg-[#e8f1ff] border border-[#bfd3f4]"
-                : "font-medium text-[#40566f] border border-transparent hover:text-[#16324a] hover:bg-[#f5f8fc] hover:border-[#d8e2ef]";
+                ? `font-bold ${color.active}`
+                : `font-bold text-[#1a202c] border-2 border-transparent ${color.hover} bg-white/50`;
               return (
                 <Link
                   key={link.href}
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`font-['Nunito'] rounded-xl px-3 py-2.5 text-[16px] transition-colors ${mobileLinkClassName}`}
+                  style={{ fontFamily: 'var(--font-fredoka), sans-serif' }}
+                  className={`rounded-xl px-4 py-3 text-[18px] transition-all ${mobileLinkClassName}`}
                 >
                   {link.label}
                 </Link>
@@ -129,9 +142,11 @@ export function HeaderClient({ navCatalogTypes }: HeaderClientProps) {
             <Link
               href="/anfragekorb"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-3 font-['Nunito'] font-medium text-[16px] text-[#2d3748] transition-colors py-2"
+              className="flex items-center gap-3 font-['Nunito'] font-bold text-[18px] text-[#2d3748] transition-colors py-2"
             >
-              <ShoppingCart size={18} />
+              <div className="relative flex items-center justify-center w-10 h-10 rounded-full border-2 border-black bg-[#f13c20] text-white shadow-[2px_2px_0_#000]">
+                <ShoppingCart size={20} />
+              </div>
               <span>Anfragekorb{hasHydrated && itemCount > 0 ? ` (${itemCount})` : ''}</span>
             </Link>
           </nav>

@@ -26,6 +26,15 @@ iframe {
   max-width: 100%;
 }
 
+.hero-title-letter {
+  -webkit-text-stroke: clamp(2.4px, 0.32vw, 4.8px) #050505;
+  paint-order: stroke fill;
+  text-shadow:
+    2px 2px 0 #050505,
+    4px 4px 0 #050505,
+    7px 7px 0 rgba(0, 0, 0, 0.22);
+}
+
 a,
 button,
 input,

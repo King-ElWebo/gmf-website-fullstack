@@ -1,4 +1,4 @@
-import type { BookingCustomer } from "@/lib/booking-core/domain/models";
+import type { BookingAddress, BookingCustomer } from "@/lib/booking-core/domain/models";
 import type { InquiryCartItemPriceResult, InquiryCartPriceType } from "@/lib/inquiry-cart/pricing";
 
 export type InquiryDeliveryType = "pickup" | "delivery";
@@ -23,6 +23,8 @@ export type InquiryBookingRequestPayload = {
     endDate: string;
     bookingDays?: number | null;
     deliveryType: InquiryDeliveryType;
+    billingAddressSameAsDelivery?: boolean;
+    billingAddress?: BookingAddress | null;
     customerMessage?: string;
     customer: BookingCustomer;
 };
@@ -47,6 +49,8 @@ export type ParsedInquiryBookingRequest = {
     startDate: string;
     endDate: string;
     deliveryType: InquiryDeliveryType;
+    billingAddressSameAsDelivery: boolean;
+    billingAddress: BookingAddress | null;
     customerMessage?: string;
     customer: BookingCustomer;
 };
@@ -134,6 +138,44 @@ function parseCustomer(value: unknown): ParseResult<BookingCustomer> {
     };
 }
 
+function buildBillingAddressFromCustomer(customer: BookingCustomer): BookingAddress | null {
+    const nameOrCompany = `${customer.firstName} ${customer.lastName}`.trim();
+    const billingAddress: BookingAddress = {
+        nameOrCompany: nameOrCompany || undefined,
+        addressLine1: customer.addressLine1,
+        zip: customer.zip,
+        city: customer.city,
+    };
+
+    return Object.values(billingAddress).some(Boolean) ? billingAddress : null;
+}
+
+function parseSeparateBillingAddress(value: unknown): ParseResult<BookingAddress> {
+    if (!isRecord(value)) {
+        return { ok: false, error: "Bitte die Rechnungsadresse vollstaendig angeben." };
+    }
+
+    const nameOrCompany = toOptionalTrimmedString(value.nameOrCompany);
+    const addressLine1 = toOptionalTrimmedString(value.addressLine1);
+    const zip = toOptionalTrimmedString(value.zip);
+    const city = toOptionalTrimmedString(value.city);
+
+    if (!nameOrCompany || !addressLine1 || !zip || !city) {
+        return { ok: false, error: "Bitte Name/Firma, Adresse, PLZ und Ort der Rechnungsadresse angeben." };
+    }
+
+    return {
+        ok: true,
+        value: {
+            nameOrCompany,
+            addressLine1,
+            zip,
+            city,
+            country: toOptionalTrimmedString(value.country),
+        },
+    };
+}
+
 export function parseInquiryBookingRequestPayload(input: unknown): ParseResult<ParsedInquiryBookingRequest> {
     if (!isRecord(input)) {
         return { ok: false, error: "Ungültiger Request-Body." };
@@ -191,6 +233,15 @@ export function parseInquiryBookingRequestPayload(input: unknown): ParseResult<P
         return parsedCustomer;
     }
 
+    const billingAddressSameAsDelivery = input.billingAddressSameAsDelivery !== false;
+    const parsedBillingAddress = billingAddressSameAsDelivery
+        ? { ok: true as const, value: buildBillingAddressFromCustomer(parsedCustomer.value) }
+        : parseSeparateBillingAddress(input.billingAddress);
+
+    if (!parsedBillingAddress.ok) {
+        return parsedBillingAddress;
+    }
+
     const deliveryType: InquiryDeliveryType =
         input.deliveryType === "delivery" ? "delivery" : "pickup";
 
@@ -201,6 +252,8 @@ export function parseInquiryBookingRequestPayload(input: unknown): ParseResult<P
             startDate,
             endDate,
             deliveryType,
+            billingAddressSameAsDelivery,
+            billingAddress: parsedBillingAddress.value,
             customerMessage: toOptionalTrimmedString(input.customerMessage),
             customer: parsedCustomer.value,
         },

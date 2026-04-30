@@ -24,6 +24,15 @@ type FormState = {
     zip: string;
     city: string;
     deliveryType: "pickup" | "delivery";
+    billingAddressDiffers: boolean;
+    billingCustomerType: "private" | "business";
+    billingFirstName: string;
+    billingLastName: string;
+    billingCompanyName: string;
+    billingAddressLine1: string;
+    billingZip: string;
+    billingCity: string;
+    billingCountry: string;
     message: string;
 };
 
@@ -47,6 +56,15 @@ const initialFormState: FormState = {
     zip: "",
     city: "",
     deliveryType: "pickup",
+    billingAddressDiffers: false,
+    billingCustomerType: "private",
+    billingFirstName: "",
+    billingLastName: "",
+    billingCompanyName: "",
+    billingAddressLine1: "",
+    billingZip: "",
+    billingCity: "",
+    billingCountry: "",
     message: "",
 };
 
@@ -88,6 +106,40 @@ function getPricingReasonLabel(reason: string | null) {
         default:
             return "Preis wird individuell berechnet.";
     }
+}
+
+function getCustomerBillingName(formState: FormState) {
+    return `${formState.firstName} ${formState.lastName}`.trim();
+}
+
+function isSeparateBillingAddressComplete(formState: FormState) {
+    if (!formState.billingAddressDiffers) return true;
+
+    const hasName = formState.billingCustomerType === "private"
+        ? Boolean(formState.billingFirstName.trim() && formState.billingLastName.trim())
+        : Boolean(formState.billingCompanyName.trim());
+
+    return Boolean(
+        hasName &&
+        formState.billingAddressLine1.trim() &&
+        formState.billingZip.trim() &&
+        formState.billingCity.trim()
+    );
+}
+
+function resetBillingAddressFields(current: FormState): FormState {
+    return {
+        ...current,
+        billingAddressDiffers: false,
+        billingCustomerType: "private",
+        billingFirstName: "",
+        billingLastName: "",
+        billingCompanyName: "",
+        billingAddressLine1: "",
+        billingZip: "",
+        billingCity: "",
+        billingCountry: "",
+    };
 }
 
 export function InquiryCartPageClient() {
@@ -181,13 +233,18 @@ export function InquiryCartPageClient() {
 
     const canSubmit = useMemo(() => {
         const hasUnavailableItem = Object.values(availabilityByItemId).some((entry) => !entry.isAvailable);
+        const hasRequiredCustomerData = Boolean(
+            formState.firstName.trim() &&
+            formState.lastName.trim() &&
+            formState.email.trim()
+        );
+
         return (
             items.length > 0 &&
             bookingDuration.days != null &&
             !hasUnavailableItem &&
-            formState.firstName.trim() &&
-            formState.lastName.trim() &&
-            formState.email.trim()
+            hasRequiredCustomerData &&
+            isSeparateBillingAddressComplete(formState)
         );
     }, [availabilityByItemId, bookingDuration.days, formState, items.length]);
 
@@ -281,6 +338,21 @@ export function InquiryCartPageClient() {
         }
     }, [availabilityByItemId, items, updateQuantity]);
 
+    const handleBillingAddressToggle = (checked: boolean) => {
+        setFormState((current) => {
+            if (!checked) {
+                return resetBillingAddressFields(current);
+            }
+
+            return {
+                ...current,
+                billingAddressDiffers: true,
+                billingFirstName: current.billingFirstName || current.firstName,
+                billingLastName: current.billingLastName || current.lastName,
+            };
+        });
+    };
+
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         if (!canSubmit) return;
@@ -288,6 +360,7 @@ export function InquiryCartPageClient() {
         setSubmitting(true);
         setError(null);
 
+        const billingAddressSameAsDelivery = !formState.billingAddressDiffers;
         const payload: InquiryBookingRequestPayload = {
             items: items.map((item) => ({
                 resourceId: item.id,
@@ -303,6 +376,23 @@ export function InquiryCartPageClient() {
             endDate: formState.endDate,
             bookingDays: bookingDuration.days,
             deliveryType: formState.deliveryType,
+            billingAddressSameAsDelivery,
+            billingAddress: billingAddressSameAsDelivery
+                ? {
+                    nameOrCompany: getCustomerBillingName(formState) || undefined,
+                    addressLine1: formState.addressLine1 || undefined,
+                    zip: formState.zip || undefined,
+                    city: formState.city || undefined,
+                }
+                : {
+                    nameOrCompany: formState.billingCustomerType === "private"
+                        ? `${formState.billingFirstName} ${formState.billingLastName}`.trim()
+                        : formState.billingCompanyName,
+                    addressLine1: formState.billingAddressLine1,
+                    zip: formState.billingZip,
+                    city: formState.billingCity,
+                    country: formState.billingCountry || undefined,
+                },
             customerMessage: formState.message,
             customer: {
                 firstName: formState.firstName,
@@ -735,24 +825,129 @@ export function InquiryCartPageClient() {
                                     </select>
                                 </div>
 
-                                <Input
-                                    label="Adresse"
-                                    value={formState.addressLine1}
-                                    onChange={(e) => setFormState((current) => ({ ...current, addressLine1: e.target.value }))}
-                                />
+                                <div className="space-y-4 rounded-[16px] border border-[#e2e8f0] bg-[#f8fafc] p-4">
+                                    <div>
+                                        <h3 className="font-['Nunito'] font-semibold text-[16px] text-[#1a202c]">Lieferadresse</h3>
+                                        <p className="mt-1 font-['Nunito'] text-[13px] leading-[20px] text-[#64748b]">
+                                            Diese Adresse verwenden wir standardmaessig auch als Rechnungsadresse.
+                                        </p>
+                                    </div>
 
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <Input
-                                        label="PLZ"
-                                        value={formState.zip}
-                                        onChange={(e) => setFormState((current) => ({ ...current, zip: e.target.value }))}
+                                        label="Strasse und Hausnummer"
+                                        value={formState.addressLine1}
+                                        onChange={(e) => setFormState((current) => ({ ...current, addressLine1: e.target.value }))}
                                     />
-                                    <Input
-                                        label="Ort"
-                                        value={formState.city}
-                                        onChange={(e) => setFormState((current) => ({ ...current, city: e.target.value }))}
-                                    />
+
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <Input
+                                            label="PLZ"
+                                            value={formState.zip}
+                                            onChange={(e) => setFormState((current) => ({ ...current, zip: e.target.value }))}
+                                        />
+                                        <Input
+                                            label="Ort"
+                                            value={formState.city}
+                                            onChange={(e) => setFormState((current) => ({ ...current, city: e.target.value }))}
+                                        />
+                                    </div>
+
+                                    <label className="flex cursor-pointer items-start gap-3 rounded-[14px] border border-[#cbd5e1] bg-white px-4 py-3">
+                                        <input
+                                            type="checkbox"
+                                            checked={formState.billingAddressDiffers}
+                                            onChange={(e) => handleBillingAddressToggle(e.target.checked)}
+                                            className="mt-0.5 h-5 w-5 rounded border-[#94a3b8] text-[#1a3a52] focus:ring-[#1a3a52]"
+                                        />
+                                        <span className="font-['Nunito'] text-[14px] leading-[21px] text-[#1a202c]">
+                                            Rechnungsadresse abweichend von Lieferadresse
+                                        </span>
+                                    </label>
                                 </div>
+
+                                {formState.billingAddressDiffers && (
+                                    <div className="space-y-4 rounded-[16px] border border-[#cbd5e1] bg-white p-4">
+                                        <div>
+                                            <h3 className="font-['Nunito'] font-semibold text-[16px] text-[#1a202c]">Rechnungsadresse</h3>
+                                            <p className="mt-1 font-['Nunito'] text-[13px] leading-[20px] text-[#64748b]">
+                                                Wird nur verwendet, wenn sie von der Lieferadresse abweicht.
+                                            </p>
+                                        </div>
+
+                                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 pb-2">
+                                            <label className="flex cursor-pointer items-center gap-2">
+                                                <input
+                                                    type="radio"
+                                                    checked={formState.billingCustomerType === "private"}
+                                                    onChange={() => setFormState(s => ({ ...s, billingCustomerType: "private" }))}
+                                                    className="h-4 w-4 border-[#94a3b8] text-[#1a3a52] focus:ring-[#1a3a52]"
+                                                />
+                                                <span className="font-['Nunito'] text-[14px] text-[#1a202c]">Privatperson</span>
+                                            </label>
+                                            <label className="flex cursor-pointer items-center gap-2">
+                                                <input
+                                                    type="radio"
+                                                    checked={formState.billingCustomerType === "business"}
+                                                    onChange={() => setFormState(s => ({ ...s, billingCustomerType: "business" }))}
+                                                    className="h-4 w-4 border-[#94a3b8] text-[#1a3a52] focus:ring-[#1a3a52]"
+                                                />
+                                                <span className="font-['Nunito'] text-[14px] text-[#1a202c]">Geschäftskunde</span>
+                                            </label>
+                                        </div>
+
+                                        {formState.billingCustomerType === "private" ? (
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                <Input
+                                                    label="Vorname"
+                                                    value={formState.billingFirstName}
+                                                    onChange={(e) => setFormState((current) => ({ ...current, billingFirstName: e.target.value }))}
+                                                    required
+                                                />
+                                                <Input
+                                                    label="Nachname"
+                                                    value={formState.billingLastName}
+                                                    onChange={(e) => setFormState((current) => ({ ...current, billingLastName: e.target.value }))}
+                                                    required
+                                                />
+                                            </div>
+                                        ) : (
+                                            <Input
+                                                label="Firmenname"
+                                                value={formState.billingCompanyName}
+                                                onChange={(e) => setFormState((current) => ({ ...current, billingCompanyName: e.target.value }))}
+                                                required
+                                            />
+                                        )}
+
+                                        <Input
+                                            label="Strasse und Hausnummer"
+                                            value={formState.billingAddressLine1}
+                                            onChange={(e) => setFormState((current) => ({ ...current, billingAddressLine1: e.target.value }))}
+                                            required
+                                        />
+
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                            <Input
+                                                label="PLZ"
+                                                value={formState.billingZip}
+                                                onChange={(e) => setFormState((current) => ({ ...current, billingZip: e.target.value }))}
+                                                required
+                                            />
+                                            <Input
+                                                label="Ort"
+                                                value={formState.billingCity}
+                                                onChange={(e) => setFormState((current) => ({ ...current, billingCity: e.target.value }))}
+                                                required
+                                            />
+                                        </div>
+
+                                        <Input
+                                            label="Land (optional)"
+                                            value={formState.billingCountry}
+                                            onChange={(e) => setFormState((current) => ({ ...current, billingCountry: e.target.value }))}
+                                        />
+                                    </div>
+                                )}
 
                                 <Textarea
                                     label="Zusätzliche Nachricht (optional)"

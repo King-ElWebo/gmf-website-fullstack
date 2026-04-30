@@ -15,26 +15,34 @@ export async function GET(
       return NextResponse.json({ error: 'Not found' }, { status: 404 });
     }
 
+    const bookingWithSystemLinks = booking as typeof booking & {
+      emailLogs?: unknown[];
+      calendarSync?: unknown;
+    };
+
     // Mapping auf AdminBookingDetail
     const detail = {
       id: booking.id,
       referenceCode: booking.referenceCode,
       status: booking.status,
       customer: booking.customer,
+      billingAddressSameAsDelivery: booking.billingAddressSameAsDelivery,
+      billingAddress: booking.billingAddress,
       items: booking.items, // Hier würde normalerweise noch der echte Name resolved (Join mit Item-Tabelle im Repo)
       startDate: booking.startDate,
       endDate: booking.endDate,
       deliveryType: booking.deliveryType,
       customerMessage: booking.customerMessage,
       notes: booking.internalNotes || [],
-      emailLogs: (booking as any).emailLogs || [],
-      calendarSync: (booking as any).calendarSync || null,
+      emailLogs: bookingWithSystemLinks.emailLogs || [],
+      calendarSync: bookingWithSystemLinks.calendarSync || null,
       createdAt: booking.createdAt,
       updatedAt: booking.updatedAt
     };
 
     return NextResponse.json(detail);
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Unknown error";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

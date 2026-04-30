@@ -17,6 +17,40 @@ type HeroCarouselProps = {
     noticeText?: string | null;
 };
 
+const heroTitleColors = [
+    "#ef2f2f",
+    "#45b854",
+    "#ffe431",
+    "#29aee4",
+    "#d43ca5",
+    "#ff7a3d",
+    "#f66fae",
+];
+
+function renderPlayfulTitle(title: string) {
+    return title.trim().split(/\s+/).map((word, wordIndex) => (
+        <span key={`${word}-${wordIndex}`} className="mr-[0.22em] inline-flex whitespace-nowrap">
+            {Array.from(word).map((letter, letterIndex) => {
+                const color = heroTitleColors[(wordIndex + letterIndex) % heroTitleColors.length];
+                const rotation = ((wordIndex + letterIndex) % 5) - 2;
+
+                return (
+                    <span
+                        key={`${letter}-${letterIndex}`}
+                        className="hero-title-letter inline-block"
+                        style={{
+                            color,
+                            transform: `rotate(${rotation}deg)`,
+                        }}
+                    >
+                        {letter}
+                    </span>
+                );
+            })}
+        </span>
+    ));
+}
+
 export function HeroCarousel({ images = [], title, text, noticeText }: HeroCarouselProps) {
     const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -71,26 +105,26 @@ export function HeroCarousel({ images = [], title, text, noticeText }: HeroCarou
 
             <div className="relative z-10 h-full flex items-center">
                 <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 w-full">
-                    <div className="max-w-[700px] text-center md:text-left mx-auto md:mx-0">
+                    <div className="mx-auto w-full max-w-[1180px] text-center md:text-left">
                         {noticeText && (
                             <div className="mb-4 sm:mb-6 inline-block transform -rotate-2">
-                                <span style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="inline-flex rounded-full border-4 border-yellow-300 bg-red-500 px-4 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-lg md:text-xl font-bold text-yellow-300 shadow-[4px_4px_0px_rgba(0,0,0,0.2)]">
+                                <span style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="inline-flex rounded-full border-4 border-black bg-[#f13c20] px-4 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-lg md:text-xl font-bold text-white shadow-[4px_4px_0px_#000]">
                                     🎈 {noticeText} 🎈
                                 </span>
                             </div>
                         )}
-                        <h1 
-                            style={{ fontFamily: 'var(--font-fredoka), sans-serif', textShadow: '3px 3px 0px #e11d48, 6px 6px 0px rgba(0,0,0,0.15)' }} 
-                            className="text-[clamp(2.05rem,8.8vw,3rem)] md:text-[64px] lg:text-[76px] leading-[1.05] text-white tracking-wide mb-4 sm:mb-6"
+                        <h1
+                            style={{ fontFamily: '"Arial Black", Impact, var(--font-fredoka), sans-serif' }}
+                            className="mb-4 flex w-full max-w-[1120px] flex-wrap justify-center text-[clamp(2rem,8.6vw,3.25rem)] font-black uppercase leading-[0.88] tracking-normal sm:mb-6 md:justify-start md:text-[70px] lg:text-[70px]"
                         >
-                            {title}
+                            {renderPlayfulTitle(title)}
                         </h1>
-                        <p className="font-['Nunito'] font-bold text-[15px] sm:text-[18px] md:text-[22px] leading-[1.5] text-white tracking-wide mb-6 sm:mb-8 drop-shadow-md">
+                        <p className="mx-auto max-w-[860px] font-['Nunito'] font-bold text-[15px] leading-[1.5] tracking-wide text-white drop-shadow-md sm:mb-8 sm:text-[18px] md:mx-0 md:text-[22px]">
                             {text}
                         </p>
                         <div className="flex flex-wrap gap-4 justify-center md:justify-start">
                             <Link href="/produkte">
-                                <button style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="w-full sm:w-auto bg-yellow-400 text-red-600 border-4 border-white text-base sm:text-xl md:text-2xl px-6 sm:px-8 py-3 sm:py-4 rounded-full font-bold shadow-[0_6px_0_#FFF,0_12px_15px_rgba(0,0,0,0.2)] hover:translate-y-1 hover:shadow-[0_2px_0_#FFF,0_6px_10px_rgba(0,0,0,0.2)] transition-all">
+                                <button style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="w-full sm:w-auto bg-[#fcd01b] text-black border-4 border-black text-base sm:text-xl md:text-2xl px-6 sm:px-8 py-3 sm:py-4 rounded-full font-bold shadow-[4px_4px_0_#000] hover:-translate-y-1 hover:shadow-[6px_6px_0_#000] transition-all">
                                     🥳 Jetzt entdecken!
                                 </button>
                             </Link>

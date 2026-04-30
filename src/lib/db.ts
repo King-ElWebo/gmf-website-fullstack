@@ -39,6 +39,7 @@ const expectedScalarFieldsByModel: Record<string, string[]> = {
     "accessRequirements",
   ],
   Faq: ["sortOrder"],
+  Booking: ["billingAddress", "billingAddressSameAsDelivery"],
   ItemImage: ["sortOrder"],
   SiteSettings: ["key", "phone", "email", "address", "openingHours", "noticeText", "heroTitle", "heroText", "additionalInfo"],
   SiteSocialLink: ["settingsId", "platform", "url", "sortOrder", "isActive"],

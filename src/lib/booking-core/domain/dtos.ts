@@ -27,6 +27,14 @@ export interface AdminBookingDetail {
     zip?: string;
     city?: string;
   };
+  billingAddressSameAsDelivery?: boolean;
+  billingAddress?: {
+    nameOrCompany?: string;
+    addressLine1?: string;
+    zip?: string;
+    city?: string;
+    country?: string;
+  } | null;
   items: {
     id: string;
     resourceId: string;

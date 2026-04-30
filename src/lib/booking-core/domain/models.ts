@@ -35,6 +35,14 @@ export interface BookingCustomer {
   city?: string;
 }
 
+export interface BookingAddress {
+  nameOrCompany?: string;
+  addressLine1?: string;
+  zip?: string;
+  city?: string;
+  country?: string;
+}
+
 export interface BookingItem {
   id: string;
   bookingId: string;
@@ -61,6 +69,10 @@ export interface Booking {
   startDate: Date;
   endDate: Date;
   deliveryType: DeliveryType;
+  billingAddressSameAsDelivery?: boolean;
+  billingAddress?: BookingAddress | null;
+  totalPriceCents?: number | null;
+  hasIndividualPricing?: boolean;
   customerMessage?: string;
   internalNotes?: InternalNote[];
   createdAt: Date;
