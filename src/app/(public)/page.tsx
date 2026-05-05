@@ -57,17 +57,26 @@ export default async function HomePage() {
                 }))}
             />
 
-            <section className="py-14 sm:py-20 bg-[#fefce8] relative">
-                <div className="max-w-[1000px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <h2 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[clamp(1.85rem,8vw,2.6rem)] text-[#f13c20] mb-4 sm:mb-6 drop-shadow-sm">
+            <section className="py-20 sm:py-32 bg-[#fefce8]">
+                <div className="max-w-[850px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <div className="inline-block bg-[#f13c20] text-white px-3 py-1 rounded-lg text-[12px] font-bold uppercase tracking-widest mb-6">
+                        Willkommen
+                    </div>
+                    <h2 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[clamp(2.2rem,8vw,3.2rem)] text-[#f13c20] mb-8 leading-tight">
                         Ihr bunter Eventmodule Verleih
                     </h2>
-                    <p className="font-['Nunito'] text-[15px] sm:text-[16px] text-[#4a5568] leading-[1.7] sm:leading-[28px] mb-4">
-                        Planen Sie eine unvergessliche <strong className="font-medium text-[#1a202c]">Hochzeit</strong>, einen aufregenden <strong className="font-medium text-[#1a202c]">Kindergeburtstag</strong> oder ein professionelles <strong className="font-medium text-[#1a202c]">Outdoor Event</strong>? Bei uns können Sie hochwertige <strong>Eventmodule mieten</strong> – flexibel buchbar und perfekt für jede Art von privaten Feiern oder Sommerfesten.
-                    </p>
-                    <p className="font-['Nunito'] text-[15px] sm:text-[16px] text-[#4a5568] leading-[1.7] sm:leading-[28px]">
-                        Egal ob Sie eine bunte <strong>Hüpfburg mieten</strong> möchten für strahlende Kinderaugen, eine romantische <strong>Candybar</strong> für Ihre Hochzeitsfeier ausstatten wollen oder professionelle <strong>Ton- und Lichttechnik mieten</strong>. Wir sind Ihr Ansprechpartner für <strong>Party Soundanlagen</strong>, Rutschen, Kinderspiele und Eventtechnik in der Region. Vertrauen Sie auf unseren Eventservice mit Abholung oder bequemer Lieferung direkt zu Ihrer <strong>Feier in Niederösterreich und Umgebung</strong>.
-                    </p>
+                    <div className="space-y-6">
+                        <p className="font-['Nunito'] text-[18px] sm:text-[20px] text-[#2d3748] leading-relaxed font-medium">
+                            Planen Sie eine unvergessliche <strong>Hochzeit</strong>, einen aufregenden <strong>Kindergeburtstag</strong> oder ein professionelles <strong>Outdoor Event</strong>?
+                        </p>
+                        <p className="font-['Nunito'] text-[16px] sm:text-[17px] text-[#4a5568] leading-[1.8]">
+                            Bei uns können Sie hochwertige <strong>Eventmodule mieten</strong> – flexibel buchbar und perfekt für jede Art von privaten Feiern oder Sommerfesten.
+                            Egal ob Sie eine bunte <strong>Hüpfburg mieten</strong> möchten für strahlende Kinderaugen, eine romantische <strong>Candybar</strong> für Ihre Hozeit ausstatten wollen oder professionelle <strong>Ton- und Lichttechnik mieten</strong>.
+                        </p>
+                        <p className="font-['Nunito'] text-[16px] sm:text-[17px] text-[#4a5568] leading-[1.8]">
+                            Wir sind Ihr Ansprechpartner für <strong>Party Soundanlagen</strong>, Rutschen, Kinderspiele und Eventtechnik in der Region. Vertrauen Sie auf unseren Eventservice mit Abholung oder bequemer Lieferung direkt zu Ihrer <strong>Feier in Niederösterreich</strong>.
+                        </p>
+                    </div>
                 </div>
             </section>
 

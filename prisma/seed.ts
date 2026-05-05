@@ -1,409 +1,476 @@
 import { db } from "../src/lib/db";
+import { ItemPriceType } from "@prisma/client";
 
 async function main() {
-  console.log("Seeding database...");
+  console.log("Starting comprehensive database seed...");
 
   // 1. Site Settings
-  await db.siteSettings.upsert({
+  console.log("Seeding Site Settings...");
+  const settings = await db.siteSettings.upsert({
     where: { key: "default" },
     update: {
-      phone: "+49 123 4567890",
-      email: "info@gmf-eventmodule.de",
-      address: "Eventstraße 1, 12345 Partystadt",
-      openingHours: "Mo-Fr 09:00 - 18:00 Uhr | Sa 10:00 - 14:00 Uhr",
-      heroTitle: "Miete die besten Eventmodule",
-      heroText: "Hüpfburgen, Partyzelte, Veranstaltungstechnik und mehr für dein unvergessliches Event.",
-      noticeText: "Willkommen auf unserer neuen Website! Miete jetzt für dein nächstes Event.",
+      phone: "+43 123 456789", // Realistic placeholder
+      email: "office@gmf-eventmodule.at",
+      address: "3702 Stranzendorf",
+      openingHours: "Nach telefonischer Vereinbarung",
+      heroTitle: "Unvergessliche Momente erleben",
+      heroText: "Unvergessliche Momente mit Eventmodulen wie Hüpfburgen, Rutschen, Licht- und Tontechnik. Für Ihre Feier einfach anfragen, sicher verwenden und jede Menge Spaß erleben.",
+      noticeText: "48h vorher kostenlos stornieren | Schlechtwetter-Option nach Absprache",
+      additionalInfo: "Betreiber ist Vermieter, keine Versicherung über Anbieter. Stornobedingungen: 48h vorher kostenlos, 24h vorher 25%, Vor-Ort-Storno 50% plus Zeit- und Anfahrtskosten.",
     },
     create: {
       key: "default",
-      phone: "+49 123 4567890",
-      email: "info@gmf-eventmodule.de",
-      address: "Eventstraße 1, 12345 Partystadt",
-      openingHours: "Mo-Fr 09:00 - 18:00 Uhr | Sa 10:00 - 14:00 Uhr",
-      heroTitle: "Miete die besten Eventmodule",
-      heroText: "Hüpfburgen, Partyzelte, Veranstaltungstechnik und mehr für dein unvergessliches Event.",
-      noticeText: "Willkommen auf unserer neuen Website! Miete jetzt für dein nächstes Event.",
+      phone: "+43 123 456789",
+      email: "office@gmf-eventmodule.at",
+      address: "3702 Stranzendorf",
+      openingHours: "Nach telefonischer Vereinbarung",
+      heroTitle: "Unvergessliche Momente erleben",
+      heroText: "Unvergessliche Momente mit Eventmodulen wie Hüpfburgen, Rutschen, Licht- und Tontechnik. Für Ihre Feier einfach anfragen, sicher verwenden und jede Menge Spaß erleben.",
+      noticeText: "48h vorher kostenlos stornieren | Schlechtwetter-Option nach Absprache",
+      additionalInfo: "Betreiber ist Vermieter, keine Versicherung über Anbieter. Stornobedingungen: 48h vorher kostenlos, 24h vorher 25%, Vor-Ort-Storno 50% plus Zeit- und Anfahrtskosten.",
     },
   });
 
-  // Social Link (if needed, otherwise skip to keep it simple, but let's add one)
-  const settings = await db.siteSettings.findUnique({ where: { key: "default" } });
-  if (settings) {
-    // Just create social link without upsetting too much
-    const existingFb = await db.siteSocialLink.findFirst({ where: { platform: "instagram" }});
-    if (!existingFb) {
-      await db.siteSocialLink.create({
-        data: {
-          settingsId: settings.id,
-          platform: "instagram",
-          label: "Instagram",
-          url: "https://instagram.com",
-          sortOrder: 1,
-        }
-      });
-    }
-  }
-
-  // 2. CatalogType
-  console.log("Seeding CatalogType...");
-  const catalogType = await db.catalogType.upsert({
-    where: { slug: "eventbedarf" },
+  // Social Links
+  await db.siteSocialLink.upsert({
+    where: { id: "social-fb" },
     update: {
-      name: "Eventbedarf & Module",
-      description: "Alle unsere Mietartikel von Hüpfburgen bis zu Partyzelten.",
-      navLabel: "Produkte",
-      showInNav: true,
-      isDefault: true,
+      settingsId: settings.id,
+      platform: "facebook",
+      label: "Facebook",
+      url: "https://facebook.com/gmf-eventmodule",
       isActive: true,
-      sortOrder: 1,
     },
     create: {
-      name: "Eventbedarf & Module",
-      slug: "eventbedarf",
-      description: "Alle unsere Mietartikel von Hüpfburgen bis zu Partyzelten.",
-      navLabel: "Produkte",
-      showInNav: true,
-      isDefault: true,
+      id: "social-fb",
+      settingsId: settings.id,
+      platform: "facebook",
+      label: "Facebook",
+      url: "https://facebook.com/gmf-eventmodule",
+      isActive: true,
+    },
+  });
+
+  await db.siteSocialLink.upsert({
+    where: { id: "social-insta" },
+    update: {
+      settingsId: settings.id,
+      platform: "instagram",
+      label: "Instagram",
+      url: "https://instagram.com/gmf-eventmodule",
+      isActive: true,
+    },
+    create: {
+      id: "social-insta",
+      settingsId: settings.id,
+      platform: "instagram",
+      label: "Instagram",
+      url: "https://instagram.com/gmf-eventmodule",
+      isActive: true,
+    },
+  });
+
+  // 2. CatalogTypes
+  console.log("Seeding CatalogTypes...");
+  const eventmoduleType = await db.catalogType.upsert({
+    where: { slug: "eventmodule" },
+    update: {
+      name: "Eventmodule",
+      navLabel: "Eventmodule",
+      description: "Alles für den ultimativen Spaß: Hüpfburgen, Rutschen, Candybars und Kinderspiele für Ihr nächstes Event.",
       isActive: true,
       sortOrder: 1,
+      showInNav: true,
+    },
+    create: {
+      name: "Eventmodule",
+      slug: "eventmodule",
+      navLabel: "Eventmodule",
+      description: "Alles für den ultimativen Spaß: Hüpfburgen, Rutschen, Candybars und Kinderspiele für Ihr nächstes Event.",
+      isActive: true,
+      sortOrder: 1,
+      showInNav: true,
     },
   });
 
   const lichtTonType = await db.catalogType.upsert({
     where: { slug: "licht-tontechnik" },
     update: {
-      name: "Licht- & Tontechnik",
-      description: "Professionelle Licht- und Tontechnik zum Mieten für Ihre Veranstaltung.",
-      navLabel: "Licht & Ton",
-      showInNav: true,
-      isDefault: false,
+      name: "Licht & Tontechnik",
+      navLabel: "Licht & Tontechnik",
+      description: "Professionelle Audio-, Licht- und Beschallungstechnik für Feiern, Hochzeiten und Firmen-Events.",
       isActive: true,
       sortOrder: 2,
+      showInNav: true,
     },
     create: {
-      name: "Licht- & Tontechnik",
+      name: "Licht & Tontechnik",
       slug: "licht-tontechnik",
-      description: "Professionelle Licht- und Tontechnik zum Mieten für Ihre Veranstaltung.",
-      navLabel: "Licht & Ton",
-      showInNav: true,
-      isDefault: false,
+      navLabel: "Licht & Tontechnik",
+      description: "Professionelle Audio-, Licht- und Beschallungstechnik für Feiern, Hochzeiten und Firmen-Events.",
       isActive: true,
       sortOrder: 2,
+      showInNav: true,
     },
   });
 
   // 3. Categories
   console.log("Seeding Categories...");
-  const categoriesData = [
-    // Eventbedarf categories
-    { name: "Hüpfburgen", slug: "huepfburgen", typeId: catalogType.id },
-    { name: "Partyzelte", slug: "partyzelte", typeId: catalogType.id },
-    { name: "Möbel", slug: "moebel", typeId: catalogType.id },
-    { name: "Deko", slug: "deko", typeId: catalogType.id },
-    { name: "Catering Zubehör", slug: "catering-zubehoer", typeId: catalogType.id },
-    { name: "Transport / Anhänger", slug: "transport-anhaenger", typeId: catalogType.id },
-    // Licht- & Tontechnik categories
-    { name: "Audio", slug: "audio", typeId: lichtTonType.id },
-    { name: "Lichttechnik", slug: "lichttechnik", typeId: lichtTonType.id },
+  const categories = [
+    // Eventmodule Categories
+    { name: "Hüpfburgen", slug: "huepfburgen", catalogTypeId: eventmoduleType.id, sortOrder: 1, description: "Action und Spaß für die Kleinen." },
+    { name: "Rutschen", slug: "rutschen", catalogTypeId: eventmoduleType.id, sortOrder: 2, description: "Riesige Rutschen für leuchtende Kinderaugen." },
+    { name: "Candybar", slug: "candybar", catalogTypeId: eventmoduleType.id, sortOrder: 3, description: "Süße Highlights für jede Feier." },
+    { name: "Kinderspiele", slug: "kinderspiele", catalogTypeId: eventmoduleType.id, sortOrder: 4, description: "Kreative Spielepakete für Kinder." },
+    { name: "Partyspiele", slug: "partyspiele", catalogTypeId: eventmoduleType.id, sortOrder: 5, description: "Spaß für Jung und Alt." },
+    { name: "Eventmodule", slug: "eventmodule-misc", catalogTypeId: eventmoduleType.id, sortOrder: 6, description: "Weitere spannende Module für Ihr Event." },
+    
+    // Licht & Tontechnik Categories
+    { name: "Tontechnik", slug: "tontechnik", catalogTypeId: lichtTonType.id, sortOrder: 1, description: "Kristallklarer Sound für Ihre Gäste." },
+    { name: "Lichttechnik", slug: "lichttechnik", catalogTypeId: lichtTonType.id, sortOrder: 2, description: "Stimmungsvolle Beleuchtung für jedes Ambiente." },
+    { name: "Komplettsets", slug: "komplettsets", catalogTypeId: lichtTonType.id, sortOrder: 3, description: "Sorglos-Pakete für Ihre Party." },
+    { name: "Lautsprecher", slug: "lautsprecher", catalogTypeId: lichtTonType.id, sortOrder: 4, description: "Einzelne Lautsprecher und Subwoofer." },
+    { name: "Partybeleuchtung", slug: "partybeleuchtung", catalogTypeId: lichtTonType.id, sortOrder: 5, description: "Effekte, die jede Tanzfläche beleben." },
   ];
 
-  const categoryMap = new Map<string, string>();
-
-  let catSortOrder = 1;
-  for (const c of categoriesData) {
-    const { typeId, ...rest } = c;
-    const category = await db.category.upsert({
-      where: { slug: c.slug },
-      update: { name: c.name, catalogTypeId: typeId, sortOrder: catSortOrder },
-      create: { ...rest, catalogTypeId: typeId, sortOrder: catSortOrder },
+  const categoryMap: Record<string, string> = {};
+  for (const cat of categories) {
+    const created = await db.category.upsert({
+      where: { slug: cat.slug },
+      update: {
+        name: cat.name,
+        catalogTypeId: cat.catalogTypeId,
+        sortOrder: cat.sortOrder,
+        description: cat.description,
+      },
+      create: cat,
     });
-    categoryMap.set(c.slug, category.id);
-    catSortOrder++;
+    categoryMap[cat.slug] = created.id;
   }
 
-  // 4. Items
+  // 4. Items (Products)
   console.log("Seeding Items...");
-  const itemsData = [
+  
+  const items = [
     // Hüpfburgen
     {
       title: "Hüpfburg Dschungel",
       slug: "huepfburg-dschungel",
       categorySlug: "huepfburgen",
-      priceCents: 15000,
-      basePriceCents: 15000,
-      shortDescription: "Mit Rutsche und tollen Tiermotiven.",
-      description: "Unsere Hüpfburg Dschungel ist ein absolutes Highlight. Inkl. kleiner Rutsche und Hindernissen. Ideal für Kindergeburtstage.",
-      imageUrl: "https://images.unsplash.com/photo-1681282664539-78c6606a2333?w=800&q=80",
+      priceType: ItemPriceType.FIXED,
+      basePriceCents: 14900,
+      priceLabel: "ab 149 €",
+      shortDescription: "Abenteuer pur im Dschungel-Design.",
+      longDescription: "Unsere Hüpfburg Dschungel bietet jede Menge Platz zum Springen und Entdecken. Mit integrierten Hindernissen und einer kleinen Rutsche ist sie der Hit auf jedem Kindergeburtstag. Maße: 5m x 4m. Geeignet für bis zu 8 Kinder gleichzeitig.",
+      depositRequired: true,
+      depositLabel: "Kaution",
+      depositInfo: "100 € Kaution bei Abholung fällig.",
+      cleaningFeeApplies: true,
+      cleaningFeeLabel: "Reinigungskosten",
+      cleaningFeeInfo: "Reinigungspauschale 120 €, falls Reinigung notwendig.",
+      dryingFeeApplies: true,
+      dryingFeeLabel: "Trocknungskosten",
+      dryingFeeInfo: "Trocknungspauschale 190 €, nur bei Nässe.",
+      setupRequirements: "Ebener Untergrund, Stromanschluss 230V erforderlich. Platzbedarf mind. 6m x 5m.",
+      accessRequirements: "Türbreite mindestens 1 m, gute Zufahrt empfohlen, möglichst keine Stufen.",
+      deliveryAvailable: true,
+      pickupAvailable: true,
+      deliveryInfo: "Lieferung abhängig von Entfernung. Selbstabholung und Rückgabe nach Vereinbarung möglich.",
+      imageUrl: "https://images.unsplash.com/photo-1598967912204-7e71dbbc8cc4?q=80&w=800",
     },
     {
-      title: "Hüpfburg Ritterburg",
-      slug: "huepfburg-ritterburg",
+      title: "Hüpfburg Schloss",
+      slug: "huepfburg-schloss",
       categorySlug: "huepfburgen",
-      priceCents: 12000,
-      basePriceCents: 12000,
-      shortDescription: "Klassische Hüpfburg für kleine Ritter.",
-      description: "Die klassische Ritterburg mit ausreichend Springfläche für bis zu 8 Kinder.",
-      imageUrl: "https://images.unsplash.com/photo-1598967912204-7e71dbbc8cc4?w=800&q=80",
+      priceType: ItemPriceType.FIXED,
+      basePriceCents: 12900,
+      priceLabel: "ab 129 €",
+      shortDescription: "Der Klassiker für kleine Prinzessinnen und Prinzen.",
+      longDescription: "Ein wunderschönes Hüpfburg-Schloss in leuchtenden Farben. Ideal für Gartenpartys und Vereinsfeste. Maße: 4m x 4m. Inklusive Gebläse und Unterlegplane.",
+      depositRequired: true,
+      depositLabel: "Kaution",
+      depositInfo: "80 € Kaution bei Abholung fällig.",
+      cleaningFeeApplies: true,
+      cleaningFeeInfo: "Reinigungspauschale 120 €, falls Reinigung notwendig.",
+      dryingFeeApplies: true,
+      dryingFeeInfo: "Trocknungspauschale 190 €, nur bei Nässe.",
+      setupRequirements: "Ebener Untergrund, Stromanschluss 230V. Gebläse muss trocken und staubfrei stehen.",
+      accessRequirements: "Türbreite mind. 1m erforderlich.",
+      deliveryAvailable: true,
+      pickupAvailable: true,
+      imageUrl: "https://images.unsplash.com/photo-1549480608-f46fae85df64?q=80&w=800",
     },
+    // Rutschen
     {
-      title: "Riesen-Hüpfburg XXL",
-      slug: "riesen-huepfburg-xxl",
-      categorySlug: "huepfburgen",
-      priceCents: 22000,
-      basePriceCents: 22000,
-      shortDescription: "Für große Events und viele Kinder.",
-      description: "Eine XXL Hüpfburg, ideal für größere Stadtfeste oder Firmenfeiern.",
-      imageUrl: "https://images.unsplash.com/photo-1549480608-f46fae85df64?w=800&q=80",
+      title: "Rutsche Pirateninsel",
+      slug: "rutsche-pirateninsel",
+      categorySlug: "rutschen",
+      priceType: ItemPriceType.FROM_PRICE,
+      basePriceCents: 24900,
+      priceLabel: "ab 249 €",
+      shortDescription: "Riesiger Rutschspaß auf der Pirateninsel.",
+      longDescription: "Diese gigantische Rutsche ist der Blickfang auf Ihrem Event. Mit einer Höhe von fast 6 Metern bietet sie Nervenkitzel und Spaß für Kinder ab 4 Jahren.",
+      depositRequired: true,
+      depositInfo: "150 € Kaution erforderlich.",
+      cleaningFeeApplies: true,
+      cleaningFeeInfo: "Reinigungspauschale 120 €, falls Reinigung notwendig.",
+      dryingFeeApplies: true,
+      dryingFeeInfo: "Trocknungspauschale 190 €, nur bei Nässe.",
+      requiresDeliveryAddress: true,
+      deliveryInfo: "Lieferadresse erforderlich. Aufgrund der Größe wird eine Lieferung durch uns empfohlen.",
+      setupRequirements: "Stabile, ebene Fläche. Platzbedarf mind. 10m x 6m. 2x 230V Anschlüsse.",
+      imageUrl: "https://images.unsplash.com/photo-1596435327244-1506505779c1?q=80&w=800",
     },
-    // Audio
+    // Candybar
     {
-      title: "PA Anlage 1000W",
-      slug: "pa-anlage-1000w",
-      categorySlug: "audio",
-      priceCents: 8500,
-      basePriceCents: 8500,
-      shortDescription: "Druckvoller Sound für Partys bis 100 Personen.",
-      description: "Professionelle PA-Anlage inkl. 2 Tops, 1 Subwoofer, Stativen und Verkabelung.",
-      imageUrl: "https://images.unsplash.com/photo-1520166012956-add9ba0ee37f?w=800&q=80", // speakers
+      title: "Candybar Set Classic",
+      slug: "candybar-set-classic",
+      categorySlug: "candybar",
+      priceType: ItemPriceType.FIXED,
+      basePriceCents: 8900,
+      priceLabel: "89 €",
+      shortDescription: "Stilvolle Candybar für Hochzeiten und Geburtstage.",
+      longDescription: "Unser Set Classic beinhaltet den dekorativen Leiterwagen, diverse Glasgefäße in verschiedenen Größen, Zangen und Schaufeln. (Ohne Süßigkeiten - diese können optional dazu gebucht werden).",
+      depositRequired: true,
+      depositInfo: "50 € Kaution für Glasgefäße.",
+      pickupAvailable: true,
+      deliveryAvailable: true,
+      usageInfo: "Gläser müssen in sauberem Zustand zurückgegeben werden.",
+      imageUrl: "https://images.unsplash.com/photo-1557142046-c704a3adf364?q=80&w=800",
     },
+    // Kinderspiele
     {
-      title: "Funkmikrofon Set",
-      slug: "funkmikrofon-set",
-      categorySlug: "audio",
-      priceCents: 3500,
-      basePriceCents: 3500,
-      shortDescription: "Kabelloses Mikrofon mit Empfänger.",
-      description: "Hohe Reichweite und kristallklarer Klang. Perfekt für Redner und DJs.",
-      imageUrl: "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=800&q=80", // microphone
+      title: "Kinderspiel Paket Mini",
+      slug: "kinderspiel-paket-mini",
+      categorySlug: "kinderspiele",
+      priceType: ItemPriceType.FIXED,
+      basePriceCents: 4500,
+      priceLabel: "45 €",
+      shortDescription: "Spiele-Klassiker für den Garten.",
+      longDescription: "Enthält Sackhüpfen-Set, Eierlaufen, Dosenwerfen und Tauziehen. Kompakt verpackt in einer praktischen Transportbox.",
+      depositRequired: false,
+      pickupAvailable: true,
+      deliveryAvailable: true,
+      imageUrl: "https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?q=80&w=800",
+    },
+    // Eventmodule
+    {
+      title: "Eventmodule Paket Familie",
+      slug: "eventmodule-paket-familie",
+      categorySlug: "eventmodule-misc",
+      priceType: ItemPriceType.FROM_PRICE,
+      basePriceCents: 39900,
+      priceLabel: "ab 399 €",
+      shortDescription: "Rundum-Sorglos-Paket für Ihr Familienfest.",
+      longDescription: "Beinhaltet eine Hüpfburg nach Wahl (Standard), das Kinderspiel Paket Mini und eine Popcornmaschine inkl. Zutaten für 50 Portionen.",
+      depositRequired: true,
+      depositInfo: "200 € Kaution für das gesamte Paket.",
+      cleaningFeeApplies: true,
+      cleaningFeeInfo: "Reinigungspauschale 120 €, falls Reinigung notwendig (hauptsächlich Hüpfburg).",
+      deliveryInfo: "Kostenlose Lieferung im Umkreis von 20km ab Stranzendorf.",
+      imageUrl: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?q=80&w=800",
+    },
+
+    // Tontechnik
+    {
+      title: "Lautsprecher Set Basic",
+      slug: "lautsprecher-set-basic",
+      categorySlug: "lautsprecher",
+      priceType: ItemPriceType.ON_REQUEST,
+      priceLabel: "Preis auf Anfrage",
+      shortDescription: "Kraftvoller Sound für bis zu 80 Personen.",
+      longDescription: "Bestehend aus 2x Aktiv-Lautsprechern inkl. Stativen und allen notwendigen Anschlusskabeln (XLR/Klinke). Einfache Bedienung, auch für Laien geeignet.",
+      depositRequired: true,
+      depositInfo: "Kaution 150 €.",
+      pickupAvailable: true,
+      deliveryAvailable: true,
+      usageInfo: "Technik muss staubfrei und trocken aufgestellt werden.",
+      imageUrl: "https://images.unsplash.com/photo-1520166012956-add9ba0ee37f?q=80&w=800",
     },
     // Lichttechnik
     {
-      title: "LED Scheinwerfer Set (4 Stück)",
-      slug: "led-scheinwerfer-set",
+      title: "Lichttechnik Ambiente Set",
+      slug: "lichttechnik-ambiente-set",
       categorySlug: "lichttechnik",
-      priceCents: 4500,
-      basePriceCents: 4500,
-      shortDescription: "Ambientebeleuchtung in Wunschfarbe.",
-      description: "4x LED Scheinwerfer zur Raumbeleuchtung oder als Party-Effektlicht (Sound2Light).",
-      imageUrl: "https://images.unsplash.com/photo-1582260662235-cb0ae357ba23?w=800&q=80", // stage lights
-    },
-    {
-      title: "Nebelmaschine 1500W",
-      slug: "nebelmaschine-1500w",
-      categorySlug: "lichttechnik",
-      priceCents: 3000,
-      basePriceCents: 3000,
-      shortDescription: "Macht die Lichtstrahlen erst richtig sichtbar.",
-      description: "Leistungsstarke Nebelmaschine inkl. 1 Liter Fluid für kleine bis mittlere Veranstaltungen.",
-      imageUrl: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&q=80", // fog
-    },
-    // Partyzelte
-    {
-      title: "Faltzelt 3x3m",
-      slug: "faltzelt-3x3m",
-      categorySlug: "partyzelte",
-      priceCents: 4500,
-      basePriceCents: 4500,
-      shortDescription: "Schnell aufgebauter Regenschutz.",
-      description: "Hochwertiges Profi-Faltzelt in schwarz. Innerhalb von 5 Minuten aufgestellt. Inklusive Gewichten.",
-      imageUrl: "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800&q=80", // tent
-    },
-    {
-      title: "Festzelt 5x10m",
-      slug: "festzelt-5x10m",
-      categorySlug: "partyzelte",
-      priceCents: 25000,
-      basePriceCents: 25000,
-      shortDescription: "Viel Platz für Ihre Gäste (bis zu 80 Personen).",
-      description: "Robustes Festzelt für die Gartenparty. Plane: PVC. Aufbauzeit zu zweit ca. 2 Stunden.",
-      imageUrl: "https://images.unsplash.com/photo-1504198458649-3128b932f49e?w=800&q=80", // big tent
-    },
-    // Möbel
-    {
-      title: "Stehtisch klappbar",
-      slug: "stehtisch-klappbar",
-      categorySlug: "moebel",
-      priceCents: 850,
-      basePriceCents: 850,
-      shortDescription: "Standard Stehtisch (Durchmesser 80cm).",
-      description: "Praktischer Klapp-Stehtisch, wetterfest. Optional können schwarze oder weiße Hussen dazu gemietet werden.",
-      imageUrl: "https://images.unsplash.com/photo-1522771731478-4ea7cf1d1b32?w=800&q=80",
-    },
-    {
-      title: "Biertischgarnitur",
-      slug: "biertischgarnitur",
-      categorySlug: "moebel",
-      priceCents: 1500,
-      basePriceCents: 1500,
-      shortDescription: "1 Tisch, 2 Bänke (220x50cm).",
-      description: "Die klassische Festzeltgarnitur in Brauerei-Qualität.",
-      imageUrl: "https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?w=800&q=80", 
-    },
-    {
-      title: "Palettenlounge Sessel",
-      slug: "palettenlounge-sessel",
-      categorySlug: "moebel",
-      priceCents: 2500,
-      basePriceCents: 2500,
-      shortDescription: "Gemütliches Sitzen inkl. Polster.",
-      description: "Stylischer Palettensessel inklusive dicker Polster in anthrazit.",
-      imageUrl: "https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?w=800&q=80",
-    },
-    // Deko
-    {
-      title: "Lichterkette 20m",
-      slug: "lichterkette-20m",
-      categorySlug: "deko",
-      priceCents: 1500,
-      basePriceCents: 1500,
-      shortDescription: "Warmweiße LED Lichterkette.",
-      description: "Dicke Glühbirnen-Optik für ein schönes gemütliches Ambiente. Wasserdicht (IP65).",
-      imageUrl: "https://images.unsplash.com/photo-1510006277258-29367e9cd2ea?w=800&q=80",
-    },
-    {
-      title: "Roter Teppich (5 Meter)",
-      slug: "roter-teppich-5m",
-      categorySlug: "deko",
-      priceCents: 3500,
-      basePriceCents: 3500,
-      shortDescription: "Für den großen Auftritt.",
-      description: "Lieferung inkl. doppelseitigem Klebeband. Eventuell kommen Reinigungskosten bei starker Verschmutzung hinzu.",
-      imageUrl: "https://images.unsplash.com/photo-1587889502932-a5e2f3d6dbf0?w=800&q=80",
-      cleaningFeeApplies: true,
-      cleaningFeeLabel: "Reinigungsgebühr",
-      cleaningFeeInfo: "Pauschal 15€ bei starken Flecken.",
-    },
-    // Catering Zubehör
-    {
-      title: "Slush-Eis Maschine",
-      slug: "slush-eis-maschine",
-      categorySlug: "catering-zubehoer",
-      priceCents: 8500,
-      basePriceCents: 8500,
-      shortDescription: "2x 10 Liter Kammern.",
-      description: "Der Hit im Sommer! Sirup und Becher können im Shop zugebucht werden.",
-      imageUrl: "https://images.unsplash.com/photo-1557142046-c704a3adf364?w=800&q=80",
-      cleaningFeeApplies: true,
-      cleaningFeeInfo: "Bitte nach der Benutzung mit klarem Wasser durchspülen.",
-    },
-    {
-      title: "Popcornmaschine XXL",
-      slug: "popcornmaschine-xxl",
-      categorySlug: "catering-zubehoer",
-      priceCents: 6500,
-      basePriceCents: 6500,
-      shortDescription: "Kino-Popcorn für Ihr Event.",
-      description: "Im wunderschönen Wagen. Inklusive Zutaten-Set für ca. 50 Portionen.",
-      imageUrl: "https://images.unsplash.com/photo-1572177439055-6b4d3fbdcd64?w=800&q=80",
-    },
-    {
-      title: "Chafing Dish Set",
-      slug: "chafing-dish-set",
-      categorySlug: "catering-zubehoer",
-      priceCents: 1200,
-      basePriceCents: 1200,
-      shortDescription: "Warmhaltebehälter für Speisen.",
-      description: "Inklusive 2 Brennpasten. Hält ihr Buffet über Stunden warm.",
-      imageUrl: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&q=80", // food
-    },
-    {
-      title: "Gläser Set (50 Stück)",
-      slug: "glaeser-set-50",
-      categorySlug: "catering-zubehoer",
-      priceCents: 2500,
-      basePriceCents: 2500,
-      shortDescription: "Miet-Gläser (Wasser/Longdrink).",
-      description: "Rückgabe erfolgt ungespült. Wir übernehmen den Abwasch!",
-      imageUrl: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=800&q=80", // glasses
-    },
-    // Transport
-    {
-      title: "Kofferanhänger 2.500kg",
-      slug: "kofferanhaenger-2500kg",
-      categorySlug: "transport-anhaenger",
-      priceCents: 4500,
-      basePriceCents: 4500,
-      shortDescription: "Großer, geschlossener Anhänger.",
-      description: "Lademasse: L x B x H = 3m x 1.5m x 1.8m. Perfekt zum trockenen Transport von Eventmodulen.",
-      imageUrl: "https://images.unsplash.com/photo-1621240361005-5db139b7a3cc?w=800&q=80", // trailer/truck
+      priceType: ItemPriceType.FROM_PRICE,
+      basePriceCents: 7500,
+      priceLabel: "ab 75 €",
+      shortDescription: "Indirekte Beleuchtung für eine besondere Atmosphäre.",
+      longDescription: "Set bestehend aus 6x Akku-LED-Spots. Kabellos, steuerbar per Fernbedienung oder App. Jede Farbe einstellbar. Akkulaufzeit bis zu 12 Stunden.",
+      depositRequired: true,
+      depositInfo: "Kaution 100 €.",
       pickupAvailable: true,
-      deliveryAvailable: false,
+      deliveryAvailable: true,
+      imageUrl: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?q=80&w=800",
+    },
+    // Komplettsets
+    {
+      title: "Tontechnik Komplettset",
+      slug: "tontechnik-komplettset",
+      categorySlug: "komplettsets",
+      priceType: ItemPriceType.ON_REQUEST,
+      priceLabel: "Preis auf Anfrage",
+      shortDescription: "Alles was Sie für eine gelungene Beschallung brauchen.",
+      longDescription: "Enthält Lautsprecher, Subwoofer, Mischpult und Funkmikrofon. Ideal für Hochzeiten und Firmenevents bis 150 Personen.",
+      depositRequired: true,
+      depositInfo: "Kaution nach Vereinbarung.",
+      deliveryInfo: "Lieferung und Aufbau durch unser Fachpersonal empfohlen.",
+      imageUrl: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=800",
     },
     {
-      title: "Rollbrett Mover",
-      slug: "rollbrett-mover",
-      categorySlug: "transport-anhaenger",
-      priceCents: 500,
-      basePriceCents: 500,
-      shortDescription: "Zum einfachen Transport.",
-      description: "Extrem starkes Rollbrett bis 500kg.",
-      imageUrl: "https://images.unsplash.com/photo-1463171515643-952cee54d42a?w=800&q=80", // wheels
-    }
+      title: "Party Licht Set",
+      slug: "party-licht-set",
+      categorySlug: "partybeleuchtung",
+      priceType: ItemPriceType.FIXED,
+      basePriceCents: 9500,
+      priceLabel: "95 €",
+      shortDescription: "Die Tanzfläche zum Beben bringen.",
+      longDescription: "Kombination aus Lichtstativ mit 4x LED-Spots, einem Derby-Effekt und einer kleinen Nebelmaschine inkl. Fluid.",
+      depositRequired: true,
+      depositInfo: "Kaution 100 €.",
+      pickupAvailable: true,
+      usageInfo: "Nebelmaschine nur in gut belüfteten Räumen verwenden.",
+      imageUrl: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?q=80&w=800",
+    },
+    {
+      title: "Mikrofon Set",
+      slug: "mikrofon-set",
+      categorySlug: "tontechnik",
+      priceType: ItemPriceType.FIXED,
+      basePriceCents: 3500,
+      priceLabel: "35 €",
+      shortDescription: "Hochwertiges Funkmikrofon für Reden.",
+      longDescription: "Set bestehend aus 1x Funkmikrofon (Handheld) und Empfänger. Reichweite bis zu 50m.",
+      depositRequired: false,
+      pickupAvailable: true,
+      imageUrl: "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?q=80&w=800",
+    },
+    {
+      title: "DJ Lichtpaket",
+      slug: "dj-lichtpaket",
+      categorySlug: "partybeleuchtung",
+      priceType: ItemPriceType.ON_REQUEST,
+      priceLabel: "Preis auf Anfrage",
+      shortDescription: "Professionelles Licht-Setup für DJs.",
+      longDescription: "Inklusive Moving Heads, Lasereffekten und DMX-Steuerung für eine synchrone Lichtshow.",
+      depositRequired: true,
+      deliveryAvailable: true,
+      pickupAvailable: false,
+      deliveryInfo: "Nur mit Lieferung und Aufbau durch uns.",
+      imageUrl: "https://images.unsplash.com/photo-1514525253361-bee8718a300a?q=80&w=800",
+    },
   ];
 
   let itemSortOrder = 1;
-  for (const item of itemsData) {
-    const categoryId = categoryMap.get(item.categorySlug);
+  for (const item of items) {
+    const categoryId = categoryMap[item.categorySlug];
     if (!categoryId) {
-      console.warn(`Category ${item.categorySlug} not found. Skipping ${item.title}`);
+      console.warn(`Category ${item.categorySlug} not found for item ${item.title}`);
       continue;
     }
 
-    const { categorySlug, imageUrl, cleaningFeeApplies, cleaningFeeLabel, cleaningFeeInfo, pickupAvailable, deliveryAvailable, ...itemRest } = item;
-
-    // Use specific values or reliable defaults
-    const dbItem = await db.item.upsert({
+    const { categorySlug, imageUrl, ...itemData } = item;
+    
+    const createdItem = await db.item.upsert({
       where: { slug: item.slug },
       update: {
-        ...itemRest,
+        ...itemData,
         categoryId,
         published: true,
-        priceType: "FIXED",
-        sortOrder: itemSortOrder,
-        cleaningFeeApplies: cleaningFeeApplies ?? false,
-        cleaningFeeLabel: cleaningFeeLabel ?? null,
-        cleaningFeeInfo: cleaningFeeInfo ?? null,
-        pickupAvailable: pickupAvailable ?? true,
-        deliveryAvailable: deliveryAvailable ?? true,
-        trackInventory: true,
-        totalStock: Math.floor(Math.random() * 5) + 1, // pseudo random stock 1-5
+        sortOrder: itemSortOrder++,
       },
       create: {
-        ...itemRest,
+        ...itemData,
         categoryId,
         published: true,
-        priceType: "FIXED",
-        sortOrder: itemSortOrder,
-        cleaningFeeApplies: cleaningFeeApplies ?? false,
-        cleaningFeeLabel: cleaningFeeLabel ?? null,
-        cleaningFeeInfo: cleaningFeeInfo ?? null,
-        pickupAvailable: pickupAvailable ?? true,
-        deliveryAvailable: deliveryAvailable ?? true,
-        trackInventory: true,
-        totalStock: Math.floor(Math.random() * 5) + 1, // pseudo random stock 1-5
+        sortOrder: itemSortOrder++,
       },
     });
 
-    // Check if the item already has this image
-    const existingImage = await db.itemImage.findFirst({
-      where: { itemId: dbItem.id, url: imageUrl }
-    });
-
-    if (!existingImage && imageUrl) {
-      // Create new image
-      await db.itemImage.create({
-        data: {
+    if (imageUrl) {
+      await db.itemImage.upsert({
+        where: { id: `img-${item.slug}` },
+        update: {
           url: imageUrl,
           alt: item.title,
+          itemId: createdItem.id,
           sortOrder: 1,
-          itemId: dbItem.id,
-          key: `seed-${item.slug}-1`,
-        }
+        },
+        create: {
+          id: `img-${item.slug}`,
+          url: imageUrl,
+          alt: item.title,
+          itemId: createdItem.id,
+          sortOrder: 1,
+          key: `seed-${item.slug}`,
+        },
       });
     }
+  }
 
-    itemSortOrder++;
+  // 5. FAQs
+  console.log("Seeding FAQs...");
+  const faqs = [
+    {
+      question: "Wie funktioniert die Anfrage?",
+      answer: "Sie können alle gewünschten Artikel in den Warenkorb legen und eine unverbindliche Anfrage senden. Wir prüfen die Verfügbarkeit zum Wunschtermin und senden Ihnen ein Angebot.",
+      sortOrder: 1,
+    },
+    {
+      question: "Kann ich mehrere Produkte gleichzeitig anfragen?",
+      answer: "Ja, Sie können beliebig viele Produkte sammeln und gemeinsam in einer Anfrage absenden.",
+      sortOrder: 2,
+    },
+    {
+      question: "Wie funktioniert Lieferung und Abholung?",
+      answer: "Viele Produkte können Sie direkt bei uns in 3702 Stranzendorf abholen. Größere Eventmodule liefern wir auch gerne gegen Aufpreis und bauen diese auf Wunsch auf.",
+      sortOrder: 3,
+    },
+    {
+      question: "Wann fallen Reinigungskosten an?",
+      answer: "Reinigungskosten fallen nur an, wenn die Artikel stark verschmutzt zurückgegeben werden. Bei normaler Nutzung ist die Endreinigung oft inklusive oder entfällt.",
+      sortOrder: 4,
+    },
+    {
+      question: "Was passiert bei Schlechtwetter?",
+      answer: "Bei Regen oder Sturm können Hüpfburgen aus Sicherheitsgründen nicht betrieben werden. Wir bieten in solchen Fällen oft kulante Stornierungs- oder Umbuchungsmöglichkeiten nach Absprache.",
+      sortOrder: 5,
+    },
+    {
+      question: "Wie funktionieren Stornierungen?",
+      answer: "Stornierungen sind bis 48h vor Mietbeginn kostenlos möglich. Danach fallen gestaffelte Gebühren an (25% bis 24h vorher, danach 50% plus eventuelle Anfahrtskosten).",
+      sortOrder: 6,
+    },
+    {
+      question: "Gibt es eine Kaution?",
+      answer: "Ja, für die meisten technischen Geräte und Eventmodule erheben wir eine Kaution, die bei ordnungsgemäßer Rückgabe sofort erstattet wird.",
+      sortOrder: 7,
+    },
+    {
+      question: "Kann ich Licht- und Tontechnik mieten?",
+      answer: "Selbstverständlich! Wir bieten alles von kleinen Party-Lautsprechern bis hin zu kompletten Bühnen-Setups.",
+      sortOrder: 8,
+    },
+    {
+      question: "Wie lange kann ich Produkte mieten?",
+      answer: "Die Standard-Mietdauer beträgt einen Tag (24h). Mehrtagesmieten sind nach Absprache zu vergünstigten Konditionen möglich.",
+      sortOrder: 9,
+    },
+  ];
+
+  for (const faq of faqs) {
+    await db.faq.upsert({
+      where: { id: `faq-${faq.sortOrder}` },
+      update: {
+        ...faq,
+        published: true,
+      },
+      create: {
+        id: `faq-${faq.sortOrder}`,
+        ...faq,
+        published: true,
+      },
+    });
   }
 
   console.log("Database seeded successfully!");
