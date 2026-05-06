@@ -3,6 +3,7 @@ import { Instagram, Facebook } from "lucide-react";
 import { CopyableContact } from "@/components/public/CopyableContact";
 
 type FooterLink = {
+    id: string;
     platform: string;
     label: string | null;
     url: string;
@@ -128,7 +129,7 @@ export function Footer({
 
                                     return (
                                         <a
-                                            key={`${link.platform}-${link.url}`}
+                                            key={link.id}
                                             href={link.url}
                                             target="_blank"
                                             rel="noreferrer"
