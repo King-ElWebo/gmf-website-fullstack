@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { db } from "../src/lib/db";
 import { ItemPriceType } from "@prisma/client";
 
@@ -81,6 +82,7 @@ async function main() {
       isActive: true,
       sortOrder: 1,
       showInNav: true,
+      isDefault: true,
     },
     create: {
       name: "Eventmodule",
@@ -90,6 +92,7 @@ async function main() {
       isActive: true,
       sortOrder: 1,
       showInNav: true,
+      isDefault: true,
     },
   });
 
@@ -102,6 +105,7 @@ async function main() {
       isActive: true,
       sortOrder: 2,
       showInNav: true,
+      isDefault: false,
     },
     create: {
       name: "Licht & Tontechnik",
@@ -111,6 +115,7 @@ async function main() {
       isActive: true,
       sortOrder: 2,
       showInNav: true,
+      isDefault: false,
     },
   });
 

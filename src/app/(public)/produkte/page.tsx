@@ -18,7 +18,7 @@ export default async function ProduktePage({ searchParams }: ProduktePageProps) 
 
     const { items, categories } = catalogTypeSlug
         ? await getProduktFilterData({ catalogTypeSlug })
-        : await getProduktFilterData();
+        : { items: [], categories: [] };
 
     return (
         <div className="min-h-screen relative" style={{ backgroundColor: '#dbf4ff', backgroundImage: 'radial-gradient(circle, #fff 10%, transparent 11%), radial-gradient(circle, #fff 10%, transparent 11%)', backgroundSize: '40px 40px', backgroundPosition: '0 0, 20px 20px' }}>
