@@ -99,7 +99,6 @@ export function HeaderClient({ navCatalogTypes }: HeaderClientProps) {
               alt="GMF Eventmodule Logo"
               width={2520}
               height={1696}
-              priority
               sizes="(max-width: 640px) 130px, 160px"
               className="relative h-[56px] w-auto object-contain transition-transform duration-200 group-hover:scale-[1.03] sm:h-[68px]"
             />

@@ -10,6 +10,15 @@ import { getPublicSiteSettings } from "@/lib/repositories/site-settings";
 
 export const revalidate = 3600;
 
+const optimizedHeroImages: Record<string, string> = {
+    "/uploads/3bcb0a7c-9cfa-46f6-9fc3-b2833376125f.jpg":
+        "/uploads/optimized/3bcb0a7c-9cfa-46f6-9fc3-b2833376125f.jpg",
+    "/uploads/9f830a8c-2aa2-40b2-9150-a3fe4cf52636.jpg":
+        "/uploads/optimized/9f830a8c-2aa2-40b2-9150-a3fe4cf52636.jpg",
+    "/uploads/38e679f1-567c-45ba-95f4-15a7da35fd57.jpg":
+        "/uploads/optimized/38e679f1-567c-45ba-95f4-15a7da35fd57.jpg",
+};
+
 export default async function HomePage() {
     const [carouselImages, socialImages, categories, settings] = await Promise.all([
         listGlobalImages({ area: DisplayArea.CAROUSEL, published: true }),
@@ -19,7 +28,7 @@ export default async function HomePage() {
     ]);
 
     const heroCarouselImages = carouselImages.map((image) => ({
-        url: image.url,
+        url: optimizedHeroImages[image.url] ?? image.url,
         alt: image.alt,
     }));
 

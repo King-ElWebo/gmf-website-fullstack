@@ -60,7 +60,7 @@ export function HeroCarousel({ images = [], title, text, noticeText }: HeroCarou
 
         const timer = setInterval(() => {
             setCurrentSlide((prev) => (prev + 1) % images.length);
-        }, 5000);
+        }, 12000);
 
         return () => clearInterval(timer);
     }, [images.length]);
@@ -88,6 +88,7 @@ export function HeroCarousel({ images = [], title, text, noticeText }: HeroCarou
                         className="object-cover"
                         priority={currentSlide === 0}
                         fetchPriority={currentSlide === 0 ? "high" : "auto"}
+                        quality={68}
                         sizes="100vw"
                     />
                     <div className="absolute inset-0 bg-gradient-to-tr from-blue-600/40 via-transparent to-yellow-400/30" />
