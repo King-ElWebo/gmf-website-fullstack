@@ -1,4 +1,4 @@
-import "../../admin-globals.css";
+import "../../../admin-globals.css";
 
 /**
  * Mietvertrag uses its own minimal layout (no AdminShell sidebar/header)
