@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { AddToInquiryCartButton } from '@/components/public/AddToInquiryCartButton';
@@ -109,23 +110,29 @@ export function ProduktDetailClient({ item }: { item: ProduktDetailItem }) {
                         {item.images.length > 0 ? (
                             <>
                                 <div className="relative bg-[#fef9c3] rounded-[16px] overflow-hidden mb-4 aspect-[4/3]">
-                                    <img
+                                    <Image
                                         src={item.images[currentImageIndex]}
                                         alt={item.title}
-                                        className="w-full h-full object-cover"
+                                        fill
+                                        priority={currentImageIndex === 0}
+                                        fetchPriority={currentImageIndex === 0 ? "high" : "auto"}
+                                        sizes="(max-width: 1024px) 100vw, 50vw"
+                                        className="object-cover"
                                     />
 
                                     {item.images.length > 1 && (
                                         <>
                                             <button
                                                 onClick={prevImage}
-                                                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full transition-colors"
+                                                className="absolute left-4 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 transition-colors hover:bg-white"
+                                                aria-label="Vorheriges Produktbild"
                                             >
                                                 <ChevronLeft className="text-[#1a3a52]" size={24} />
                                             </button>
                                             <button
                                                 onClick={nextImage}
-                                                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full transition-colors"
+                                                className="absolute right-4 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 transition-colors hover:bg-white"
+                                                aria-label="Naechstes Produktbild"
                                             >
                                                 <ChevronRight className="text-[#1a3a52]" size={24} />
                                             </button>
@@ -139,12 +146,15 @@ export function ProduktDetailClient({ item }: { item: ProduktDetailItem }) {
                                             <button
                                                 key={index}
                                                 onClick={() => setCurrentImageIndex(index)}
-                                                className={`aspect-[4/3] rounded-[16px] overflow-hidden border-2 transition-colors ${currentImageIndex === index ? 'border-[#1a3a52]' : 'border-[#cbd5e1]'}`}
+                                                className={`relative aspect-[4/3] min-h-12 rounded-[16px] overflow-hidden border-2 transition-colors ${currentImageIndex === index ? 'border-[#1a3a52]' : 'border-[#cbd5e1]'}`}
+                                                aria-label={`Produktbild ${index + 1} anzeigen`}
                                             >
-                                                <img
+                                                <Image
                                                     src={image}
                                                     alt={`${item.title} ${index + 1}`}
-                                                    className="w-full h-full object-cover"
+                                                    fill
+                                                    sizes="(max-width: 1024px) 33vw, 16vw"
+                                                    className="object-cover"
                                                 />
                                             </button>
                                         ))}

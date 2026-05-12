@@ -114,7 +114,7 @@ export function ContactClient({ settings }: ContactClientProps) {
                                         else if (platformStr.includes('facebook')) Icon = Facebook;
 
                                         return (
-                                            <a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-[#fef9c3] hover:bg-[#cbd5e1] rounded-full flex items-center justify-center transition-colors">
+                                            <a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer" className="h-12 w-12 bg-[#fef9c3] hover:bg-[#cbd5e1] rounded-full flex items-center justify-center transition-colors">
                                                 {Icon ? <Icon size={20} className="text-[#1a3a52]" /> : <span className="text-[#1a3a52] text-xs font-bold">{link.platform.substring(0, 2).toUpperCase()}</span>}
                                             </a>
                                         );
@@ -128,6 +128,7 @@ export function ContactClient({ settings }: ContactClientProps) {
                             <h3 className="font-['Nunito'] font-medium text-[18px] text-[#1a202c] mb-4">Standort</h3>
                             <div className="bg-[#fef9c3] rounded-[16px] h-[240px] sm:h-[300px] flex items-center justify-center border border-[#cbd5e1] overflow-hidden">
                                 <iframe
+                                    title="Google Maps Karte zum Standort GMF Eventmodule"
                                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2652.3718250777197!2d16.357130356852537!3d48.3341579974037!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x476d0fbf7cc77e57%3A0x6d03f6c40f987f39!2sSpargelfeldgasse%2022%2C%202102%20Bisamberg!5e0!3m2!1sde!2sat!4v1773320289705!5m2!1sde!2sat"
                                     width="100%"
                                     height="100%"

@@ -8,6 +8,8 @@ import { listGlobalImages } from "@/lib/repositories/global-images";
 import { listCategories } from "@/lib/repositories/catalog";
 import { getPublicSiteSettings } from "@/lib/repositories/site-settings";
 
+export const revalidate = 3600;
+
 export default async function HomePage() {
     const [carouselImages, socialImages, categories, settings] = await Promise.all([
         listGlobalImages({ area: DisplayArea.CAROUSEL, published: true }),
@@ -90,7 +92,7 @@ export default async function HomePage() {
                 <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                     <div className="inline-block bg-white px-5 sm:px-8 py-2 sm:py-3 rounded-full border-4 border-black shadow-[4px_4px_0_#000] mb-8 sm:mb-12 mx-auto justify-center flex hover:rotate-2 transition-transform">
                         <h2 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[22px] sm:text-[28px] md:text-[36px] text-black">
-                            So funktioniert's! 🎈
+                            So funktioniert&apos;s! 🎈
                         </h2>
                     </div>
 
@@ -173,6 +175,7 @@ export default async function HomePage() {
 
                         <div className="bg-[#fef9c3] rounded-[16px] h-[240px] sm:h-[300px] flex items-center justify-center border border-[#cbd5e1] overflow-hidden">
                             <iframe
+                                title="Google Maps Karte zum Standort GMF Eventmodule"
                                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2652.3718250777197!2d16.357130356852537!3d48.3341579974037!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x476d0fbf7cc77e57%3A0x6d03f6c40f987f39!2sSpargelfeldgasse%2022%2C%202102%20Bisamberg!5e0!3m2!1sde!2sat!4v1773320289705!5m2!1sde!2sat"
                                 width="100%"
                                 height="100%"
@@ -224,7 +227,7 @@ export default async function HomePage() {
                                     href={instagramLink.url}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="flex items-center gap-2 bg-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-[16px] border-2 border-black hover:-translate-y-1 hover:shadow-[4px_4px_0_#000] transition-all"
+                                    className="flex min-h-12 items-center gap-2 bg-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-[16px] border-2 border-black hover:-translate-y-1 hover:shadow-[4px_4px_0_#000] transition-all"
                                 >
                                     <Instagram size={20} className="text-[#1a3a52]" />
                                     <span className="font-['Nunito'] font-bold text-[15px] text-[#2d3748]">
@@ -237,7 +240,7 @@ export default async function HomePage() {
                                     href={facebookLink.url}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="flex items-center gap-2 bg-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-[16px] border-2 border-black hover:-translate-y-1 hover:shadow-[4px_4px_0_#000] transition-all"
+                                    className="flex min-h-12 items-center gap-2 bg-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-[16px] border-2 border-black hover:-translate-y-1 hover:shadow-[4px_4px_0_#000] transition-all"
                                 >
                                     <Facebook size={20} className="text-[#1a3a52]" />
                                     <span className="font-['Nunito'] font-bold text-[15px] text-[#2d3748]">

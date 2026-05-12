@@ -53,6 +53,7 @@ function renderPlayfulTitle(title: string) {
 
 export function HeroCarousel({ images = [], title, text, noticeText }: HeroCarouselProps) {
     const [currentSlide, setCurrentSlide] = useState(0);
+    const activeImage = images[currentSlide] ?? null;
 
     useEffect(() => {
         if (images.length <= 1) return;
@@ -78,24 +79,20 @@ export function HeroCarousel({ images = [], title, text, noticeText }: HeroCarou
 
     return (
         <section className="relative h-[460px] sm:h-[520px] md:h-[600px] overflow-hidden">
-            {images.length > 0 ? (
-                images.map((image, index) => (
-                    <div
-                        key={`${image.url}-${index}`}
-                        className={`absolute inset-0 transition-opacity duration-1000 ${index === currentSlide ? "opacity-100" : "opacity-0"}`}
-                    >
-                        <Image
-                            src={image.url}
-                            alt={image.alt ?? `Slide ${index + 1}`}
-                            fill
-                            className="object-cover"
-                            priority={index === 0}
-                            sizes="100vw"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-tr from-blue-600/40 via-transparent to-yellow-400/30" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-red-600/60 to-transparent opacity-80" />
-                    </div>
-                ))
+            {activeImage ? (
+                <div key={`${activeImage.url}-${currentSlide}`} className="absolute inset-0">
+                    <Image
+                        src={activeImage.url}
+                        alt={activeImage.alt ?? `Slide ${currentSlide + 1}`}
+                        fill
+                        className="object-cover"
+                        priority={currentSlide === 0}
+                        fetchPriority={currentSlide === 0 ? "high" : "auto"}
+                        sizes="100vw"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-tr from-blue-600/40 via-transparent to-yellow-400/30" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-red-600/60 to-transparent opacity-80" />
+                </div>
             ) : (
                 <div
                     className="absolute inset-0"
@@ -144,27 +141,31 @@ export function HeroCarousel({ images = [], title, text, noticeText }: HeroCarou
                 <>
                     <button
                         onClick={prevSlide}
-                        className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 bg-white/80 hover:bg-white p-1.5 sm:p-2 rounded-full transition-colors"
+                        className="absolute left-2 sm:left-4 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 transition-colors hover:bg-white"
                         aria-label="Previous slide"
                     >
                         <ChevronLeft className="text-[#1a3a52]" size={20} />
                     </button>
                     <button
                         onClick={nextSlide}
-                        className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 bg-white/80 hover:bg-white p-1.5 sm:p-2 rounded-full transition-colors"
+                        className="absolute right-2 sm:right-4 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 transition-colors hover:bg-white"
                         aria-label="Next slide"
                     >
                         <ChevronRight className="text-[#1a3a52]" size={20} />
                     </button>
 
-                    <div className="absolute bottom-4 sm:bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+                    <div className="absolute bottom-4 sm:bottom-8 left-1/2 z-20 flex -translate-x-1/2 gap-1">
                         {images.map((_, index) => (
                             <button
                                 key={index}
                                 onClick={() => setCurrentSlide(index)}
                                 aria-label={`Go to slide ${index + 1}`}
-                                className={`w-2 h-2 rounded-full transition-all ${index === currentSlide ? "bg-white w-8" : "bg-white/50"}`}
-                            />
+                                className="flex h-12 min-w-12 items-center justify-center rounded-full"
+                            >
+                                <span
+                                    className={`h-2 rounded-full transition-all ${index === currentSlide ? "w-8 bg-white" : "w-2 bg-white/50"}`}
+                                />
+                            </button>
                         ))}
                     </div>
                 </>

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button } from './Button';
 import { AddToInquiryCartButton } from './AddToInquiryCartButton';
 import { PriceDisplay } from './PricingNotice';
@@ -53,11 +54,13 @@ export function ProductCard({
             <div className="group bg-white rounded-[16px] border border-[#cbd5e1] shadow-sm hover:shadow-xl hover:border-[#94a3b8] transition-all duration-300 transform hover:-translate-y-1 overflow-hidden flex flex-col">
                 <Link href={`/produkt/${slug}`} className="block">
                     {imageUrl ? (
-                        <div className="overflow-hidden w-full h-[220px]">
-                            <img
+                        <div className="relative overflow-hidden w-full h-[220px]">
+                            <Image
                                 src={imageUrl}
                                 alt={title}
-                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                fill
+                                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                                sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
                             />
                         </div>
                     ) : (
@@ -120,11 +123,13 @@ export function ProductCard({
         <div className="group bg-white rounded-[32px] border-4 border-blue-200 shadow-[6px_6px_0_#bfdbfe] hover:shadow-[8px_8px_0_#60a5fa] hover:border-blue-400 transition-all duration-300 transform hover:-translate-y-2 overflow-hidden flex flex-col">
             <Link href={`/produkt/${slug}`} className="block">
                 {imageUrl ? (
-                    <div className="overflow-hidden w-full h-[190px] sm:h-[220px]">
-                        <img
+                    <div className="relative overflow-hidden w-full h-[190px] sm:h-[220px]">
+                        <Image
                             src={imageUrl}
                             alt={title}
-                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                            fill
+                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
                         />
                     </div>
                 ) : (

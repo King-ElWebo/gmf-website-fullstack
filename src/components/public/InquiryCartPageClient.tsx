@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Trash2, ShoppingCart, AlertTriangle, ShieldCheck, Clock, CloudRain, Info } from "lucide-react";
 import { Button } from "@/components/public/Button";
@@ -516,9 +517,15 @@ export function InquiryCartPageClient() {
                                 <div className="space-y-4">
                                     {items.map((item) => (
                                         <div key={item.id} className="flex flex-col gap-4 rounded-[16px] border border-[#e2e8f0] p-4 sm:flex-row">
-                                            <div className="h-[110px] w-full overflow-hidden rounded-[16px] bg-[#fef9c3] sm:w-[160px]">
+                                            <div className="relative h-[110px] w-full overflow-hidden rounded-[16px] bg-[#fef9c3] sm:w-[160px]">
                                                 {item.imageUrl ? (
-                                                    <img src={item.imageUrl} alt={item.title} className="h-full w-full object-cover" />
+                                                    <Image
+                                                        src={item.imageUrl}
+                                                        alt={item.title}
+                                                        fill
+                                                        sizes="(max-width: 640px) 100vw, 160px"
+                                                        className="object-cover"
+                                                    />
                                                 ) : (
                                                     <div className="flex h-full w-full items-center justify-center text-sm text-[#64748b]">
                                                         Kein Bild

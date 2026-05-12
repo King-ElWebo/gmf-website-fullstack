@@ -3,6 +3,8 @@ import { DeliveryNoticeBox } from '@/components/public/PricingNotice';
 import { getProduktFilterData } from '@/lib/public-product-list';
 import { getDefaultCatalogType } from '@/lib/repositories/catalog-types';
 
+export const revalidate = 3600;
+
 interface ProduktePageProps {
     searchParams: Promise<{
         kategorie?: string;

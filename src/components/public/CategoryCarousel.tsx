@@ -178,7 +178,7 @@ export function CategoryCarousel({ categories }: { categories: CategoryCard[] })
                     <div className="flex gap-3 sm:gap-4 shrink-0 self-center md:self-auto">
                         <button
                             onClick={() => navigate(-1)}
-                            className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-4 border-yellow-400 bg-yellow-300 flex items-center justify-center text-red-600 hover:bg-yellow-400 hover:scale-110 transition-transform disabled:opacity-30 shadow-[0_4px_0_#facc15]"
+                            className="h-12 w-12 rounded-full border-4 border-yellow-400 bg-yellow-300 flex items-center justify-center text-red-600 hover:bg-yellow-400 hover:scale-110 transition-transform disabled:opacity-30 shadow-[0_4px_0_#facc15]"
                             aria-label="Vorherige Kategorie"
                             disabled={categoryCount <= 1}
                         >
@@ -186,7 +186,7 @@ export function CategoryCarousel({ categories }: { categories: CategoryCard[] })
                         </button>
                         <button
                             onClick={() => navigate(1)}
-                            className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-4 border-yellow-400 bg-yellow-300 flex items-center justify-center text-red-600 hover:bg-yellow-400 hover:scale-110 transition-transform disabled:opacity-30 shadow-[0_4px_0_#facc15]"
+                            className="h-12 w-12 rounded-full border-4 border-yellow-400 bg-yellow-300 flex items-center justify-center text-red-600 hover:bg-yellow-400 hover:scale-110 transition-transform disabled:opacity-30 shadow-[0_4px_0_#facc15]"
                             aria-label="Nächste Kategorie"
                             disabled={categoryCount <= 1}
                         >
@@ -270,8 +270,12 @@ export function CategoryCarousel({ categories }: { categories: CategoryCard[] })
                                     isJumping.current = false;
                                 }}
                                 aria-label={`Kategorie ${idx + 1}`}
-                                className={`rounded-full transition-all duration-300 border-2 border-white shadow-sm ${activeDot === idx ? 'w-8 h-4 bg-red-500' : 'w-4 h-4 bg-blue-300 hover:bg-blue-400'}`}
-                            />
+                                className="flex h-12 min-w-12 items-center justify-center rounded-full"
+                            >
+                                <span
+                                    className={`rounded-full transition-all duration-300 border-2 border-white shadow-sm ${activeDot === idx ? 'h-4 w-8 bg-red-500' : 'h-4 w-4 bg-blue-300 hover:bg-blue-400'}`}
+                                />
+                            </button>
                         ))}
                     </div>
                 )}

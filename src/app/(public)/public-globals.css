@@ -1,12 +1,10 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
-
 :root {
   --public-background: #fffdf8;
   --public-foreground: #1f2937;
   --public-heading: #1f2937;
   --public-body: #64748b;
   --public-meta: #7c8aa5;
-  --public-font-sans: "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --public-font-sans: var(--font-nunito), "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   --public-h1-size: 32px;
   --public-h1-line: 1.2;
   --public-h1-weight: 600;
