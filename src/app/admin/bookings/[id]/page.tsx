@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { AlertTriangle, CalendarDays, Mail, MapPin, MessageSquare, Phone, ReceiptText, User } from "lucide-react";
+import { AlertTriangle, CalendarDays, FileText, Mail, MapPin, MessageSquare, Phone, ReceiptText, User } from "lucide-react";
 import { PrismaBookingRepository } from "@/lib/booking-core/infrastructure/database/PrismaBookingRepository";
 import { getBookingDurationDays } from "@/lib/inquiry-cart/pricing";
 import { formatPriceCents, getItemPriceDisplay } from "@/lib/items/price";
@@ -259,7 +259,20 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
             </p>
           </div>
 
-          <ClientBookingActions bookingId={booking.id} currentStatus={booking.status} />
+          <div className="flex flex-wrap items-center gap-3">
+            <ClientBookingActions bookingId={booking.id} currentStatus={booking.status} />
+            {booking.status === "approved" && (
+              <Link
+                href={`/admin/bookings/${booking.id}/mietvertrag`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700 shadow-sm transition hover:bg-blue-100"
+              >
+                <FileText className="h-4 w-4" />
+                Mietvertrag drucken
+              </Link>
+            )}
+          </div>
         </div>
 
         <div className="mt-6 grid gap-3 md:grid-cols-4">

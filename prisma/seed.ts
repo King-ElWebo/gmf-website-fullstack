@@ -478,6 +478,41 @@ async function main() {
     });
   }
 
+  // 6. Global Images
+  console.log("Seeding Global Images...");
+  const globalImages = [
+    {
+      id: "gi-1",
+      url: "https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?w=1200&q=80",
+      key: "gi-1-key",
+      alt: "Hero 1",
+      area: "CAROUSEL",
+      published: true,
+    },
+    {
+      id: "gi-2",
+      url: "https://images.unsplash.com/photo-1549480608-f46fae85df64?w=1200&q=80",
+      key: "gi-2-key",
+      alt: "Hero 2",
+      area: "CAROUSEL",
+      published: true,
+    },
+  ];
+
+  for (const img of globalImages) {
+    await db.globalImage.upsert({
+      where: { id: img.id },
+      update: {
+        url: img.url,
+        key: img.key,
+        alt: img.alt,
+        area: img.area,
+        published: img.published,
+      },
+      create: img,
+    });
+  }
+
   console.log("Database seeded successfully!");
 }
 

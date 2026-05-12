@@ -9,6 +9,7 @@ import { Textarea } from "@/components/public/Textarea";
 import { DateRangePicker } from "@/components/public/DateRangePicker";
 import "@/components/public/DateRangePicker.css";
 import { useInquiryCart } from "@/components/public/InquiryCartProvider";
+import { DeliveryNoticeBox, InquiryPricingNotice, PriceDisplay } from "@/components/public/PricingNotice";
 import { formatPriceCents } from "@/lib/items/price";
 import { calculateInquiryCartItemPrice, getBookingDurationDays } from "@/lib/inquiry-cart/pricing";
 import type { InquiryBookingRequestPayload } from "@/lib/inquiry-cart/request-payload";
@@ -549,9 +550,11 @@ export function InquiryCartPageClient() {
 
                                                 <div className="flex flex-wrap items-center justify-between gap-3">
                                                     <div className="space-y-1">
-                                                        <p className="font-['Nunito'] font-semibold text-[16px] text-[#4a5568]">
-                                                            {item.price || "Preis auf Anfrage"}
-                                                        </p>
+                                                        <PriceDisplay
+                                                            price={item.price}
+                                                            priceType={item.priceType}
+                                                            priceClassName="font-['Nunito'] font-semibold text-[16px] text-[#4a5568]"
+                                                        />
                                                         {(() => {
                                                             const pricing = pricingByItemId.get(item.id);
                                                             if (!pricing) return null;
@@ -580,8 +583,8 @@ export function InquiryCartPageClient() {
                                                                             Zeitraum: {periodText}
                                                                         </p>
                                                                         <p className="font-['Nunito'] text-[13px] text-[#1a3a52]">
-                                                                            Berechnet: {formatPriceCents(pricing.calculatedUnitPriceCents)} x {item.quantity} ={" "}
-                                                                            <span className="font-semibold">{formatPriceCents(pricing.calculatedTotalPriceCents)}</span>
+                                                                            Berechnet: {formatPriceCents(pricing.calculatedUnitPriceCents)} inkl. MwSt. x {item.quantity} ={" "}
+                                                                            <span className="font-semibold">{formatPriceCents(pricing.calculatedTotalPriceCents)} inkl. MwSt.</span>
                                                                         </p>
                                                                         {stockLabel && (
                                                                             availability && !availability.isAvailable ? (
@@ -742,10 +745,13 @@ export function InquiryCartPageClient() {
                                             <>
                                                 <p className="font-['Nunito'] text-[14px] text-[#4a5568]">Voraussichtliche Gesamtsumme</p>
                                                 <p className="font-['Nunito'] text-[12px] text-[#64748b] mb-1">
-                                                    Für automatisch berechenbare Produkte
+                                                    Nur fuer automatisch berechenbare Produktpreise, inkl. MwSt.
                                                 </p>
                                                 <p className="font-['Nunito'] font-semibold text-[28px] leading-[1.1] text-[#1a202c]">
                                                     {formatPriceCents(pricingSummary.autoCalculatedTotalCents)}
+                                                </p>
+                                                <p className="mt-1 font-['Nunito'] text-[12px] text-[#64748b]">
+                                                    inkl. MwSt.; Anfahrt/Lieferung sind nicht enthalten.
                                                 </p>
                                                 {pricingSummary.hasMixedPricing && (
                                                     <p className="mt-1 font-['Nunito'] text-[12px] text-[#64748b]">
@@ -780,6 +786,8 @@ export function InquiryCartPageClient() {
                                         )}
                                     </div>
                                 </div>
+
+                                <InquiryPricingNotice />
 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <Input
@@ -824,6 +832,8 @@ export function InquiryCartPageClient() {
                                         <option value="delivery">Lieferung</option>
                                     </select>
                                 </div>
+
+                                <DeliveryNoticeBox />
 
                                 <div className="space-y-4 rounded-[16px] border border-[#e2e8f0] bg-[#f8fafc] p-4">
                                     <div>
@@ -1032,7 +1042,7 @@ export function InquiryCartPageClient() {
                                         {submitting ? "Anfrage wird gesendet..." : "Gesamtanfrage senden"}
                                     </Button>
                                     <p className="text-center font-['Nunito'] text-[12px] text-[#64748b] mt-4">
-                                        Diese Anfrage ist noch unverbindlich. Sie erhalten von uns ein Angebot.
+                                        Diese Anfrage ist noch unverbindlich. Sie erhalten von uns ein Angebot mit final bestätigtem Preis; Anfahrt und Lieferung können zusätzlich dazukommen.
                                     </p>
                                 </div>
                             </form>

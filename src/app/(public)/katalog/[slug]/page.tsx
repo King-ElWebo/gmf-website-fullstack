@@ -1,5 +1,6 @@
 import { notFound, redirect } from 'next/navigation';
 import { ProduktFilter } from '@/components/public/ProduktFilter';
+import { DeliveryNoticeBox } from '@/components/public/PricingNotice';
 import { getProduktFilterData } from '@/lib/public-product-list';
 import { getActiveCatalogTypeBySlug, getDefaultCatalogType } from '@/lib/repositories/catalog-types';
 
@@ -60,6 +61,8 @@ export default async function KatalogPage({ params, searchParams }: KatalogPageP
                     initialCatalogType={slug}
                     variant={filterVariant}
                 />
+
+                <DeliveryNoticeBox className="mt-10" />
             </div>
         </div>
     );

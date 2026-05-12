@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Menu, ShoppingCart, X } from 'lucide-react';
@@ -58,49 +59,83 @@ export function HeaderClient({ navCatalogTypes }: HeaderClientProps) {
   const navLinks = [...staticLinksBefore, ...catalogLinks, ...staticLinksAfter];
 
   const navColors = [
-    { active: "bg-[#f13c20] border-2 border-black text-white shadow-[3px_3px_0_#000]", hover: "hover:border-black hover:bg-[#f13c20]/10 hover:text-black hover:shadow-[3px_3px_0_#000]" },
-    { active: "bg-[#fcd01b] border-2 border-black text-black shadow-[3px_3px_0_#000]", hover: "hover:border-black hover:bg-[#fcd01b]/20 hover:text-black hover:shadow-[3px_3px_0_#000]" },
-    { active: "bg-[#066bb7] border-2 border-black text-white shadow-[3px_3px_0_#000]", hover: "hover:border-black hover:bg-[#066bb7]/10 hover:text-black hover:shadow-[3px_3px_0_#000]" },
-    { active: "bg-[#619a45] border-2 border-black text-white shadow-[3px_3px_0_#000]", hover: "hover:border-black hover:bg-[#619a45]/10 hover:text-black hover:shadow-[3px_3px_0_#000]" },
-    { active: "bg-[#a43292] border-2 border-black text-white shadow-[3px_3px_0_#000]", hover: "hover:border-black hover:bg-[#a43292]/10 hover:text-black hover:shadow-[3px_3px_0_#000]" },
+    {
+      active: "border-[#8b1d10] bg-[#f13c20] text-white shadow-[3px_3px_0_#8b1d10]",
+      idle: "border-[#f13c20]/35 bg-[#fff8d8] text-[#8b1d10] hover:border-[#8b1d10] hover:bg-[#ffe1d9] hover:shadow-[3px_3px_0_#8b1d10]",
+    },
+    {
+      active: "border-[#7c5a00] bg-[#fcd01b] text-[#332600] shadow-[3px_3px_0_#7c5a00]",
+      idle: "border-[#f0c000]/45 bg-[#fff8d8] text-[#6e5300] hover:border-[#7c5a00] hover:bg-[#fff1a8] hover:shadow-[3px_3px_0_#7c5a00]",
+    },
+    {
+      active: "border-[#064f86] bg-[#066bb7] text-white shadow-[3px_3px_0_#064f86]",
+      idle: "border-[#066bb7]/35 bg-[#fff8d8] text-[#064f86] hover:border-[#064f86] hover:bg-[#dff0ff] hover:shadow-[3px_3px_0_#064f86]",
+    },
+    {
+      active: "border-[#3e6d28] bg-[#619a45] text-white shadow-[3px_3px_0_#3e6d28]",
+      idle: "border-[#619a45]/35 bg-[#fff8d8] text-[#3e6d28] hover:border-[#3e6d28] hover:bg-[#e7f7dd] hover:shadow-[3px_3px_0_#3e6d28]",
+    },
+    {
+      active: "border-[#762068] bg-[#a43292] text-white shadow-[3px_3px_0_#762068]",
+      idle: "border-[#a43292]/35 bg-[#fff8d8] text-[#762068] hover:border-[#762068] hover:bg-[#ffe2f8] hover:shadow-[3px_3px_0_#762068]",
+    },
   ];
 
   return (
-    <header className="sticky top-0 z-50 border-b-4 border-black bg-[#e7ff19] shadow-[0_4px_0_rgba(0,0,0,0.1)]">
+    <header className="sticky top-0 z-50 border-b-[3px] border-[#1a202c] bg-[linear-gradient(180deg,#fff7a8_0%,#ffe65c_52%,#ffd43b_100%)] shadow-[0_6px_0_rgba(26,32,44,0.10),0_14px_28px_rgba(15,23,42,0.12)]">
       <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-[72px] sm:h-[80px]">
+        <div className="flex h-[86px] items-center justify-between sm:h-[98px]">
+
           {/* Logo */}
-          <Link href="/" className="flex items-center">
-            <img src="/Logo.png" alt="Logo" className="h-[70px]" />
+          <Link
+            href="/"
+            className="group relative flex items-center rounded-[24px] border-2 border-[#1a202c] bg-[#fffef2] px-3 py-2 shadow-[5px_5px_0_#1a202c] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[6px_6px_0_#1a202c]"
+            aria-label="GMF Eventmodule Startseite"
+          >
+            <span className="absolute -left-2 -top-2 h-5 w-5 rounded-full border-2 border-[#1a202c] bg-[#f13c20]" />
+            <span className="absolute -bottom-2 right-3 h-4 w-4 rounded-full border-2 border-[#1a202c] bg-[#3b82f6]" />
+            <Image
+              src="/Logo.png"
+              alt="GMF Eventmodule Logo"
+              width={2520}
+              height={1696}
+              priority
+              sizes="(max-width: 640px) 130px, 160px"
+              className="relative h-[56px] w-auto object-contain transition-transform duration-200 group-hover:scale-[1.03] sm:h-[68px]"
+            />
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-4 xl:gap-6">
+          <nav className="hidden items-center gap-2 rounded-full border-2 border-[#1a202c] bg-white/55 px-2.5 py-2 shadow-[4px_4px_0_rgba(26,32,44,0.22)] backdrop-blur-sm lg:flex xl:gap-3">
             {navLinks.map((link, index) => {
               const isActive = pathname === link.href || (link.href !== '/' && pathname?.startsWith(link.href));
               const color = navColors[index % navColors.length];
+
               const linkClassName = isActive
-                ? `font-bold ${color.active}`
-                : `font-bold text-[#1a202c] border-2 border-transparent ${color.hover}`;
+                ? color.active
+                : color.idle;
+
               return (
                 <Link
                   key={link.href}
                   href={link.href}
+                  aria-current={isActive ? "page" : undefined}
                   style={{ fontFamily: 'var(--font-fredoka), sans-serif' }}
-                  className={`rounded-full px-4 py-2 text-[17px] transition-all duration-200 ${linkClassName}`}
+                  className={`rounded-full border-2 px-4 py-2 text-[16px] font-bold transition-all duration-200 hover:-translate-y-0.5 ${linkClassName}`}
                 >
                   {link.label}
                 </Link>
               );
             })}
+
             <Link
               href="/anfragekorb"
-              className="relative inline-flex h-[46px] w-[46px] items-center justify-center rounded-full border-2 border-black bg-[#f13c20] text-white shadow-[3px_3px_0_#000] hover:-translate-y-1 hover:shadow-[4px_4px_0_#000] transition-all"
+              className="group relative ml-1 flex h-[48px] w-[48px] items-center justify-center rounded-full border-2 border-[#1a202c] bg-[#f13c20] text-white shadow-[4px_4px_0_#1a202c] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#d93018] hover:shadow-[5px_5px_0_#1a202c]"
               aria-label="Anfragekorb"
             >
-              <ShoppingCart size={22} />
+              <ShoppingCart size={22} className="transition-transform group-hover:scale-110" />
               {hasHydrated && itemCount > 0 && (
-                <span className="absolute -right-2 -top-2 inline-flex min-h-[24px] min-w-[24px] items-center justify-center rounded-full border-2 border-black bg-[#fcd01b] px-1 text-[13px] font-bold text-black shadow-[2px_2px_0_#000]">
+                <span className="absolute -right-2 -top-2 flex min-h-[24px] min-w-[24px] items-center justify-center rounded-full border-2 border-[#1a202c] bg-[#fcd01b] px-1 text-[12px] font-bold text-[#1a202c] shadow-[2px_2px_0_#1a202c] transition-transform group-hover:scale-110">
                   {itemCount}
                 </span>
               )}
@@ -110,7 +145,7 @@ export function HeaderClient({ navCatalogTypes }: HeaderClientProps) {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden rounded-full border-2 border-black bg-white p-2 text-[#2d3748] shadow-[3px_3px_0_#000]"
+            className="flex h-12 w-12 items-center justify-center rounded-[18px] border-2 border-[#1a202c] bg-[#fffef2] text-[#1a202c] shadow-[4px_4px_0_#1a202c] transition-all hover:-translate-y-0.5 hover:bg-white active:translate-y-0 lg:hidden"
             aria-expanded={mobileMenuOpen}
             aria-label={mobileMenuOpen ? "Menue schliessen" : "Menue oeffnen"}
           >
@@ -120,34 +155,44 @@ export function HeaderClient({ navCatalogTypes }: HeaderClientProps) {
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <nav className="lg:hidden border-t-4 border-black bg-[#e7ff19] py-4 flex max-h-[calc(100vh-72px)] flex-col gap-3 overflow-y-auto px-4 shadow-inner">
+          <nav className="lg:hidden -mx-4 flex max-h-[calc(100vh-86px)] flex-col gap-3 overflow-y-auto border-t-2 border-[#1a202c] bg-[#fff7a8] px-4 py-5 shadow-[inset_0_8px_18px_rgba(26,32,44,0.10)] sm:-mx-6 sm:max-h-[calc(100vh-98px)] sm:px-6">
             {navLinks.map((link, index) => {
               const isActive = pathname === link.href || (link.href !== '/' && pathname?.startsWith(link.href));
               const color = navColors[index % navColors.length];
+
               const mobileLinkClassName = isActive
-                ? `font-bold ${color.active}`
-                : `font-bold text-[#1a202c] border-2 border-transparent ${color.hover} bg-white/50`;
+                ? color.active
+                : color.idle;
+
               return (
                 <Link
                   key={link.href}
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
+                  aria-current={isActive ? "page" : undefined}
                   style={{ fontFamily: 'var(--font-fredoka), sans-serif' }}
-                  className={`rounded-xl px-4 py-3 text-[18px] transition-all ${mobileLinkClassName}`}
+                  className={`rounded-[18px] border-2 px-5 py-3.5 text-[17px] font-bold transition-all ${mobileLinkClassName}`}
                 >
                   {link.label}
                 </Link>
               );
             })}
+
             <Link
               href="/anfragekorb"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-3 font-['Nunito'] font-bold text-[18px] text-[#2d3748] transition-colors py-2"
+              className="flex items-center gap-4 rounded-[18px] border-2 border-[#1a202c] bg-[#f13c20] px-5 py-3.5 text-[17px] font-bold text-white shadow-[4px_4px_0_#1a202c] transition-all hover:-translate-y-0.5 hover:bg-[#d93018]"
+              style={{ fontFamily: 'var(--font-fredoka), sans-serif' }}
             >
-              <div className="relative flex items-center justify-center w-10 h-10 rounded-full border-2 border-black bg-[#f13c20] text-white shadow-[2px_2px_0_#000]">
-                <ShoppingCart size={20} />
+              <div className="relative">
+                <ShoppingCart size={22} />
+                {hasHydrated && itemCount > 0 && (
+                  <span className="absolute -right-3 -top-3 flex min-h-[22px] min-w-[22px] items-center justify-center rounded-full border-2 border-[#1a202c] bg-[#fcd01b] px-1 text-[11px] text-[#1a202c] shadow-[2px_2px_0_#1a202c]">
+                    {itemCount}
+                  </span>
+                )}
               </div>
-              <span>Anfragekorb{hasHydrated && itemCount > 0 ? ` (${itemCount})` : ''}</span>
+              <span>Anfragekorb</span>
             </Link>
           </nav>
         )}

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { AddToInquiryCartButton } from '@/components/public/AddToInquiryCartButton';
 import { Button } from '@/components/public/Button';
+import { DeliveryNoticeBox, PriceDisplay } from '@/components/public/PricingNotice';
 import type { InquiryCartPriceType } from '@/lib/inquiry-cart/pricing';
 
 interface ProduktDetailItem {
@@ -195,11 +196,16 @@ export function ProduktDetailClient({ item }: { item: ProduktDetailItem }) {
                             </p>
                         )}
 
-                        {item.price && (
-                            <p className="font-['Nunito'] font-semibold text-[24px] text-[#4a5568] mb-6">
-                                {item.price}
-                            </p>
-                        )}
+                        <div className="mb-6">
+                            <PriceDisplay
+                                price={item.price}
+                                priceType={item.priceType}
+                                priceClassName="font-['Nunito'] font-semibold text-[24px] text-[#4a5568]"
+                                noteClassName="font-['Nunito'] text-[13px] text-[#64748b]"
+                            />
+                        </div>
+
+                        <DeliveryNoticeBox className="mb-6" />
 
                         {operationalHighlights.length > 0 && (
                             <div className="mb-6 flex flex-wrap gap-2">

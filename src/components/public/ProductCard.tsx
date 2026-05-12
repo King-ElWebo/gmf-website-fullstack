@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { Button } from './Button';
 import { AddToInquiryCartButton } from './AddToInquiryCartButton';
+import { PriceDisplay } from './PricingNotice';
 import type { InquiryCartPriceType } from '@/lib/inquiry-cart/pricing';
 
 interface ProductCardProps {
@@ -82,9 +83,11 @@ export function ProductCard({
                         {description}
                     </p>
                     <div className="flex items-center justify-between mt-2">
-                        <p className="font-['Nunito'] font-semibold text-[16px] leading-[25.6px] text-[#4a5568]">
-                            {price}
-                        </p>
+                        <PriceDisplay
+                            price={price}
+                            priceType={priceType}
+                            priceClassName="font-['Nunito'] font-semibold text-[16px] leading-[25.6px] text-[#4a5568]"
+                        />
                     </div>
                     <div className="mt-2 flex items-center gap-3">
                         <Link href={`/produkt/${slug}`} className="flex-1">
@@ -147,9 +150,12 @@ export function ProductCard({
                     {description}
                 </p>
                 <div className="flex items-center justify-between mt-2 pt-4 border-t-2 border-dashed border-blue-200">
-                    <p style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[18px] sm:text-[20px] text-red-600">
-                        {price}
-                    </p>
+                    <PriceDisplay
+                        price={price}
+                        priceType={priceType}
+                        priceClassName="text-[18px] sm:text-[20px] text-red-600"
+                        noteClassName="font-['Nunito'] text-[12px] leading-[18px] text-[#64748b]"
+                    />
                 </div>
                 <div className="mt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                     <Link href={`/produkt/${slug}`} className="flex-1">

@@ -1,4 +1,5 @@
 import { ProduktFilter } from '@/components/public/ProduktFilter';
+import { DeliveryNoticeBox } from '@/components/public/PricingNotice';
 import { getProduktFilterData } from '@/lib/public-product-list';
 import { getDefaultCatalogType } from '@/lib/repositories/catalog-types';
 
@@ -38,6 +39,8 @@ export default async function ProduktePage({ searchParams }: ProduktePageProps) 
                     initialCategory={initialCategory}
                     initialCatalogType={catalogTypeSlug ?? 'alle'}
                 />
+
+                <DeliveryNoticeBox className="mt-10 bg-white/80" />
             </div>
         </div>
     );
