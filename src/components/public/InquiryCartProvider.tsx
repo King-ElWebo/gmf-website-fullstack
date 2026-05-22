@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, useRef } from "react";
 import type { InquiryCartPriceType } from "@/lib/inquiry-cart/pricing";
 
 export type InquiryCartItem = {
@@ -16,6 +16,8 @@ export type InquiryCartItem = {
     imageUrl: string;
     summary?: string | null;
     quantity: number;
+    deliveryAvailable?: boolean;
+    pickupAvailable?: boolean;
 };
 
 type AddInquiryCartItemInput = Omit<InquiryCartItem, "quantity"> & {
@@ -104,12 +106,15 @@ function normalizeInquiryCartItem(value: unknown): InquiryCartItem | null {
         imageUrl: typeof raw.imageUrl === "string" ? raw.imageUrl : "",
         summary: typeof raw.summary === "string" ? raw.summary : null,
         quantity,
+        deliveryAvailable: typeof raw.deliveryAvailable === "boolean" ? raw.deliveryAvailable : true,
+        pickupAvailable: typeof raw.pickupAvailable === "boolean" ? raw.pickupAvailable : true,
     };
 }
 
 export function InquiryCartProvider({ children }: { children: React.ReactNode }) {
     const [items, setItems] = useState<InquiryCartItem[]>([]);
     const [hasHydrated, setHasHydrated] = useState(false);
+    const hasSyncedRef = useRef(false);
 
     useEffect(() => {
         try {
@@ -126,6 +131,61 @@ export function InquiryCartProvider({ children }: { children: React.ReactNode })
             setHasHydrated(true);
         }
     }, []);
+
+    // Sync database state on hydration to correct cached settings
+    useEffect(() => {
+        if (!hasHydrated || items.length === 0 || hasSyncedRef.current) return;
+
+        hasSyncedRef.current = true;
+        let active = true;
+
+        const syncCartItems = async () => {
+            try {
+                const ids = items.map((item) => item.id);
+                const response = await fetch("/api/public/cart/sync", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ ids }),
+                });
+
+                if (!response.ok) return;
+                const data = await response.json();
+                if (!active || !data?.items) return;
+
+                const syncMap = data.items as Record<string, { deliveryAvailable: boolean; pickupAvailable: boolean }>;
+
+                setItems((current) => {
+                    let changed = false;
+                    const next = current.map((item) => {
+                        const syncInfo = syncMap[item.id];
+                        if (!syncInfo) return item;
+
+                        const diffDelivery = item.deliveryAvailable !== syncInfo.deliveryAvailable;
+                        const diffPickup = item.pickupAvailable !== syncInfo.pickupAvailable;
+
+                        if (diffDelivery || diffPickup) {
+                            changed = true;
+                            return {
+                                ...item,
+                                deliveryAvailable: syncInfo.deliveryAvailable,
+                                pickupAvailable: syncInfo.pickupAvailable,
+                            };
+                        }
+                        return item;
+                    });
+                    return changed ? next : current;
+                });
+            } catch {
+                // Silently ignore sync errors
+            }
+        };
+
+        void syncCartItems();
+
+        return () => {
+            active = false;
+        };
+    }, [hasHydrated, items]);
 
     useEffect(() => {
         if (!hasHydrated) return;
@@ -161,6 +221,8 @@ export function InquiryCartProvider({ children }: { children: React.ReactNode })
                             imageUrl: item.imageUrl,
                             summary: item.summary ?? entry.summary,
                             quantity: nextQuantity,
+                            deliveryAvailable: item.deliveryAvailable ?? entry.deliveryAvailable,
+                            pickupAvailable: item.pickupAvailable ?? entry.pickupAvailable,
                         }
                         : entry
                 );
@@ -174,7 +236,12 @@ export function InquiryCartProvider({ children }: { children: React.ReactNode })
                 return current;
             }
 
-            return [...current, { ...item, quantity: initialQuantity }];
+            return [...current, { 
+                ...item, 
+                quantity: initialQuantity,
+                deliveryAvailable: item.deliveryAvailable ?? true,
+                pickupAvailable: item.pickupAvailable ?? true,
+            }];
         });
     }, []);
 

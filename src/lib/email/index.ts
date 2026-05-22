@@ -3,3 +3,5 @@
 
 export { sendEmail, sendBookingEmail, sendNewBookingEmails, sendStatusChangeEmail } from "./email-service";
 export type { SendEmailParams, SendEmailResult, EmailType, BookingEmailContext } from "./types";
+export { generateActionToken, verifyActionToken } from "./security";
+

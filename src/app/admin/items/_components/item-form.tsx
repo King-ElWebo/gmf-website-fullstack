@@ -594,31 +594,44 @@ export default function ItemForm(props: {
                             </p>
                         </div>
 
-                        <div className="grid gap-3 md:grid-cols-3">
-                            <label className="flex items-center gap-2 rounded-md border px-3 py-3 text-sm">
-                                <input
-                                    type="checkbox"
-                                    checked={formState.deliveryAvailable}
-                                    onChange={(e) => updateField("deliveryAvailable", e.target.checked)}
-                                />
-                                Lieferung verfuegbar
-                            </label>
-                            <label className="flex items-center gap-2 rounded-md border px-3 py-3 text-sm">
-                                <input
-                                    type="checkbox"
-                                    checked={formState.pickupAvailable}
-                                    onChange={(e) => updateField("pickupAvailable", e.target.checked)}
-                                />
-                                Abholung verfuegbar
-                            </label>
-                            <label className="flex items-center gap-2 rounded-md border px-3 py-3 text-sm">
-                                <input
-                                    type="checkbox"
-                                    checked={formState.requiresDeliveryAddress}
-                                    onChange={(e) => updateField("requiresDeliveryAddress", e.target.checked)}
-                                />
-                                Lieferadresse erforderlich
-                            </label>
+                        <div className="grid gap-4 md:grid-cols-2">
+                            <div className="space-y-1">
+                                <label className="text-sm font-medium">Liefer- & Abholungsoptionen</label>
+                                <select
+                                    value={formState.pickupAvailable && formState.deliveryAvailable ? "both" : formState.pickupAvailable ? "pickup" : formState.deliveryAvailable ? "delivery" : "both"}
+                                    onChange={(e) => {
+                                        const val = e.target.value;
+                                        if (val === "pickup") {
+                                            updateField("pickupAvailable", true);
+                                            updateField("deliveryAvailable", false);
+                                        } else if (val === "delivery") {
+                                            updateField("pickupAvailable", false);
+                                            updateField("deliveryAvailable", true);
+                                        } else {
+                                            updateField("pickupAvailable", true);
+                                            updateField("deliveryAvailable", true);
+                                        }
+                                    }}
+                                    className="w-full rounded-md border px-3 py-2 bg-white"
+                                >
+                                    <option value="both">Beides (Abholung & Lieferung)</option>
+                                    <option value="pickup">Nur Selbstabholung</option>
+                                    <option value="delivery">Nur Lieferung</option>
+                                </select>
+                            </div>
+
+                            {formState.deliveryAvailable && (
+                                <div className="space-y-1 flex flex-col justify-end">
+                                    <label className="flex items-center gap-2 rounded-md border px-3 py-3 text-sm h-[42px] bg-white cursor-pointer select-none">
+                                        <input
+                                            type="checkbox"
+                                            checked={formState.requiresDeliveryAddress}
+                                            onChange={(e) => updateField("requiresDeliveryAddress", e.target.checked)}
+                                        />
+                                        Lieferadresse erforderlich
+                                    </label>
+                                </div>
+                            )}
                         </div>
 
                         <div className="grid gap-4 md:grid-cols-2">

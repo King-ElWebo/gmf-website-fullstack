@@ -70,6 +70,7 @@ export interface BookingEmailAddress {
  * All optional fields are gracefully handled — missing data is simply omitted from the email.
  */
 export interface BookingEmailContext {
+  bookingId?: string;
   referenceCode: string;
   customerFirstName: string;
   customerLastName: string;

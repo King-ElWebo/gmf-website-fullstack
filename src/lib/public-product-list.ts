@@ -71,6 +71,8 @@ export async function getProduktFilterData(options: { catalogTypeSlug?: string }
         categorySlug: item.category.slug,
         catalogTypeName: item.category.catalogType.name,
         catalogTypeSlug: item.category.catalogType.slug,
+        deliveryAvailable: item.deliveryAvailable,
+        pickupAvailable: item.pickupAvailable,
     }));
 
     const mappedCategories = categories.map((category) => ({

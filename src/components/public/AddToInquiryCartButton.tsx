@@ -18,6 +18,8 @@ type AddToInquiryCartButtonProps = {
         totalStock: number;
         imageUrl: string;
         summary?: string | null;
+        deliveryAvailable?: boolean;
+        pickupAvailable?: boolean;
     };
     iconOnly?: boolean;
     variant?: "playful" | "classic";

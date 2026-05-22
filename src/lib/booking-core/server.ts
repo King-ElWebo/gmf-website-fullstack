@@ -6,7 +6,7 @@ import { PrismaBookingRepository } from "./infrastructure/database/PrismaBooking
 import { PrismaCalendarBlockerRepository } from "@/lib/calendar/blocker-repository";
 
 const bookingModuleConfig: BookingModuleConfig = {
-  blockingStatuses: ["approved", "requested"],
+  blockingStatuses: ["approved"],
   requiresApproval: true,
   trackInventoryGlobally: true,
   useTimeSlots: false,

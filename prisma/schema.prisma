@@ -111,6 +111,7 @@ model SiteSettings {
   heroTitle      String?
   heroText       String?
   additionalInfo String?
+  deliveryTerms  String?
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
   socialLinks    SiteSocialLink[]

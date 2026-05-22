@@ -20,6 +20,8 @@ interface ProduktItem {
     categorySlug: string;
     catalogTypeName: string;
     catalogTypeSlug: string;
+    deliveryAvailable?: boolean;
+    pickupAvailable?: boolean;
 }
 
 interface ProduktCategory {
@@ -148,6 +150,8 @@ export function ProduktFilter({
                         badge={catalogTypes.length > 1 ? item.catalogTypeName : undefined}
                         badgeColor="gray"
                         variant={variant}
+                        deliveryAvailable={item.deliveryAvailable}
+                        pickupAvailable={item.pickupAvailable}
                     />
                 ))}
             </div>

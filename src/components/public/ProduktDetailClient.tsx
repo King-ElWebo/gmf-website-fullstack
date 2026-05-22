@@ -55,7 +55,7 @@ function InfoSection({ title, content }: { title: string; content?: string | nul
     );
 }
 
-export function ProduktDetailClient({ item }: { item: ProduktDetailItem }) {
+export function ProduktDetailClient({ item, deliveryTerms }: { item: ProduktDetailItem; deliveryTerms?: string | null }) {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     const operationalHighlights = useMemo(() => {
@@ -215,7 +215,7 @@ export function ProduktDetailClient({ item }: { item: ProduktDetailItem }) {
                             />
                         </div>
 
-                        <DeliveryNoticeBox className="mb-6" />
+                        <DeliveryNoticeBox className="mb-6" deliveryTerms={deliveryTerms} />
 
                         {operationalHighlights.length > 0 && (
                             <div className="mb-6 flex flex-wrap gap-2">
@@ -262,6 +262,8 @@ export function ProduktDetailClient({ item }: { item: ProduktDetailItem }) {
                                     totalStock: item.totalStock,
                                     imageUrl: item.images[0] ?? "",
                                     summary: item.summary,
+                                    deliveryAvailable: item.deliveryAvailable,
+                                    pickupAvailable: item.pickupAvailable,
                                 }}
                                 className="flex-1"
                             />

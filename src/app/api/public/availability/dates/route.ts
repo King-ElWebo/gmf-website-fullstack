@@ -28,7 +28,31 @@ export async function POST(req: Request) {
     const rangeEnd = new Date(`${monthEnd}T23:59:59.999Z`);
 
     // 1. Fetch all blocking bookings in range for any of these items
-    const blockingBookings: any[] = [];
+    const blockingBookings = await db.booking.findMany({
+      where: {
+        status: "approved",
+        startDate: { lte: rangeEnd },
+        endDate: { gte: rangeStart },
+        items: {
+          some: {
+            itemId: { in: resourceIds },
+          },
+        },
+      },
+      select: {
+        startDate: true,
+        endDate: true,
+        items: {
+          where: {
+            itemId: { in: resourceIds },
+          },
+          select: {
+            itemId: true,
+            quantity: true,
+          },
+        },
+      },
+    });
 
     // 2. Fetch all calendar blockers in range
     const calendarBlockers = await db.calendarBlocker.findMany({

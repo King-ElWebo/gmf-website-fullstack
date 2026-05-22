@@ -107,6 +107,7 @@ export class PublicBookingUseCases {
 
     // 5. Fire-and-forget email notifications (never blocks the response)
     const emailCtx: BookingEmailContext = {
+      bookingId: saved.id,
       referenceCode: saved.referenceCode,
       customerFirstName: dto.customer.firstName,
       customerLastName: dto.customer.lastName,

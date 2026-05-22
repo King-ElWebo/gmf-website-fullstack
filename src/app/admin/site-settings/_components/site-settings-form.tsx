@@ -20,6 +20,7 @@ type SiteSettingsFormData = {
     heroTitle: string | null;
     heroText: string | null;
     additionalInfo: string | null;
+    deliveryTerms: string | null;
     socialLinks: SocialLinkFormRow[];
 };
 
@@ -43,6 +44,7 @@ export default function SiteSettingsForm({ initial }: { initial: SiteSettingsFor
     const [heroTitle, setHeroTitle] = useState(initial.heroTitle ?? "");
     const [heroText, setHeroText] = useState(initial.heroText ?? "");
     const [additionalInfo, setAdditionalInfo] = useState(initial.additionalInfo ?? "");
+    const [deliveryTerms, setDeliveryTerms] = useState(initial.deliveryTerms ?? "");
     const [socialLinks, setSocialLinks] = useState<SocialLinkFormRow[]>(
         initial.socialLinks.length > 0 ? initial.socialLinks : [createEmptySocialLink()]
     );
@@ -91,6 +93,7 @@ export default function SiteSettingsForm({ initial }: { initial: SiteSettingsFor
             heroTitle,
             heroText,
             additionalInfo,
+            deliveryTerms,
             socialLinks: socialLinks.map((link) => ({
                 platform: link.platform,
                 label: link.label,
@@ -163,6 +166,18 @@ export default function SiteSettingsForm({ initial }: { initial: SiteSettingsFor
                     <div className="space-y-1">
                         <label className="text-sm font-medium">Allgemeine Zusatzinfos</label>
                         <textarea className="min-h-[110px] w-full rounded-md border px-3 py-2" value={additionalInfo} onChange={(e) => setAdditionalInfo(e.target.value)} />
+                    </div>
+                    <div className="space-y-1">
+                        <label className="text-sm font-medium">Anfahrtsklausel / Lieferbedingungen</label>
+                        <textarea 
+                            className="min-h-[110px] w-full rounded-md border px-3 py-2" 
+                            value={deliveryTerms} 
+                            onChange={(e) => setDeliveryTerms(e.target.value)} 
+                            placeholder="Anfahrt und Lieferung werden nach Entfernung berechnet und im Zuge der Anfrage individuell vereinbart."
+                        />
+                        <p className="text-xs text-neutral-500">
+                            Wird auf der Produktdetailseite und im Anfragekorb/Checkout angezeigt.
+                        </p>
                     </div>
                 </section>
             </div>

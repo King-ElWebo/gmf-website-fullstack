@@ -11,40 +11,36 @@ export default async function ImpressumPage() {
                 <div className="space-y-6 rounded-[16px] border border-[#cbd5e1] bg-[#f8fafc] p-6 sm:p-8">
                     <section>
                         <h2 className="mb-2 font-['Nunito'] text-[20px] font-semibold text-[#1a202c]">Angaben gemaess ECG / UGB / GewO / MedienG</h2>
-                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">
-                            Bitte pruefen und ergaenzen Sie die folgenden Angaben vor Livegang rechtlich.
-                        </p>
                     </section>
 
                     <section>
                         <h3 className="mb-2 font-['Nunito'] text-[17px] font-semibold text-[#1a202c]">Medieninhaber und Diensteanbieter</h3>
-                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">Event-Vermietung</p>
-                        {settings.address ? (
-                            <p className="whitespace-pre-line font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">{settings.address}</p>
-                        ) : (
-                            <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">[Adresse ergaenzen]</p>
-                        )}
+                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">GMF Eventmodule</p>
+                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">Inhaber: Georg Wilkl-Fuhry</p>
+                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">
+                            {settings.address && settings.address.includes("16") ? settings.address : "Stranzendorf 16, 3702 Stranzendorf"}
+                        </p>
                     </section>
 
                     <section>
                         <h3 className="mb-2 font-['Nunito'] text-[17px] font-semibold text-[#1a202c]">Kontakt</h3>
-                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">E-Mail: {settings.email || "[E-Mail ergaenzen]"}</p>
-                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">Telefon: {settings.phone || "[Telefon ergaenzen]"}</p>
+                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">E-Mail: {settings.email || "office@gmf-eventmodule.at"}</p>
+                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">Telefon: {settings.phone || "+43 123 456789"}</p>
                     </section>
 
                     <section>
                         <h3 className="mb-2 font-['Nunito'] text-[17px] font-semibold text-[#1a202c]">Unternehmensdaten</h3>
-                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">Unternehmensgegenstand: [Bitte ergaenzen]</p>
-                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">Rechtsform: [Bitte ergaenzen]</p>
-                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">Firmenbuchnummer: [Bitte ergaenzen]</p>
-                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">Firmenbuchgericht: [Bitte ergaenzen]</p>
-                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">UID-Nummer: [Bitte ergaenzen]</p>
-                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">Aufsichtsbehoerde: [Bitte ergaenzen]</p>
+                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">Unternehmensgegenstand: Vermietung von Eventmodulen, Hüpfburgen sowie Licht- und Tontechnik</p>
+                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">Rechtsform: Einzelunternehmen</p>
+                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">Firmenbuch: Nicht im Firmenbuch eingetragen (nicht eintragungspflichtig)</p>
+                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">UID-Nummer: Umsatzsteuerbefreit aufgrund der Kleinunternehmerregelung</p>
+                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">Aufsichtsbehoerde: Bezirkshauptmannschaft Korneuburg</p>
                     </section>
 
                     <section>
                         <h3 className="mb-2 font-['Nunito'] text-[17px] font-semibold text-[#1a202c]">Berufsrechtliche Angaben</h3>
-                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">Kammer / Berufsbezeichnung: [Bitte ergaenzen]</p>
+                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">Kammer / Berufsverband: Wirtschaftskammer Niederoesterreich (WKNOE)</p>
+                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">Gewerbeordnung: www.ris.bka.gv.at</p>
                     </section>
 
                     <section>

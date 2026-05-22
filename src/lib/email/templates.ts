@@ -15,6 +15,8 @@ import {
   deliveryLabel,
   formatCentsEuro,
 } from "./html-layout";
+import { generateActionToken } from "./security";
+
 
 // ──────────────────────────────────────────────
 // Template rendering helpers
@@ -100,6 +102,46 @@ function textDateRange(ctx: BookingEmailContext): string {
 
 function renderNewBookingAdmin(ctx: BookingEmailContext): RenderedTemplate {
   const subject = `Neue Anfrage ${ctx.referenceCode}`;
+  const baseUrl = process.env.APP_URL || "http://localhost:3000";
+
+  let linksText = "";
+  let linksHtml = "";
+
+  if (ctx.bookingId) {
+    const expiresAt = Date.now() + 1000 * 60 * 60 * 24 * 7; // 7 Tage Gültigkeit
+    const approveToken = generateActionToken({
+      bookingId: ctx.bookingId,
+      action: "approve",
+      expiresAt,
+    });
+    const rejectToken = generateActionToken({
+      bookingId: ctx.bookingId,
+      action: "reject",
+      expiresAt,
+    });
+
+    const approveUrl = `${baseUrl}/bookings/action?bookingId=${ctx.bookingId}&action=approve&expiresAt=${expiresAt}&token=${approveToken}`;
+    const rejectUrl = `${baseUrl}/bookings/action?bookingId=${ctx.bookingId}&action=reject&expiresAt=${expiresAt}&token=${rejectToken}`;
+
+    linksText = `\n\nSCHNELLAKTIONEN:\n- Anfrage annehmen:\n  ${approveUrl}\n- Anfrage ablehnen:\n  ${rejectUrl}\n`;
+
+    linksHtml = `
+      <div style="margin: 24px 0; padding: 24px; background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; text-align: center;">
+        <h3 style="margin: 0 0 16px 0; font-size: 14px; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.5px;">Schnellaktionen</h3>
+        <table role="presentation" cellpadding="0" cellspacing="0" style="margin: 0 auto; width: auto;">
+          <tr>
+            <td style="padding: 0 12px;">
+              <a href="${approveUrl}" style="display: inline-block; padding: 12px 28px; font-family: 'Nunito', Arial, sans-serif; font-size: 14px; font-weight: 700; color: #ffffff; background-color: #10b981; text-decoration: none; border-radius: 8px; text-align: center; box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2); transition: all 0.2s ease;">Anfrage annehmen</a>
+            </td>
+            <td style="padding: 0 12px;">
+              <a href="${rejectUrl}" style="display: inline-block; padding: 12px 28px; font-family: 'Nunito', Arial, sans-serif; font-size: 14px; font-weight: 700; color: #ffffff; background-color: #ef4444; text-decoration: none; border-radius: 8px; text-align: center; box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.2); transition: all 0.2s ease;">Anfrage ablehnen</a>
+            </td>
+          </tr>
+        </table>
+        <p style="margin: 16px 0 0 0; font-size: 11px; color: #9ca3af; line-height: 1.4;">Diese Links sind 7 Tage gültig und kryptografisch signiert. Nur gültige Links können eine Statusänderung auslösen.</p>
+      </div>
+    `;
+  }
 
   // ── Plain text ──
   const textParts = [
@@ -126,7 +168,12 @@ function renderNewBookingAdmin(ctx: BookingEmailContext): RenderedTemplate {
   if (ctx.customerMessage) {
     textParts.push(``, `Nachricht des Kunden:`, `  „${ctx.customerMessage}"`);
   }
-  textParts.push(``, `Bitte im Admin-Dashboard prüfen und bearbeiten.`);
+
+  if (linksText) {
+    textParts.push(linksText);
+  } else {
+    textParts.push(``, `Bitte im Admin-Dashboard prüfen und bearbeiten.`);
+  }
 
   // ── HTML ──
   let body = `
@@ -155,6 +202,10 @@ function renderNewBookingAdmin(ctx: BookingEmailContext): RenderedTemplate {
   if (ctx.customerMessage) {
     body += sectionHeading("Nachricht des Kunden");
     body += messageBox(ctx.customerMessage);
+  }
+
+  if (linksHtml) {
+    body += linksHtml;
   }
 
   return {

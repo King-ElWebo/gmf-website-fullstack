@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { getPublishedItemBySlug } from '@/lib/repositories/catalog';
 import { formatItemPrice, getItemLongDescription, getItemSummary, getVideoUrl } from '@/lib/public-catalog';
 import { ProduktDetailClient } from '@/components/public/ProduktDetailClient';
+import { getPublicSiteSettings } from '@/lib/repositories/site-settings';
 
 interface PageProps {
     params: Promise<{ id: string }>;
@@ -14,6 +15,8 @@ export default async function ProductDetailPage({ params }: PageProps) {
     if (!item) {
         notFound();
     }
+
+    const settings = await getPublicSiteSettings();
 
     const mappedItem = {
         id: item.id,
@@ -48,5 +51,5 @@ export default async function ProductDetailPage({ params }: PageProps) {
         requiresDeliveryAddress: item.requiresDeliveryAddress,
     };
 
-    return <ProduktDetailClient item={mappedItem} />;
+    return <ProduktDetailClient item={mappedItem} deliveryTerms={settings.deliveryTerms} />;
 }

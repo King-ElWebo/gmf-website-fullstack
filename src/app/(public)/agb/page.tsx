@@ -10,7 +10,7 @@ export default function AgbPage() {
                     <section>
                         <h2 className="mb-2 font-['Nunito'] text-[20px] font-semibold text-[#1a202c]">1. Geltungsbereich</h2>
                         <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">
-                            Diese AGB gelten fuer die Vermietung von Eventmodulen und Zubehoer durch Event-Vermietung.
+                            Diese AGB gelten fuer die Vermietung von Eventmodulen und Zubehoer durch GMF Eventmodule.
                             Abweichende Bedingungen des Kunden gelten nur, wenn diese ausdruecklich schriftlich
                             bestaetigt wurden.
                         </p>
@@ -52,8 +52,7 @@ export default function AgbPage() {
                     <section>
                         <h2 className="mb-2 font-['Nunito'] text-[20px] font-semibold text-[#1a202c]">6. Schlussbestimmungen</h2>
                         <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">
-                            Es gilt oesterreichisches Recht. Gerichtsstand und zusaetzliche Klauseln sind je nach
-                            Unternehmensform und Zielgruppe rechtlich zu pruefen und zu ergaenzen.
+                            Es gilt oesterreichisches Recht. Als Gerichtsstand wird, sofern zulaessig, Korneuburg vereinbart.
                         </p>
                     </section>
 

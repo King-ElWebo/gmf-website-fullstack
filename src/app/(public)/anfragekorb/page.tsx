@@ -1,5 +1,7 @@
 import { InquiryCartPageClient } from "@/components/public/InquiryCartPageClient";
+import { getPublicSiteSettings } from "@/lib/repositories/site-settings";
 
-export default function InquiryCartPage() {
-    return <InquiryCartPageClient />;
+export default async function InquiryCartPage() {
+    const settings = await getPublicSiteSettings();
+    return <InquiryCartPageClient settings={settings} />;
 }

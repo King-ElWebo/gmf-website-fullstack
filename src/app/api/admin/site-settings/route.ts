@@ -10,6 +10,7 @@ type SiteSettingsRequestBody = {
     heroTitle?: string | null;
     heroText?: string | null;
     additionalInfo?: string | null;
+    deliveryTerms?: string | null;
     socialLinks?: Array<{
         platform?: string | null;
         label?: string | null;
@@ -36,6 +37,7 @@ export async function PATCH(req: NextRequest) {
             heroTitle: body?.heroTitle?.trim() || null,
             heroText: body?.heroText?.trim() || null,
             additionalInfo: body?.additionalInfo?.trim() || null,
+            deliveryTerms: body?.deliveryTerms?.trim() || null,
             socialLinks: (body?.socialLinks ?? []).map((link) => ({
                 platform: link.platform?.trim() || "",
                 label: link.label?.trim() || null,

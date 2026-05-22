@@ -33,7 +33,14 @@ export function PriceDisplay({
     );
 }
 
-export function DeliveryNoticeBox({ className = "" }: { className?: string }) {
+export function DeliveryNoticeBox({
+    className = "",
+    deliveryTerms,
+}: {
+    className?: string;
+    deliveryTerms?: string | null;
+}) {
+    const terms = deliveryTerms?.trim() || `${DELIVERY_COST_NOTICE} ${DELIVERY_REQUEST_NOTICE}`;
     return (
         <div className={`rounded-[16px] border border-[#cbd5e1] bg-[#f8fafc] p-4 ${className}`}>
             <div className="flex items-start gap-3">
@@ -44,8 +51,8 @@ export function DeliveryNoticeBox({ className = "" }: { className?: string }) {
                     <p className="font-['Nunito'] font-semibold text-[14px] text-[#1a202c]">
                         Hinweis zu Anfahrt und Lieferung
                     </p>
-                    <p className="mt-1 font-['Nunito'] text-[13px] leading-[20px] text-[#4a5568]">
-                        {DELIVERY_COST_NOTICE} {DELIVERY_REQUEST_NOTICE}
+                    <p className="mt-1 font-['Nunito'] text-[13px] leading-[20px] text-[#4a5568] whitespace-pre-line">
+                        {terms}
                     </p>
                 </div>
             </div>

@@ -22,6 +22,8 @@ interface ProductCardProps {
     badge?: string;
     badgeColor?: 'gray' | 'yellow';
     variant?: 'playful' | 'classic';
+    deliveryAvailable?: boolean;
+    pickupAvailable?: boolean;
 }
 
 export function ProductCard({
@@ -39,6 +41,8 @@ export function ProductCard({
     badge,
     badgeColor = 'gray',
     variant = 'playful',
+    deliveryAvailable = true,
+    pickupAvailable = true,
 }: ProductCardProps) {
     const playfulBadgeStyles = {
         gray: "bg-green-500 text-white border-2 border-green-600 shadow-sm",
@@ -111,6 +115,8 @@ export function ProductCard({
                                 totalStock,
                                 imageUrl,
                                 summary: description,
+                                deliveryAvailable,
+                                pickupAvailable,
                             }}
                         />
                     </div>
@@ -183,6 +189,8 @@ export function ProductCard({
                             totalStock,
                             imageUrl,
                             summary: description,
+                            deliveryAvailable,
+                            pickupAvailable,
                         }}
                     />
                 </div>

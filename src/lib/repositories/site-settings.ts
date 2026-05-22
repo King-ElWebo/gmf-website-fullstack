@@ -23,6 +23,7 @@ export type SiteSettingsRecord = {
     heroTitle: string | null;
     heroText: string | null;
     additionalInfo: string | null;
+    deliveryTerms: string | null;
     createdAt: Date;
     updatedAt: Date;
     socialLinks: SiteSocialLinkRecord[];
@@ -44,6 +45,7 @@ export type SiteSettingsInput = {
     heroTitle?: string | null;
     heroText?: string | null;
     additionalInfo?: string | null;
+    deliveryTerms?: string | null;
     socialLinks?: SiteSocialLinkInput[];
 };
 
@@ -100,6 +102,7 @@ export async function updateSiteSettings(input: SiteSettingsInput) {
                 heroTitle: input.heroTitle ?? null,
                 heroText: input.heroText ?? null,
                 additionalInfo: input.additionalInfo ?? null,
+                deliveryTerms: input.deliveryTerms ?? null,
             },
         });
 

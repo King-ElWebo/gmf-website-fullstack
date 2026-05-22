@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Trash2, ShoppingCart, AlertTriangle, ShieldCheck, Clock, CloudRain, Info } from "lucide-react";
+import { Trash2, ShoppingCart, AlertTriangle, ShieldCheck, Clock, CloudRain, Info, Truck, Store } from "lucide-react";
 import { Button } from "@/components/public/Button";
 import { Input } from "@/components/public/Input";
 import { Textarea } from "@/components/public/Textarea";
@@ -14,6 +14,7 @@ import { DeliveryNoticeBox, InquiryPricingNotice, PriceDisplay } from "@/compone
 import { formatPriceCents } from "@/lib/items/price";
 import { calculateInquiryCartItemPrice, getBookingDurationDays } from "@/lib/inquiry-cart/pricing";
 import type { InquiryBookingRequestPayload } from "@/lib/inquiry-cart/request-payload";
+import type { SiteSettingsRecord } from "@/lib/repositories/site-settings";
 
 type FormState = {
     startDate: string;
@@ -144,7 +145,7 @@ function resetBillingAddressFields(current: FormState): FormState {
     };
 }
 
-export function InquiryCartPageClient() {
+export function InquiryCartPageClient({ settings }: { settings?: SiteSettingsRecord }) {
     const { items, removeItem, updateQuantity, clearCart, itemCount, hasHydrated } = useInquiryCart();
     const [formState, setFormState] = useState<FormState>(initialFormState);
     const [submitting, setSubmitting] = useState(false);
@@ -157,6 +158,61 @@ export function InquiryCartPageClient() {
         () => getBookingDurationDays(formState.startDate, formState.endDate),
         [formState.endDate, formState.startDate]
     );
+
+    // Compute allowed shipping types based on product flags
+    const {
+        hasDeliveryOnlyItem,
+        hasPickupOnlyItem,
+        allowedDeliveryTypes,
+        showDeliveryDropdown,
+    } = useMemo(() => {
+        let hasDeliveryOnly = false;
+        let hasPickupOnly = false;
+
+        for (const item of items) {
+            const delivery = item.deliveryAvailable ?? true;
+            const pickup = item.pickupAvailable ?? true;
+
+            if (delivery && !pickup) {
+                hasDeliveryOnly = true;
+            }
+            if (pickup && !delivery) {
+                hasPickupOnly = true;
+            }
+        }
+
+        let allowed: Array<"pickup" | "delivery"> = ["pickup", "delivery"];
+        if (hasDeliveryOnly && !hasPickupOnly) {
+            allowed = ["delivery"];
+        } else if (hasPickupOnly && !hasDeliveryOnly) {
+            allowed = ["pickup"];
+        }
+
+        const showDropdown = items.every(
+            (item) => (item.deliveryAvailable ?? true) && (item.pickupAvailable ?? true)
+        );
+
+        return {
+            hasDeliveryOnlyItem: hasDeliveryOnly,
+            hasPickupOnlyItem: hasPickupOnly,
+            allowedDeliveryTypes: allowed,
+            showDeliveryDropdown: showDropdown,
+        };
+    }, [items]);
+
+    // Force active selection to the allowed one if forced
+    useEffect(() => {
+        if (allowedDeliveryTypes.length === 1) {
+            const forced = allowedDeliveryTypes[0];
+            if (formState.deliveryType !== forced) {
+                setFormState((prev) => ({ ...prev, deliveryType: forced }));
+            }
+        } else if (hasDeliveryOnlyItem && hasPickupOnlyItem) {
+            if (formState.deliveryType !== "delivery") {
+                setFormState((prev) => ({ ...prev, deliveryType: "delivery" }));
+            }
+        }
+    }, [allowedDeliveryTypes, formState.deliveryType, hasDeliveryOnlyItem, hasPickupOnlyItem]);
 
     // Fetch unavailable dates when items or visible month changes
     const fetchUnavailableDates = useCallback(
@@ -240,12 +296,18 @@ export function InquiryCartPageClient() {
             formState.lastName.trim() &&
             formState.email.trim()
         );
+        const hasRequiredDeliveryAddress = formState.deliveryType === "pickup" || Boolean(
+            formState.addressLine1.trim() &&
+            formState.zip.trim() &&
+            formState.city.trim()
+        );
 
         return (
             items.length > 0 &&
             bookingDuration.days != null &&
             !hasUnavailableItem &&
             hasRequiredCustomerData &&
+            hasRequiredDeliveryAddress &&
             isSeparateBillingAddressComplete(formState)
         );
     }, [availabilityByItemId, bookingDuration.days, formState, items.length]);
@@ -830,23 +892,94 @@ export function InquiryCartPageClient() {
                                     <label className="font-['Nunito'] font-medium text-[14px] leading-[21px] text-[#1a202c]">
                                         Lieferart
                                     </label>
-                                    <select
-                                        value={formState.deliveryType}
-                                        onChange={(e) => setFormState((current) => ({ ...current, deliveryType: e.target.value as "pickup" | "delivery" }))}
-                                        className="bg-white h-[50px] w-full rounded-[16px] px-[16px] py-[12px] font-['Nunito'] text-[16px] text-[#2d3748] border border-[#cbd5e1] focus:outline-none focus:border-[#1a3a52]"
-                                    >
-                                        <option value="pickup">Selbstabholung</option>
-                                        <option value="delivery">Lieferung</option>
-                                    </select>
+                                    {showDeliveryDropdown ? (
+                                        <select
+                                            value={formState.deliveryType}
+                                            onChange={(e) => setFormState((current) => ({ ...current, deliveryType: e.target.value as "pickup" | "delivery" }))}
+                                            className="bg-white h-[50px] w-full rounded-[16px] px-[16px] py-[12px] font-['Nunito'] text-[16px] text-[#2d3748] border border-[#cbd5e1] focus:outline-none focus:border-[#1a3a52]"
+                                        >
+                                            {allowedDeliveryTypes.includes("pickup") && (
+                                                <option value="pickup">Selbstabholung</option>
+                                            )}
+                                            {allowedDeliveryTypes.includes("delivery") && (
+                                                <option value="delivery">Lieferung</option>
+                                            )}
+                                        </select>
+                                    ) : (
+                                        <div className="space-y-2">
+                                            {hasDeliveryOnlyItem && hasPickupOnlyItem ? (
+                                                <div className="flex flex-col gap-2 rounded-[16px] border border-[#fef08a] bg-[#fffbf2] p-4 shadow-sm">
+                                                    <div className="flex items-center gap-2.5">
+                                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#ca8a04]/10 text-[#ca8a04] shrink-0">
+                                                            <AlertTriangle size={18} />
+                                                        </div>
+                                                        <div>
+                                                             <h4 className="font-['Nunito'] font-semibold text-[15px] text-[#854d0e]">
+                                                                 Lieferung & Selbstabholung (Mischbestellung)
+                                                             </h4>
+                                                             <p className="font-['Nunito'] text-[12px] text-[#854d0e]/80">
+                                                                 Vorgegeben durch Artikelauswahl
+                                                             </p>
+                                                        </div>
+                                                    </div>
+                                                    <p className="font-['Nunito'] text-[13px] leading-[20px] text-[#854d0e] mt-1">
+                                                        Ihr Warenkorb enthält sowohl Produkte zur <em>reinen Selbstabholung</em> als auch Produkte zur <em>reinen Lieferung</em>. Die genaue Logistik wird individuell mit Ihnen im Angebot vereinbart.
+                                                    </p>
+                                                </div>
+                                            ) : hasDeliveryOnlyItem ? (
+                                                <div className="flex flex-col gap-2 rounded-[16px] border border-[#bfdbfe] bg-[#f0f7ff] p-4 shadow-sm">
+                                                    <div className="flex items-center gap-2.5">
+                                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#2563eb]/10 text-[#2563eb] shrink-0">
+                                                            <Truck size={18} />
+                                                        </div>
+                                                        <div>
+                                                             <h4 className="font-['Nunito'] font-semibold text-[15px] text-[#1e40af]">
+                                                                 Nur Lieferung möglich
+                                                             </h4>
+                                                             <p className="font-['Nunito'] text-[12px] text-[#1e40af]/80">
+                                                                 Vorgegeben durch Artikelauswahl
+                                                             </p>
+                                                        </div>
+                                                    </div>
+                                                    <p className="font-['Nunito'] text-[13px] leading-[20px] text-[#1e40af] mt-1">
+                                                        Da sich Produkte im Warenkorb befinden, die <em>nur geliefert</em> werden können, ist für diese Anfrage nur Lieferung möglich.
+                                                    </p>
+                                                </div>
+                                            ) : (
+                                                <div className="flex flex-col gap-2 rounded-[16px] border border-[#bbf7d0] bg-[#f0fdf4] p-4 shadow-sm">
+                                                    <div className="flex items-center gap-2.5">
+                                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#16a34a]/10 text-[#15803d] shrink-0">
+                                                            <Store size={18} />
+                                                        </div>
+                                                        <div>
+                                                             <h4 className="font-['Nunito'] font-semibold text-[15px] text-[#15803d]">
+                                                                 Nur Selbstabholung möglich
+                                                             </h4>
+                                                             <p className="font-['Nunito'] text-[12px] text-[#15803d]/80">
+                                                                 Vorgegeben durch Artikelauswahl
+                                                             </p>
+                                                        </div>
+                                                    </div>
+                                                    <p className="font-['Nunito'] text-[13px] leading-[20px] text-[#15803d] mt-1">
+                                                        Da sich Produkte im Warenkorb befinden, die <em>nur selbst abgeholt</em> werden können, ist für diese Anfrage nur Selbstabholung möglich.
+                                                    </p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
                                 </div>
 
-                                <DeliveryNoticeBox />
+                                <DeliveryNoticeBox deliveryTerms={settings?.deliveryTerms} />
 
                                 <div className="space-y-4 rounded-[16px] border border-[#e2e8f0] bg-[#f8fafc] p-4">
                                     <div>
-                                        <h3 className="font-['Nunito'] font-semibold text-[16px] text-[#1a202c]">Lieferadresse</h3>
+                                        <h3 className="font-['Nunito'] font-semibold text-[16px] text-[#1a202c]">
+                                            {formState.deliveryType === "delivery" ? "Lieferadresse" : "Kundenadresse"}
+                                        </h3>
                                         <p className="mt-1 font-['Nunito'] text-[13px] leading-[20px] text-[#64748b]">
-                                            Diese Adresse verwenden wir standardmaessig auch als Rechnungsadresse.
+                                            {formState.deliveryType === "delivery" 
+                                                ? "Diese Adresse verwenden wir standardmaessig auch als Rechnungsadresse."
+                                                : "Geben Sie Ihre Kontaktdaten für die Abholung an."}
                                         </p>
                                     </div>
 
@@ -854,6 +987,7 @@ export function InquiryCartPageClient() {
                                         label="Strasse und Hausnummer"
                                         value={formState.addressLine1}
                                         onChange={(e) => setFormState((current) => ({ ...current, addressLine1: e.target.value }))}
+                                        required={formState.deliveryType === "delivery"}
                                     />
 
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -861,11 +995,13 @@ export function InquiryCartPageClient() {
                                             label="PLZ"
                                             value={formState.zip}
                                             onChange={(e) => setFormState((current) => ({ ...current, zip: e.target.value }))}
+                                            required={formState.deliveryType === "delivery"}
                                         />
                                         <Input
                                             label="Ort"
                                             value={formState.city}
                                             onChange={(e) => setFormState((current) => ({ ...current, city: e.target.value }))}
+                                            required={formState.deliveryType === "delivery"}
                                         />
                                     </div>
 

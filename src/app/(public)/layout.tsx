@@ -1,5 +1,5 @@
-import { Header } from '@/components/public/Header';
 import { Footer } from '@/components/public/Footer';
+import { HeaderClient, type NavCatalogType } from '@/components/public/HeaderClient';
 import { InquiryCartProvider } from '@/components/public/InquiryCartProvider';
 import { ScrollToTop } from '@/components/public/ScrollToTop';
 import { getPublicSiteSettings } from '@/lib/repositories/site-settings';
@@ -33,12 +33,17 @@ export default async function PublicLayout({
         { href: '/agb', label: 'AGB' },
         { href: '/widerruf', label: 'Widerruf' },
     ];
+    const headerNavCatalogTypes: NavCatalogType[] = navCatalogTypes.map((ct) => ({
+        slug: ct.slug,
+        label: ct.navLabel?.trim() || ct.name,
+        isDefault: ct.isDefault,
+    }));
 
     return (
         <InquiryCartProvider>
             <div className="public-site flex flex-col min-h-screen">
                 <ScrollToTop />
-                <Header />
+                <HeaderClient navCatalogTypes={headerNavCatalogTypes} />
                 <main className="flex-1">
                     {children}
                 </main>

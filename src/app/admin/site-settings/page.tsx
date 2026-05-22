@@ -15,6 +15,7 @@ export default async function SiteSettingsPage() {
                 heroTitle: settings.heroTitle,
                 heroText: settings.heroText,
                 additionalInfo: settings.additionalInfo,
+                deliveryTerms: settings.deliveryTerms,
                 socialLinks: settings.socialLinks.map((link) => ({
                     id: link.id,
                     platform: link.platform,

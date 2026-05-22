@@ -1,4 +1,8 @@
-export default function WiderrufPage() {
+import { getPublicSiteSettings } from "@/lib/repositories/site-settings";
+
+export default async function WiderrufPage() {
+    const settings = await getPublicSiteSettings();
+
     return (
         <div className="min-h-screen bg-white">
             <div className="mx-auto max-w-[900px] px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
@@ -32,9 +36,7 @@ export default function WiderrufPage() {
                     <section>
                         <h2 className="mb-2 font-['Nunito'] text-[20px] font-semibold text-[#1a202c]">Ausschluss bzw. vorzeitiges Erloeschen</h2>
                         <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">
-                            Das Widerrufsrecht kann in bestimmten Faellen ausgeschlossen sein oder vorzeitig
-                            erloeschen. Bitte ergaenzen Sie diesen Abschnitt entsprechend Ihrer konkreten
-                            Vertragsabwicklung und Leistungen.
+                            Das Widerrufsrecht erlischt vorzeitig, sobald die Dienstleistung vollstaendig erbracht wurde. Wir weisen darauf hin, dass bei Vertraegen ueber Dienstleistungen im Bereich der Freizeitbetaetigung, fuer die ein spezifischer Termin oder Zeitraum vereinbart wurde (wie die zeitgebundene Miete von Eventmodulen), gemaess FAGG kein gesetzliches Widerrufsrecht besteht.
                         </p>
                     </section>
 
@@ -46,9 +48,10 @@ export default function WiderrufPage() {
                             </p>
                             <div className="mt-3 whitespace-pre-line font-['Nunito'] text-[14px] leading-[22px] text-[#4a5568]">
                                 {`An:
-[Name/Firma]
-[Adresse]
-[E-Mail]
+GMF Eventmodule
+Georg Wilkl-Fuhry
+${settings.address && settings.address.includes("16") ? settings.address : "Stranzendorf 16, 3702 Stranzendorf"}
+E-Mail: ${settings.email || "office@gmf-eventmodule.at"}
 
 Hiermit widerrufe ich den von mir abgeschlossenen Vertrag ueber die Anmietung der folgenden Waren/Dienstleistungen:
 [Bezeichnung]

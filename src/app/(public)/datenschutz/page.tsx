@@ -12,13 +12,12 @@ export default async function DatenschutzPage() {
                 <div className="space-y-6 rounded-[16px] border border-[#cbd5e1] bg-[#f8fafc] p-6 sm:p-8">
                     <section>
                         <h2 className="mb-2 font-['Nunito'] text-[20px] font-semibold text-[#1a202c]">1. Verantwortlicher</h2>
-                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">Event-Vermietung</p>
-                        {settings.address ? (
-                            <p className="whitespace-pre-line font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">{settings.address}</p>
-                        ) : (
-                            <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">[Adresse ergaenzen]</p>
-                        )}
-                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">E-Mail: {settings.email || "[E-Mail ergaenzen]"}</p>
+                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">GMF Eventmodule</p>
+                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">Inhaber: Georg Wilkl-Fuhry</p>
+                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">
+                            {settings.address && settings.address.includes("16") ? settings.address : "Stranzendorf 16, 3702 Stranzendorf"}
+                        </p>
+                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">E-Mail: {settings.email || "office@gmf-eventmodule.at"}</p>
                     </section>
 
                     <section>
@@ -65,8 +64,7 @@ export default async function DatenschutzPage() {
                     <section>
                         <h2 className="mb-2 font-['Nunito'] text-[20px] font-semibold text-[#1a202c]">7. Cookies und Drittanbieter</h2>
                         <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">
-                            Wenn Cookies oder externe Dienste eingesetzt werden, sind Zweck, Rechtsgrundlage und
-                            Speicherdauer in diesem Abschnitt konkret zu ergaenzen.
+                            Wir setzen auf dieser Website nur technisch notwendige Cookies ein (z. B. zur Speicherung Ihres Warenkorbs). Es werden keine Tracking- oder Marketing-Cookies von Drittanbietern verwendet. Sofern externe Ressourcen geladen werden, geschieht dies datenschutzkonform, um Ihre Privatsphaehre zu schuetzen.
                         </p>
                     </section>
 
