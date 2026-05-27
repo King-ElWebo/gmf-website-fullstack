@@ -7,6 +7,7 @@ import { CopyableContact } from "@/components/public/CopyableContact";
 import { listGlobalImages } from "@/lib/repositories/global-images";
 import { listCategories } from "@/lib/repositories/catalog";
 import { getPublicSiteSettings } from "@/lib/repositories/site-settings";
+import { COMPANY_CONFIG } from "@/lib/company-config";
 
 export const revalidate = 3600;
 
@@ -164,7 +165,7 @@ export default async function HomePage() {
                             </p>
                             <div className="space-y-3">
                                 <p className="font-['Nunito'] text-[14px] text-[#2d3748]">
-                                    <strong>Adresse:</strong> {settings.address?.trim() || "Spargelfeldgasse 22, 3702 Stranzendorf"}
+                                    <strong>Adresse:</strong> {settings.address?.trim() || COMPANY_CONFIG.address}
                                 </p>
                                 <p className="font-['Nunito'] text-[14px] text-[#2d3748]">
                                     <strong>Öffnungszeiten:</strong> {settings.openingHours?.trim() || "nach telefonischer Vereinbarung"}

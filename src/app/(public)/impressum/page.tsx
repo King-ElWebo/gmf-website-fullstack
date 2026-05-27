@@ -1,4 +1,5 @@
 import { getPublicSiteSettings } from "@/lib/repositories/site-settings";
+import { COMPANY_CONFIG } from "@/lib/company-config";
 
 export default async function ImpressumPage() {
     const settings = await getPublicSiteSettings();
@@ -15,31 +16,41 @@ export default async function ImpressumPage() {
 
                     <section>
                         <h3 className="mb-2 font-['Nunito'] text-[17px] font-semibold text-[#1a202c]">Medieninhaber und Diensteanbieter</h3>
-                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">GMF Eventmodule</p>
-                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">Inhaber: Georg Wilkl-Fuhry</p>
+                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568] font-bold">{COMPANY_CONFIG.legalName}</p>
+                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#64748b] italic">Markenname: {COMPANY_CONFIG.brandingName}</p>
                         <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">
-                            {settings.address && settings.address.includes("16") ? settings.address : "Stranzendorf 16, 3702 Stranzendorf"}
+                            {settings.address || COMPANY_CONFIG.address}
                         </p>
                     </section>
 
                     <section>
                         <h3 className="mb-2 font-['Nunito'] text-[17px] font-semibold text-[#1a202c]">Kontakt</h3>
-                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">E-Mail: {settings.email || "office@gmf-eventmodule.at"}</p>
-                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">Telefon: {settings.phone || "+43 123 456789"}</p>
+                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">
+                            E-Mail: <a href={`mailto:${settings.email || COMPANY_CONFIG.emailPrimary}`} className="text-[#1a3a52] underline hover:text-[#0f2434]">{settings.email || COMPANY_CONFIG.emailPrimary}</a>
+                            {(!settings.email || settings.email === COMPANY_CONFIG.emailPrimary) && (
+                                <>
+                                    {" "}(Primär) | Backup: <a href={`mailto:${COMPANY_CONFIG.emailSecondary}`} className="text-[#1a3a52] underline hover:text-[#0f2434]">{COMPANY_CONFIG.emailSecondary}</a>
+                                </>
+                            )}
+                        </p>
+                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">
+                            Telefon: <a href={COMPANY_CONFIG.phoneLink} className="text-[#1a3a52] underline hover:text-[#0f2434]">{settings.phone || COMPANY_CONFIG.phone}</a>
+                        </p>
                     </section>
 
                     <section>
                         <h3 className="mb-2 font-['Nunito'] text-[17px] font-semibold text-[#1a202c]">Unternehmensdaten</h3>
-                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">Unternehmensgegenstand: Vermietung von Eventmodulen, Hüpfburgen sowie Licht- und Tontechnik</p>
+                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">Unternehmensgegenstand: {COMPANY_CONFIG.activities}</p>
                         <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">Rechtsform: Einzelunternehmen</p>
                         <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">Firmenbuch: Nicht im Firmenbuch eingetragen (nicht eintragungspflichtig)</p>
-                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">UID-Nummer: Umsatzsteuerbefreit aufgrund der Kleinunternehmerregelung</p>
-                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">Aufsichtsbehoerde: Bezirkshauptmannschaft Korneuburg</p>
+                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">UID-Nummer: {COMPANY_CONFIG.uid}</p>
+                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">Aufsichtsbehoerde: {COMPANY_CONFIG.authority}</p>
+                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">Gerichtsstand: {COMPANY_CONFIG.court}</p>
                     </section>
 
                     <section>
                         <h3 className="mb-2 font-['Nunito'] text-[17px] font-semibold text-[#1a202c]">Berufsrechtliche Angaben</h3>
-                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">Kammer / Berufsverband: Wirtschaftskammer Niederoesterreich (WKNOE)</p>
+                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">Kammer / Berufsverband: {COMPANY_CONFIG.chamber}</p>
                         <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">Gewerbeordnung: www.ris.bka.gv.at</p>
                     </section>
 

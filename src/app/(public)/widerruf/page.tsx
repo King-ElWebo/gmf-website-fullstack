@@ -1,4 +1,5 @@
 import { getPublicSiteSettings } from "@/lib/repositories/site-settings";
+import { COMPANY_CONFIG } from "@/lib/company-config";
 
 export default async function WiderrufPage() {
     const settings = await getPublicSiteSettings();
@@ -48,10 +49,10 @@ export default async function WiderrufPage() {
                             </p>
                             <div className="mt-3 whitespace-pre-line font-['Nunito'] text-[14px] leading-[22px] text-[#4a5568]">
                                 {`An:
-GMF Eventmodule
-Georg Wilkl-Fuhry
-${settings.address && settings.address.includes("16") ? settings.address : "Stranzendorf 16, 3702 Stranzendorf"}
-E-Mail: ${settings.email || "office@gmf-eventmodule.at"}
+${COMPANY_CONFIG.brandingName}
+${COMPANY_CONFIG.legalName}
+${settings.address || COMPANY_CONFIG.address}
+E-Mail: ${settings.email || COMPANY_CONFIG.emailPrimary}
 
 Hiermit widerrufe ich den von mir abgeschlossenen Vertrag ueber die Anmietung der folgenden Waren/Dienstleistungen:
 [Bezeichnung]

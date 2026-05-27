@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { COMPANY_CONFIG } from "@/lib/company-config";
 import { notFound } from "next/navigation";
 import { PrismaBookingRepository } from "@/lib/booking-core/infrastructure/database/PrismaBookingRepository";
 import { formatPriceCents, getItemPriceDisplay } from "@/lib/items/price";
@@ -121,12 +122,12 @@ export default async function MietvertragPage({ params }: { params: Promise<{ id
                 {/* Header */}
                 <header className="doc-header">
                     <div className="doc-header-left">
-                        <div className="company-name">GMF Eventmodule</div>
-                        <div className="company-detail">Georg Müller | 3702 Stranzendorf</div>
-                        <div className="company-detail">Tel: +43 123 456789 | office@gmf-eventmodule.at</div>
+                        <div className="company-name">{COMPANY_CONFIG.brandingName}</div>
+                        <div className="company-detail">{COMPANY_CONFIG.legalName} | {COMPANY_CONFIG.address}</div>
+                        <div className="company-detail">Tel: {COMPANY_CONFIG.phone} | {COMPANY_CONFIG.emailPrimary} | UID: {COMPANY_CONFIG.uid}</div>
                     </div>
                     <div className="doc-header-right">
-                        <div className="doc-title">Mietvertrag / Lieferschein</div>
+                        <div className="doc-title">Mietvertrag & Lieferschein</div>
                         <div className="doc-refcode">Ref: {booking.referenceCode}</div>
                         <div className="doc-date">Erstellt am: {today}</div>
                         <div className={`doc-status status-${booking.status}`}>
@@ -269,7 +270,7 @@ export default async function MietvertragPage({ params }: { params: Promise<{ id
 
                     <div className="price-hints">
                         <div>• Alle Preise inkl. gesetzlicher MwSt.</div>
-                        <div>• Anfahrt / Lieferung wird zusätzlich nach Entfernung und Absprache berechnet.</div>
+                        <div>• Anfahrt/Lieferung wird zusätzlich nach Entfernung und Absprache verrechnet.</div>
                         {booking.hasIndividualPricing && (
                             <div>• Positionen mit „Preis auf Anfrage" werden individuell kalkuliert und separat kommuniziert.</div>
                         )}
@@ -315,8 +316,14 @@ export default async function MietvertragPage({ params }: { params: Promise<{ id
                             <div className="payment-status-row">
                                 <span>Betrag erhalten:</span>
                                 <span className="fill-line" />
+                                <span>€</span>
                             </div>
                             <div className="payment-status-row">
+                                <span>Offene Zahlung:</span>
+                                <span className="fill-line" />
+                                <span>€</span>
+                            </div>
+                            <div className="payment-status-row" style={{ marginTop: "4px" }}>
                                 <label className="payment-option">
                                     <span className="checkbox-box" />
                                     <span>Vollständig bezahlt</span>
@@ -326,6 +333,47 @@ export default async function MietvertragPage({ params }: { params: Promise<{ id
                     </div>
                 </section>
 
+                {/* Bankverbindung & QR Code */}
+                <div className="info-block" style={{ marginTop: "12px", background: "#f8fafc", border: "1px solid #e2e8f0" }}>
+                    <div className="info-block-title">Bankverbindung & Zahlung</div>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 130px", gap: "16px", alignItems: "center" }}>
+                        <div className="info-block-content" style={{ display: "grid", gridTemplateColumns: "1fr", gap: "4px", fontSize: "9.5pt" }}>
+                            <div><strong>Kontoinhaber:</strong> {COMPANY_CONFIG.bank.holder}</div>
+                            <div><strong>IBAN:</strong> {COMPANY_CONFIG.bank.iban}</div>
+                            <div><strong>BIC:</strong> {COMPANY_CONFIG.bank.bic}</div>
+                            <div style={{ fontSize: "8.5pt", color: "#64748b", marginTop: "4px" }}>
+                                * Bitte geben Sie als Verwendungszweck Ihre Referenznummer <strong>{booking.referenceCode}</strong> an.
+                            </div>
+                        </div>
+                        {/* QR-Code Placeholder */}
+                        <div style={{
+                            border: "1.5px dashed #cbd5e1",
+                            borderRadius: "8px",
+                            height: "100px",
+                            width: "100px",
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            textAlign: "center",
+                            background: "#fff",
+                            padding: "4px",
+                            fontSize: "7.5pt",
+                            color: "#94a3b8",
+                            marginLeft: "auto"
+                        }}>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: "4px", color: "#cbd5e1" }}>
+                                <rect x="3" y="3" width="7" height="7" />
+                                <rect x="14" y="3" width="7" height="7" />
+                                <rect x="14" y="14" width="7" height="7" />
+                                <rect x="3" y="14" width="7" height="7" />
+                            </svg>
+                            <span style={{ fontWeight: "600" }}>QR-Zahlung</span>
+                            <span style={{ fontSize: "6.5pt" }}>[Vorbereitet]</span>
+                        </div>
+                    </div>
+                </div>
+
                 <hr className="doc-divider" />
 
                 {/* Rental conditions */}
@@ -333,28 +381,34 @@ export default async function MietvertragPage({ params }: { params: Promise<{ id
                     <div className="section-title">Mietbedingungen</div>
                     <div className="conditions-grid">
                         <div className="condition-item">
-                            <strong>Rückgabe:</strong> Alle Artikel sind zum vereinbarten Rückgabetermin vollständig und ordentlich verpackt zurückzugeben.
+                            <strong>Inkludiertes Zubehör:</strong> Zubehör wie Fallschutzmatten, Gebläse, Erdnägel, Transportwagen etc. sind im Mietpreis inkludiert.
                         </div>
                         <div className="condition-item">
-                            <strong>Reinigung:</strong> Stark verschmutzte Artikel werden mit einer Reinigungspauschale von 120 € in Rechnung gestellt.
+                            <strong>Helfer vor Ort:</strong> Für den Auf- und Abbau der Eventmodule werden seitens des Mieters 1–2 kräftige Helfer benötigt.
                         </div>
                         <div className="condition-item">
-                            <strong>Trocknung:</strong> Bei Rückgabe nasser Hüpfburgen/Rutschen fällt eine Trocknungspauschale von 190 € an.
+                            <strong>Stromversorgung:</strong> Die Stromversorgung ist vom Veranstalter bereitzustellen. Es werden ca. 3 kW pro Hüpfburg/Gebläse benötigt.
                         </div>
                         <div className="condition-item">
-                            <strong>Kaution:</strong> Eine Kaution ist bei Übergabe fällig und wird nach ordnungsgemäßer Rückgabe erstattet.
+                            <strong>Betreuungspflicht:</strong> Es besteht eine ständige Betreuungspflicht der Mietgeräte durch geeignete erwachsene Personen.
                         </div>
                         <div className="condition-item">
-                            <strong>Haftung:</strong> Der Mieter haftet für Beschädigungen oder Verlust der gemieteten Artikel während der Mietdauer.
+                            <strong>Haftungsausschluss:</strong> Der Vermieter haftet nicht für Unfälle, Verletzungen oder Schäden durch Missbrauch der Mietgeräte.
                         </div>
                         <div className="condition-item">
-                            <strong>Stornierung:</strong> Kostenlos bis 48h vorher. Danach 25% (bis 24h), Vor-Ort-Storno 50% zzgl. Anfahrtskosten.
+                            <strong>Veranstaltungsmeldung:</strong> Der Veranstalter/Mieter ist eigenverantwortlich für eventuell notwendige behördliche Veranstaltungsmeldungen zuständig.
                         </div>
                         <div className="condition-item">
-                            <strong>Nutzung:</strong> Die Artikel sind sorgfältig und bestimmungsgemäß zu nutzen. Betreiber/Vermieter stellt keine eigene Versicherung.
+                            <strong>Reinigungspauschale:</strong> Bei grober, fahrlässiger oder mutwilliger Verschmutzung wird eine Reinigungspauschale von 120 € exkl. MwSt. (144 € inkl. MwSt.) verrechnet.
                         </div>
                         <div className="condition-item">
-                            <strong>Schlechtwetter:</strong> Hüpfburgen dürfen bei Regen/Sturm aus Sicherheitsgründen nicht betrieben werden.
+                            <strong>Trocknungskosten:</strong> Bei Rückgabe nasser Module (durch Regen/Nässe) fällt eine Trocknungspauschale von 165 € netto (198 € inkl. MwSt.) pro Hüpfburg an.
+                        </div>
+                        <div className="condition-item">
+                            <strong>Beschädigungen:</strong> Schäden an den Mietgegenständen durch unsachgemäßen Gebrauch oder Vandalismus werden nach tatsächlichem Aufwand verrechnet.
+                        </div>
+                        <div className="condition-item">
+                            <strong>Stornobedingungen:</strong> Eine Stornierung ist bis 2 Tage vor Mietbeginn kostenlos möglich. Danach werden angefallene Kosten bis max. 350 € netto in Rechnung gestellt.
                         </div>
                     </div>
                 </section>
@@ -370,17 +424,32 @@ export default async function MietvertragPage({ params }: { params: Promise<{ id
                             <div className="signature-line" />
                             <div className="signature-hint">{today}</div>
                         </div>
-                        <div className="signature-block">
+                        <div className="signature-block" style={{ position: "relative" }}>
                             <div className="signature-label">Unterschrift Kunde / Mieterin</div>
                             <div className="signature-line" />
                             <div className="signature-hint">
                                 {booking.customer.firstName} {booking.customer.lastName}
                             </div>
+                            {/* Digital Signature Placeholder */}
+                            <div className="no-print" style={{
+                                position: "absolute",
+                                bottom: "35px",
+                                right: "0",
+                                border: "1px dashed #cbd5e1",
+                                borderRadius: "4px",
+                                padding: "2px 6px",
+                                fontSize: "7pt",
+                                color: "#94a3b8",
+                                background: "#fff",
+                                userSelect: "none"
+                            }}>
+                                [ Digitale Signatur vorbereitet ]
+                            </div>
                         </div>
                         <div className="signature-block">
                             <div className="signature-label">Unterschrift Vermieter / Übergabe</div>
                             <div className="signature-line" />
-                            <div className="signature-hint">GMF Eventmodule</div>
+                            <div className="signature-hint">{COMPANY_CONFIG.legalName}</div>
                         </div>
                     </div>
 
@@ -413,7 +482,7 @@ export default async function MietvertragPage({ params }: { params: Promise<{ id
                 </section>
 
                 <footer className="doc-footer">
-                    GMF Eventmodule · 3702 Stranzendorf · office@gmf-eventmodule.at · Ref: {booking.referenceCode}
+                    {COMPANY_CONFIG.brandingName} · {COMPANY_CONFIG.address} · {COMPANY_CONFIG.emailPrimary} · Ref: {booking.referenceCode}
                 </footer>
             </div>
         </>

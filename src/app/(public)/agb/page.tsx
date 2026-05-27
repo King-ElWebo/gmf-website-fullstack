@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { COMPANY_CONFIG } from "@/lib/company-config";
 
 export default function AgbPage() {
     return (
@@ -10,7 +11,7 @@ export default function AgbPage() {
                     <section>
                         <h2 className="mb-2 font-['Nunito'] text-[20px] font-semibold text-[#1a202c]">1. Geltungsbereich</h2>
                         <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">
-                            Diese AGB gelten fuer die Vermietung von Eventmodulen und Zubehoer durch GMF Eventmodule.
+                            Diese AGB gelten fuer die Vermietung von Eventtechnik und -modulen durch den Betreiber {COMPANY_CONFIG.legalName} (unter der Marke „{COMPANY_CONFIG.brandingName}“).
                             Abweichende Bedingungen des Kunden gelten nur, wenn diese ausdruecklich schriftlich
                             bestaetigt wurden.
                         </p>

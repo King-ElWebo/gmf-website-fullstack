@@ -13,6 +13,7 @@ export class AdminBookingCommands {
    */
   private buildEmailContext(booking: any, extra?: Partial<BookingEmailContext>): BookingEmailContext {
     return {
+      bookingId: booking.id,
       referenceCode: booking.referenceCode,
       customerFirstName: booking.customer?.firstName ?? "",
       customerLastName: booking.customer?.lastName ?? "",
@@ -27,7 +28,7 @@ export class AdminBookingCommands {
       deliveryType: booking.deliveryType ?? "",
       itemCount: booking.items?.length ?? 0,
       items: (booking.items ?? []).map((i: any) => ({
-        title: i.resourceTitle || i.title || "Produkt",
+        title: i.resourceTitle || i.item?.title || "Produkt",
         quantity: i.quantity ?? 1,
         priceType: i.priceType,
         displayPrice: i.displayPrice,

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getPublicSiteSettings } from "@/lib/repositories/site-settings";
+import { COMPANY_CONFIG } from "@/lib/company-config";
 
 export default async function DatenschutzPage() {
     const settings = await getPublicSiteSettings();
@@ -12,12 +13,14 @@ export default async function DatenschutzPage() {
                 <div className="space-y-6 rounded-[16px] border border-[#cbd5e1] bg-[#f8fafc] p-6 sm:p-8">
                     <section>
                         <h2 className="mb-2 font-['Nunito'] text-[20px] font-semibold text-[#1a202c]">1. Verantwortlicher</h2>
-                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">GMF Eventmodule</p>
-                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">Inhaber: Georg Wilkl-Fuhry</p>
+                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568] font-bold">{COMPANY_CONFIG.legalName}</p>
+                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#64748b] italic">Markenname: {COMPANY_CONFIG.brandingName}</p>
                         <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">
-                            {settings.address && settings.address.includes("16") ? settings.address : "Stranzendorf 16, 3702 Stranzendorf"}
+                            {settings.address || COMPANY_CONFIG.address}
                         </p>
-                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">E-Mail: {settings.email || "office@gmf-eventmodule.at"}</p>
+                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">
+                            E-Mail: <a href={`mailto:${settings.email || COMPANY_CONFIG.emailPrimary}`} className="text-[#1a3a52] underline hover:text-[#0f2434]">{settings.email || COMPANY_CONFIG.emailPrimary}</a>
+                        </p>
                     </section>
 
                     <section>

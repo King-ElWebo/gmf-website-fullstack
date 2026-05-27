@@ -237,6 +237,41 @@ export function ProduktDetailClient({ item, deliveryTerms }: { item: ProduktDeta
                             </div>
                         )}
 
+                        {/* Technische Details & Inklusivleistungen für Eventmodule */}
+                        {item.catalogType.toLowerCase().includes("event") && (
+                            <div className="mb-8 rounded-[24px] border-4 border-black bg-white p-6 shadow-[6px_6px_0_#000] hover:rotate-[-0.5deg] transition-transform">
+                                <h3 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[20px] text-black mb-4">
+                                    🎈 Wichtige Infos & Inklusivleistungen
+                                </h3>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-sm font-['Nunito'] text-[#4a5568] leading-relaxed">
+                                    <div className="flex gap-2.5">
+                                        <span className="text-[#f13c20] font-bold text-lg">✓</span>
+                                        <div>
+                                            <strong>Zubehör inklusive:</strong> Fallschutzmatten, Gebläse, Erdnägel, Transportwagen und weiteres notwendiges Zubehör.
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-2.5">
+                                        <span className="text-[#f13c20] font-bold text-lg">⚡</span>
+                                        <div>
+                                            <strong>Strombedarf:</strong> Normale 230V Steckdose, ca. 3 kW Leistung pro Hüpfburg/Gebläse erforderlich.
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-2.5">
+                                        <span className="text-[#f13c20] font-bold text-lg">💪</span>
+                                        <div>
+                                            <strong>Aufbau-Hilfe:</strong> Seitens des Mieters werden 1–2 kräftige Helfer für den Auf- & Abbau benötigt.
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-2.5">
+                                        <span className="text-[#f13c20] font-bold text-lg">🛡️</span>
+                                        <div>
+                                            <strong>Sicherheit:</strong> Ständige Betreuung durch einen Erwachsenen ist verpflichtend (zivil-technisch überprüft).
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
                         <InfoSection title="Beschreibung" content={item.description} />
                         <InfoSection title="Lieferung & Abholung" content={item.deliveryInfo} />
                         <InfoSection title="Zusatzkosten" content={item.additionalCostsInfo} />

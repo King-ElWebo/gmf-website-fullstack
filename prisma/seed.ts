@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { db } from "../src/lib/db";
 import { ItemPriceType } from "@prisma/client";
+import { COMPANY_CONFIG } from "../src/lib/company-config";
 
 async function main() {
   console.log("Starting comprehensive database seed...");
@@ -10,25 +11,25 @@ async function main() {
   const settings = await db.siteSettings.upsert({
     where: { key: "default" },
     update: {
-      phone: "+43 123 456789", // Realistic placeholder
-      email: "office@gmf-eventmodule.at",
-      address: "3702 Stranzendorf",
+      phone: COMPANY_CONFIG.phone,
+      email: COMPANY_CONFIG.emailPrimary,
+      address: COMPANY_CONFIG.address,
       openingHours: "Nach telefonischer Vereinbarung",
       heroTitle: "Unvergessliche Momente erleben",
       heroText: "Unvergessliche Momente mit Eventmodulen wie Hüpfburgen, Rutschen, Licht- und Tontechnik. Für Ihre Feier einfach anfragen, sicher verwenden und jede Menge Spaß erleben.",
-      noticeText: "48h vorher kostenlos stornieren | Schlechtwetter-Option nach Absprache",
-      additionalInfo: "Betreiber ist Vermieter, keine Versicherung über Anbieter. Stornobedingungen: 48h vorher kostenlos, 24h vorher 25%, Vor-Ort-Storno 50% plus Zeit- und Anfahrtskosten.",
+      noticeText: "Bis 2 Tage vorher kostenlos stornieren | Schlechtwetter-Option nach Absprache",
+      additionalInfo: "Selbstabholung ist nach Vereinbarung an unserem Standort in Bisamberg möglich. Bitte beachten Sie, dass die gemieteten Produkte selbstständig und termingerecht retourniert werden müssen. Die Lieferung erfolgt je nach Entfernung – Liefer- und Anfahrtskosten werden individuell berechnet.",
     },
     create: {
       key: "default",
-      phone: "+43 123 456789",
-      email: "office@gmf-eventmodule.at",
-      address: "3702 Stranzendorf",
+      phone: COMPANY_CONFIG.phone,
+      email: COMPANY_CONFIG.emailPrimary,
+      address: COMPANY_CONFIG.address,
       openingHours: "Nach telefonischer Vereinbarung",
       heroTitle: "Unvergessliche Momente erleben",
       heroText: "Unvergessliche Momente mit Eventmodulen wie Hüpfburgen, Rutschen, Licht- und Tontechnik. Für Ihre Feier einfach anfragen, sicher verwenden und jede Menge Spaß erleben.",
-      noticeText: "48h vorher kostenlos stornieren | Schlechtwetter-Option nach Absprache",
-      additionalInfo: "Betreiber ist Vermieter, keine Versicherung über Anbieter. Stornobedingungen: 48h vorher kostenlos, 24h vorher 25%, Vor-Ort-Storno 50% plus Zeit- und Anfahrtskosten.",
+      noticeText: "Bis 2 Tage vorher kostenlos stornieren | Schlechtwetter-Option nach Absprache",
+      additionalInfo: "Selbstabholung ist nach Vereinbarung an unserem Standort in Bisamberg möglich. Bitte beachten Sie, dass die gemieteten Produkte selbstständig und termingerecht retourniert werden müssen. Die Lieferung erfolgt je nach Entfernung – Liefer- und Anfahrtskosten werden individuell berechnet.",
     },
   });
 
@@ -272,7 +273,7 @@ async function main() {
       depositInfo: "200 € Kaution für das gesamte Paket.",
       cleaningFeeApplies: true,
       cleaningFeeInfo: "Reinigungspauschale 120 €, falls Reinigung notwendig (hauptsächlich Hüpfburg).",
-      deliveryInfo: "Kostenlose Lieferung im Umkreis von 20km ab Stranzendorf.",
+      deliveryInfo: "Kostenlose Lieferung im Umkreis von 20km ab Bisamberg.",
       imageUrl: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?q=80&w=800",
     },
 
@@ -428,22 +429,22 @@ async function main() {
     },
     {
       question: "Wie funktioniert Lieferung und Abholung?",
-      answer: "Viele Produkte können Sie direkt bei uns in 3702 Stranzendorf abholen. Größere Eventmodule liefern wir auch gerne gegen Aufpreis und bauen diese auf Wunsch auf.",
+      answer: "Viele Produkte können Sie direkt bei uns in A-2102 Bisamberg abholen. Größere Eventmodule liefern wir auch gerne gegen Aufpreis und bauen diese auf Wunsch auf.",
       sortOrder: 3,
     },
     {
       question: "Wann fallen Reinigungskosten an?",
-      answer: "Reinigungskosten fallen nur an, wenn die Artikel stark verschmutzt zurückgegeben werden. Bei normaler Nutzung ist die Endreinigung oft inklusive oder entfällt.",
+      answer: "Eine Reinigungspauschale von 120 € exkl. MwSt. (144 € inkl. MwSt.) fällt nur bei grober, fahrlässiger oder mutwilliger Verschmutzung an. Bei normaler, pfleglicher Nutzung entstehen Ihnen keine zusätzlichen Reinigungskosten.",
       sortOrder: 4,
     },
     {
       question: "Was passiert bei Schlechtwetter?",
-      answer: "Bei Regen oder Sturm können Hüpfburgen aus Sicherheitsgründen nicht betrieben werden. Wir bieten in solchen Fällen oft kulante Stornierungs- oder Umbuchungsmöglichkeiten nach Absprache.",
+      answer: "Bei Regen oder Sturm dürfen Hüpfburgen aus Sicherheitsgründen nicht betrieben werden. Bei Rückgabe einer komplett nassen Hüpfburg durch Regen/Nässe müssen wir eine Trocknungspauschale von 165 € netto (198 € inkl. MwSt.) pro Hüpfburg verrechnen.",
       sortOrder: 5,
     },
     {
       question: "Wie funktionieren Stornierungen?",
-      answer: "Stornierungen sind bis 48h vor Mietbeginn kostenlos möglich. Danach fallen gestaffelte Gebühren an (25% bis 24h vorher, danach 50% plus eventuelle Anfahrtskosten).",
+      answer: "Stornierungen sind bis 2 Tage vor dem Veranstaltungstag kostenlos möglich. Bei einer späteren Stornierung verrechnen wir die tatsächlich angefallenen Kosten bis zu einem Maximum von 350 € netto.",
       sortOrder: 6,
     },
     {
@@ -460,6 +461,11 @@ async function main() {
       question: "Wie lange kann ich Produkte mieten?",
       answer: "Die Standard-Mietdauer beträgt einen Tag (24h). Mehrtagesmieten sind nach Absprache zu vergünstigten Konditionen möglich.",
       sortOrder: 9,
+    },
+    {
+      question: "Was muss ich für den Aufbau und Betrieb (Strom, Helfer) beachten?",
+      answer: "Zubehör wie Fallschutzmatten, Gebläse, Erdnägel und Transportwagen sind in der Miete bereits inkludiert. Für den Auf- und Abbau der Module werden vor Ort 1–2 kräftige Helfer benötigt. Der Betrieb erfordert eine normale 230V Stromversorgung durch den Veranstalter (ca. 3 kW pro Hüpfburg/Gebläse).",
+      sortOrder: 10,
     },
   ];
 

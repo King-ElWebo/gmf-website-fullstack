@@ -92,15 +92,41 @@ export async function sendBookingEmail(
   ctx: BookingEmailContext,
   overrideTo?: string
 ): Promise<SendEmailResult> {
+  const to = overrideTo || ctx.customerEmail;
+  console.log(
+    `[Email Service] Attempting to send booking email:\n` +
+    `  - Type: ${type}\n` +
+    `  - Recipient: ${to}\n` +
+    `  - Reference Code: ${ctx.referenceCode || "N/A"}\n` +
+    `  - Booking ID: ${ctx.bookingId || "N/A"}`
+  );
+
   const rendered = renderEmailTemplate(type, ctx);
 
-  const to = overrideTo || ctx.customerEmail;
-  return sendEmail({
+  const result = await sendEmail({
     to,
     subject: rendered.subject,
     text: rendered.text,
     html: rendered.html,
   });
+
+  if (result.success) {
+    console.log(
+      `[Email Service] Successfully sent booking email:\n` +
+      `  - Type: ${type}\n` +
+      `  - Recipient: ${to}\n` +
+      `  - Message ID: ${result.messageId}`
+    );
+  } else {
+    console.error(
+      `[Email Service] Failed to send booking email:\n` +
+      `  - Type: ${type}\n` +
+      `  - Recipient: ${to}\n` +
+      `  - Error: ${result.error}`
+    );
+  }
+
+  return result;
 }
 
 /**

@@ -885,7 +885,7 @@ export function InquiryCartPageClient({ settings }: { settings?: SiteSettingsRec
                                     label="Telefon"
                                     type="tel"
                                     value={formState.phone}
-                                    onChange={(e) => setFormState((current) => ({ ...current, phone: e.target.value }))}
+                                    onChange={(e) => setFormState((current) => ({ ...current, phone: e.target.value.replace(/[^0-9+\s\-()/]/g, "") }))}
                                 />
 
                                 <div className="space-y-2">
@@ -994,7 +994,7 @@ export function InquiryCartPageClient({ settings }: { settings?: SiteSettingsRec
                                         <Input
                                             label="PLZ"
                                             value={formState.zip}
-                                            onChange={(e) => setFormState((current) => ({ ...current, zip: e.target.value }))}
+                                            onChange={(e) => setFormState((current) => ({ ...current, zip: e.target.value.replace(/\D/g, "") }))}
                                             required={formState.deliveryType === "delivery"}
                                         />
                                         <Input
@@ -1083,7 +1083,7 @@ export function InquiryCartPageClient({ settings }: { settings?: SiteSettingsRec
                                             <Input
                                                 label="PLZ"
                                                 value={formState.billingZip}
-                                                onChange={(e) => setFormState((current) => ({ ...current, billingZip: e.target.value }))}
+                                                onChange={(e) => setFormState((current) => ({ ...current, billingZip: e.target.value.replace(/\D/g, "") }))}
                                                 required
                                             />
                                             <Input
