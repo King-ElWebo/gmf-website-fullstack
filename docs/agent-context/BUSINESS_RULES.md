@@ -53,8 +53,8 @@ The following parameters must be communicated clearly to customers:
   - **Standard Rate**: 120 € exkl. MwSt. (144 € inkl. MwSt.)
   - **Rule**: Only charged in cases of gross, negligent, or intentional soiling (grobe/mutwillige Verschmutzung).
 - **Drying Fee (Trocknungsgebühr)**:
-  - **Standard Rate**: 190 € exkl. MwSt. (228 € inkl. MwSt.)
-  - **Rule**: Charged if inflatable items are returned wet/damp, covering the labor-intensive effort to inflate and dry the modules to prevent mold.
+  - **Standard Rate**: 165 € netto pro Hüpfburg
+  - **Rule**: Charged if inflatable items are returned wet/damp (e.g. due to rain), covering the labor-intensive effort to inflate and dry the modules to prevent mold.
 - **Cancellation (Storno) Terms**:
   - Cancellations up to 2 days before the event are free of charge.
   - Cancellations after that are subject to a late fee (maximum 350 € net).

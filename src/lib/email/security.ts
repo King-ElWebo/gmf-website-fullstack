@@ -1,11 +1,17 @@
 import { createHmac } from "crypto";
 
-const SECRET = process.env.ADMIN_SESSION_SECRET || "gmf-website-email-secret-fallback-long-random";
-
 export interface SignedActionParams {
   bookingId: string;
   action: "approve" | "reject";
   expiresAt: number; // Expiry timestamp in milliseconds
+}
+
+function getActionSecret() {
+  const secret = process.env.ADMIN_SESSION_SECRET;
+  if (!secret) {
+    throw new Error("Missing ADMIN_SESSION_SECRET for signed booking action links.");
+  }
+  return secret;
 }
 
 /**
@@ -13,7 +19,7 @@ export interface SignedActionParams {
  */
 export function generateActionToken(params: SignedActionParams): string {
   const data = `${params.bookingId}:${params.action}:${params.expiresAt}`;
-  const hmac = createHmac("sha256", SECRET);
+  const hmac = createHmac("sha256", getActionSecret());
   hmac.update(data);
   return hmac.digest("hex");
 }

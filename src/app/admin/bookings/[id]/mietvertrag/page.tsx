@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { PrismaBookingRepository } from "@/lib/booking-core/infrastructure/database/PrismaBookingRepository";
 import { formatPriceCents, getItemPriceDisplay } from "@/lib/items/price";
 import { getBookingDurationDays } from "@/lib/inquiry-cart/pricing";
+import { PrintButton } from "./PrintButton";
 import "./print.css";
 
 export const dynamic = "force-dynamic";
@@ -92,6 +93,39 @@ export default async function MietvertragPage({ params }: { params: Promise<{ id
 
     if (!booking) notFound();
 
+    // ── Status gate: rejected/cancelled → info page ──
+    if (booking.status === "rejected" || booking.status === "cancelled") {
+        return (
+            <>
+                <div className="no-print screen-controls">
+                    <Link href={`/admin/bookings/${id}`} className="back-link">
+                        ← Zurück zur Buchungsdetails
+                    </Link>
+                </div>
+                <div className="mietvertrag-doc" style={{ textAlign: "center", paddingTop: "80px", paddingBottom: "80px" }}>
+                    <div style={{ fontSize: "48px", marginBottom: "24px" }}>📋</div>
+                    <div style={{ fontSize: "18pt", fontWeight: 700, color: "#0f172a", marginBottom: "12px" }}>
+                        Kein finaler Vertrag verfügbar
+                    </div>
+                    <div style={{ fontSize: "11pt", color: "#64748b", maxWidth: "420px", margin: "0 auto", lineHeight: 1.6 }}>
+                        Diese Anfrage wurde {booking.status === "rejected" ? "abgelehnt" : "storniert"}.
+                        Ein Mietvertrag / Lieferschein wird nur für bestätigte Buchungen erstellt.
+                    </div>
+                    <div style={{ marginTop: "32px" }}>
+                        <Link
+                            href={`/admin/bookings/${id}`}
+                            style={{ color: "#1e40af", fontWeight: 600, fontSize: "11pt", textDecoration: "none" }}
+                        >
+                            → Zurück zur Buchungsdetails
+                        </Link>
+                    </div>
+                </div>
+            </>
+        );
+    }
+
+    const isDraft = booking.status !== "approved";
+
     const deliveryAddress = getAddressLines({
         addressLine1: booking.customer.addressLine1,
         zip: booking.customer.zip,
@@ -112,19 +146,25 @@ export default async function MietvertragPage({ params }: { params: Promise<{ id
                 <Link href={`/admin/bookings/${id}`} className="back-link">
                     ← Zurück zur Buchungsdetails
                 </Link>
-                <button onClick={() => window.print()} className="print-btn">
-                    🖨️ Mietvertrag drucken
-                </button>
+                <PrintButton />
             </div>
 
             {/* ── The printable document ── */}
             <div className="mietvertrag-doc" id="mietvertrag">
                 {/* Header */}
+                {isDraft && (
+                    <div className="draft-banner">
+                        ⚠️ ENTWURF – Dieser Vertrag ist noch nicht bestätigt und daher nicht gültig.
+                    </div>
+                )}
+
                 <header className="doc-header">
                     <div className="doc-header-left">
                         <div className="company-name">{COMPANY_CONFIG.brandingName}</div>
-                        <div className="company-detail">{COMPANY_CONFIG.legalName} | {COMPANY_CONFIG.address}</div>
-                        <div className="company-detail">Tel: {COMPANY_CONFIG.phone} | {COMPANY_CONFIG.emailPrimary} | UID: {COMPANY_CONFIG.uid}</div>
+                        <div className="company-detail">{COMPANY_CONFIG.legalName} · {COMPANY_CONFIG.activities}</div>
+                        <div className="company-detail">{COMPANY_CONFIG.address}</div>
+                        <div className="company-detail">Tel: {COMPANY_CONFIG.phone} | {COMPANY_CONFIG.emailPrimary} | {COMPANY_CONFIG.emailSecondary}</div>
+                        <div className="company-detail">UID: {COMPANY_CONFIG.uid}</div>
                     </div>
                     <div className="doc-header-right">
                         <div className="doc-title">Mietvertrag & Lieferschein</div>
@@ -381,34 +421,40 @@ export default async function MietvertragPage({ params }: { params: Promise<{ id
                     <div className="section-title">Mietbedingungen</div>
                     <div className="conditions-grid">
                         <div className="condition-item">
-                            <strong>Inkludiertes Zubehör:</strong> Zubehör wie Fallschutzmatten, Gebläse, Erdnägel, Transportwagen etc. sind im Mietpreis inkludiert.
+                            <strong>Inkludiertes Zubehör:</strong> Bei der Miete ist das komplette Zubehör wie Fallschutzmatten, Gebläse, Erdnägel und Transportwagen inkludiert.
                         </div>
                         <div className="condition-item">
-                            <strong>Helfer vor Ort:</strong> Für den Auf- und Abbau der Eventmodule werden seitens des Mieters 1–2 kräftige Helfer benötigt.
+                            <strong>Technische Prüfung:</strong> Die Module sind zivil-technisch überprüft, um etwaige Mängel auszuschließen.
                         </div>
                         <div className="condition-item">
-                            <strong>Stromversorgung:</strong> Die Stromversorgung ist vom Veranstalter bereitzustellen. Es werden ca. 3 kW pro Hüpfburg/Gebläse benötigt.
+                            <strong>Helfer vor Ort:</strong> Zum Aufstellen werden zusätzlich 1 bis 2 kräftige Helfer benötigt, ebenso beim Abbau.
                         </div>
                         <div className="condition-item">
-                            <strong>Betreuungspflicht:</strong> Es besteht eine ständige Betreuungspflicht der Mietgeräte durch geeignete erwachsene Personen.
+                            <strong>Stromversorgung:</strong> Die Stromversorgung ist vom Veranstalter bereitzustellen. Pro Hüpfburg werden ca. 3 kW Strom benötigt.
                         </div>
                         <div className="condition-item">
-                            <strong>Haftungsausschluss:</strong> Der Vermieter haftet nicht für Unfälle, Verletzungen oder Schäden durch Missbrauch der Mietgeräte.
+                            <strong>Betreuungspflicht:</strong> Die Hüpfburg muss während der gesamten Nutzung durch einen Erwachsenen betreut bzw. beaufsichtigt werden.
                         </div>
                         <div className="condition-item">
-                            <strong>Veranstaltungsmeldung:</strong> Der Veranstalter/Mieter ist eigenverantwortlich für eventuell notwendige behördliche Veranstaltungsmeldungen zuständig.
+                            <strong>Haftungsausschluss:</strong> Der Vermieter haftet nicht für Unfälle oder Schäden, die durch Missbrauch oder Versäumnisse des Veranstalters entstehen.
                         </div>
                         <div className="condition-item">
-                            <strong>Reinigungspauschale:</strong> Bei grober, fahrlässiger oder mutwilliger Verschmutzung wird eine Reinigungspauschale von 120 € exkl. MwSt. (144 € inkl. MwSt.) verrechnet.
+                            <strong>Untergrund:</strong> Der Untergrund soll eben und frei von Verschmutzungen sein.
                         </div>
                         <div className="condition-item">
-                            <strong>Trocknungskosten:</strong> Bei Rückgabe nasser Module (durch Regen/Nässe) fällt eine Trocknungspauschale von 165 € netto (198 € inkl. MwSt.) pro Hüpfburg an.
+                            <strong>Veranstaltungsmeldung:</strong> Veranstaltungsmeldung übernimmt der Veranstalter.
                         </div>
                         <div className="condition-item">
-                            <strong>Beschädigungen:</strong> Schäden an den Mietgegenständen durch unsachgemäßen Gebrauch oder Vandalismus werden nach tatsächlichem Aufwand verrechnet.
+                            <strong>Reinigungspauschale:</strong> Bei grober oder mutwilliger Verschmutzung fällt eine Reinigungspauschale von 120 € exkl. MwSt. pro Hüpfburg an.
                         </div>
                         <div className="condition-item">
-                            <strong>Stornobedingungen:</strong> Eine Stornierung ist bis 2 Tage vor Mietbeginn kostenlos möglich. Danach werden angefallene Kosten bis max. 350 € netto in Rechnung gestellt.
+                            <strong>Trocknungskosten:</strong> Sollte eine Hüpfburg durch Regen komplett nass sein, wird für die Trocknung pro Hüpfburg eine Pauschale von 165 € netto verrechnet.
+                        </div>
+                        <div className="condition-item">
+                            <strong>Beschädigungen:</strong> Etwaige Beschädigungen wie Risse, Stiche usw. werden nach entstandenem Aufwand und Reparatur abgerechnet.
+                        </div>
+                        <div className="condition-item">
+                            <strong>Stornobedingungen:</strong> Bis 2 Tage vor Veranstaltung kostenlos. Danach werden die angefallenen Kosten bis maximal 350 € netto verrechnet.
                         </div>
                     </div>
                 </section>
