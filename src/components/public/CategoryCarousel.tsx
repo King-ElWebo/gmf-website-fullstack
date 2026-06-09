@@ -111,7 +111,7 @@ export function CategoryCarousel({ categories }: { categories: CategoryCard[] })
                         {categories.map((category) => (
                             <div
                                 key={category.id}
-                                className="h-full bg-white rounded-[32px] border-4 border-blue-200 shadow-[6px_6px_0_#bfdbfe] hover:shadow-[8px_8px_0_#60a5fa] hover:border-blue-400 transition-all duration-300 transform hover:-translate-y-2 overflow-hidden flex flex-col group"
+                                className="h-full bg-white rounded-[32px] border-4 border-blue-200 shadow-[6px_6px_0_#bfdbfe] hover:shadow-[8px_8px_0_#60a5fa] hover:border-blue-400 transition-[transform,box-shadow,border-color] duration-200 ease-out-strong hover:-translate-y-2 overflow-hidden flex flex-col group"
                             >
                                 <div className="relative w-full shrink-0 bg-[#fef9c3]" style={{ paddingBottom: '62%' }}>
                                     {category.imageUrl ? (
@@ -120,7 +120,7 @@ export function CategoryCarousel({ categories }: { categories: CategoryCard[] })
                                                 src={category.imageUrl}
                                                 alt={category.title}
                                                 fill
-                                                className="object-cover group-hover:scale-105 transition-transform duration-500"
+                                                className="object-cover group-hover:scale-105 transition-transform duration-300 ease-out-strong"
                                                 sizes="(max-width: 768px) 100vw, (max-width: 1100px) 50vw, 33vw"
                                                 draggable={false}
                                             />
@@ -147,7 +147,7 @@ export function CategoryCarousel({ categories }: { categories: CategoryCard[] })
                                         href={`/produkte?bereich=${encodeURIComponent(category.catalogTypeSlug)}&kategorie=${encodeURIComponent(category.slug)}`}
                                         className="block shrink-0"
                                     >
-                                        <span style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="flex items-center justify-center w-full h-[48px] sm:h-[54px] rounded-full bg-red-500 border-b-4 border-red-700 text-white text-[16px] sm:text-[18px] transition-all hover:bg-red-400 hover:border-red-600 focus:outline-none">
+                                        <span style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="flex items-center justify-center w-full h-[48px] sm:h-[54px] rounded-full bg-red-500 border-b-4 border-red-700 text-white text-[16px] sm:text-[18px] transition-[transform,background-color,border-color] duration-150 ease-out-strong active:scale-[0.97] transform-gpu hover:bg-red-400 hover:border-red-600 focus:outline-none">
                                             Entdecken! 🚀
                                         </span>
                                     </Link>
@@ -178,7 +178,7 @@ export function CategoryCarousel({ categories }: { categories: CategoryCard[] })
                     <div className="flex gap-3 sm:gap-4 shrink-0 self-center md:self-auto">
                         <button
                             onClick={() => navigate(-1)}
-                            className="h-12 w-12 rounded-full border-4 border-yellow-400 bg-yellow-300 flex items-center justify-center text-red-600 hover:bg-yellow-400 hover:scale-110 transition-transform disabled:opacity-30 shadow-[0_4px_0_#facc15]"
+                            className="h-12 w-12 rounded-full border-4 border-yellow-400 bg-yellow-300 flex items-center justify-center text-red-600 hover:bg-yellow-400 hover:scale-105 active:scale-[0.95] transition-[transform,background-color,box-shadow] duration-150 ease-out-strong disabled:opacity-30 shadow-[0_4px_0_#facc15] active:shadow-[0_2px_0_#facc15] translate-y-0 active:translate-y-[2px] transform-gpu"
                             aria-label="Vorherige Kategorie"
                             disabled={categoryCount <= 1}
                         >
@@ -186,7 +186,7 @@ export function CategoryCarousel({ categories }: { categories: CategoryCard[] })
                         </button>
                         <button
                             onClick={() => navigate(1)}
-                            className="h-12 w-12 rounded-full border-4 border-yellow-400 bg-yellow-300 flex items-center justify-center text-red-600 hover:bg-yellow-400 hover:scale-110 transition-transform disabled:opacity-30 shadow-[0_4px_0_#facc15]"
+                            className="h-12 w-12 rounded-full border-4 border-yellow-400 bg-yellow-300 flex items-center justify-center text-red-600 hover:bg-yellow-400 hover:scale-105 active:scale-[0.95] transition-[transform,background-color,box-shadow] duration-150 ease-out-strong disabled:opacity-30 shadow-[0_4px_0_#facc15] active:shadow-[0_2px_0_#facc15] translate-y-0 active:translate-y-[2px] transform-gpu"
                             aria-label="Nächste Kategorie"
                             disabled={categoryCount <= 1}
                         >
@@ -213,7 +213,7 @@ export function CategoryCarousel({ categories }: { categories: CategoryCard[] })
                                 style={{ width: `${100 / total}%` }}
                                 className="px-2 sm:px-3"
                             >
-                                <div className="h-full bg-white rounded-[32px] border-4 border-blue-200 shadow-[6px_6px_0_#bfdbfe] hover:shadow-[8px_8px_0_#60a5fa] hover:border-blue-400 transition-all duration-300 transform hover:-translate-y-2 overflow-hidden flex flex-col group mx-1 sm:mx-2">
+                                <div className="h-full bg-white rounded-[32px] border-4 border-blue-200 shadow-[6px_6px_0_#bfdbfe] hover:shadow-[8px_8px_0_#60a5fa] hover:border-blue-400 transition-[transform,box-shadow,border-color] duration-200 ease-out-strong hover:-translate-y-2 overflow-hidden flex flex-col group mx-1 sm:mx-2">
                                     <div className="relative w-full shrink-0 bg-[#fef9c3]" style={{ paddingBottom: '62%' }}>
                                         {category.imageUrl ? (
                                             <>
@@ -221,7 +221,7 @@ export function CategoryCarousel({ categories }: { categories: CategoryCard[] })
                                                     src={category.imageUrl}
                                                     alt={category.title}
                                                     fill
-                                                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                                                    className="object-cover group-hover:scale-105 transition-transform duration-300 ease-out-strong"
                                                     sizes="(max-width: 768px) 100vw, (max-width: 1100px) 50vw, 33vw"
                                                     draggable={false}
                                                 />
@@ -248,7 +248,7 @@ export function CategoryCarousel({ categories }: { categories: CategoryCard[] })
                                             href={`/produkte?bereich=${encodeURIComponent(category.catalogTypeSlug)}&kategorie=${encodeURIComponent(category.slug)}`}
                                             className="block shrink-0"
                                         >
-                                            <span style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="flex items-center justify-center w-full h-[48px] sm:h-[54px] rounded-full bg-red-500 border-b-4 border-red-700 text-white text-[16px] sm:text-[18px] transition-all hover:bg-red-400 hover:border-red-600 focus:outline-none">
+                                            <span style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="flex items-center justify-center w-full h-[48px] sm:h-[54px] rounded-full bg-red-500 border-b-4 border-red-700 text-white text-[16px] sm:text-[18px] transition-[transform,background-color,border-color] duration-150 ease-out-strong active:scale-[0.97] transform-gpu hover:bg-red-400 hover:border-red-600 focus:outline-none">
                                                 Entdecken! 🚀
                                             </span>
                                         </Link>
@@ -273,7 +273,7 @@ export function CategoryCarousel({ categories }: { categories: CategoryCard[] })
                                 className="flex h-12 min-w-12 items-center justify-center rounded-full"
                             >
                                 <span
-                                    className={`rounded-full transition-all duration-300 border-2 border-white shadow-sm ${activeDot === idx ? 'h-4 w-8 bg-red-500' : 'h-4 w-4 bg-blue-300 hover:bg-blue-400'}`}
+                                    className={`rounded-full transition-[width,background-color,transform] duration-200 ease-out-strong border-2 border-white shadow-sm ${activeDot === idx ? 'h-4 w-8 bg-red-500' : 'h-4 w-4 bg-blue-300 hover:bg-blue-400'}`}
                                 />
                             </button>
                         ))}

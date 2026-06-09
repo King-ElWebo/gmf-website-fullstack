@@ -636,7 +636,9 @@ export function InquiryCartPageClient({ settings }: { settings?: SiteSettingsRec
                                                                 availability && availability.trackInventory && availability.availableQuantity != null
                                                                     ? availability.isAvailable
                                                                         ? `Verfuegbar im Zeitraum: ${availability.availableQuantity}`
-                                                                        : `Nicht ausreichend verfuegbar im Zeitraum (max. ${availability.availableQuantity})`
+                                                                        : availability.availableQuantity === 0
+                                                                            ? "Nicht verfügbar im gewählten Zeitraum"
+                                                                            : `Nicht ausreichend verfuegbar im Zeitraum (max. ${availability.availableQuantity})`
                                                                     : item.trackInventory
                                                                         ? `Bestand: ${item.totalStock}`
                                                                         : null;
@@ -1123,28 +1125,21 @@ export function InquiryCartPageClient({ settings }: { settings?: SiteSettingsRec
                                             <Clock size={16} className="text-[#059669] mt-0.5 shrink-0" />
                                             <div>
                                                 <p className="font-['Nunito'] text-[13px] font-medium text-[#1a202c]">Kostenlos</p>
-                                                <p className="font-['Nunito'] text-[12px] text-[#4a5568]">Bis 48 Stunden vorher</p>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-start gap-2">
-                                            <AlertTriangle size={16} className="text-[#d97706] mt-0.5 shrink-0" />
-                                            <div>
-                                                <p className="font-['Nunito'] text-[13px] font-medium text-[#1a202c]">25% der Kosten</p>
-                                                <p className="font-['Nunito'] text-[12px] text-[#4a5568]">Bis 24 Stunden vorher</p>
+                                                <p className="font-['Nunito'] text-[12px] text-[#4a5568]">Bis 2 Tage vor Mietbeginn</p>
                                             </div>
                                         </div>
                                         <div className="flex items-start gap-2">
                                             <AlertTriangle size={16} className="text-[#dc2626] mt-0.5 shrink-0" />
                                             <div>
-                                                <p className="font-['Nunito'] text-[13px] font-medium text-[#1a202c]">50% + Aufwand</p>
-                                                <p className="font-['Nunito'] text-[12px] text-[#4a5568]">Vor-Ort Stornierung</p>
+                                                <p className="font-['Nunito'] text-[13px] font-medium text-[#1a202c]">Spätere Stornierung</p>
+                                                <p className="font-['Nunito'] text-[12px] text-[#4a5568]">Angefallene Kosten bis max. 350 € netto</p>
                                             </div>
                                         </div>
-                                        <div className="flex items-start gap-2">
+                                        <div className="flex items-start gap-2 sm:col-span-2">
                                             <CloudRain size={16} className="text-[#0284c7] mt-0.5 shrink-0" />
                                             <div>
-                                                <p className="font-['Nunito'] text-[13px] font-medium text-[#1a202c]">Schlechtwetter-Storno</p>
-                                                <p className="font-['Nunito'] text-[12px] text-[#4a5568]">Individuelle & faire Lösung</p>
+                                                <p className="font-['Nunito'] text-[13px] font-medium text-[#1a202c]">Schlechtwetter-Option</p>
+                                                <p className="font-['Nunito'] text-[12px] text-[#4a5568]">Bei Nässe/Sturm (kostenlose Stornierung nach Vereinbarung)</p>
                                             </div>
                                         </div>
                                     </div>

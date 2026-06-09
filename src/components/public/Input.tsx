@@ -33,7 +33,7 @@ export function Input({
                 placeholder={placeholder}
                 value={value}
                 onChange={onChange}
-                className={`bg-white h-[50px] rounded-[16px] px-[16px] py-[12px] font-['Nunito'] text-[16px] text-[#2d3748] border ${error ? 'border-[#dc2626] focus:border-[#dc2626] focus:ring-[#dc2626]/20' : 'border-[#cbd5e1] focus:border-[#1a3a52] focus:ring-[#1a3a52]/20'} focus:outline-none focus:ring-2 transition-all placeholder:text-[#94a3b8]`}
+                className={`bg-white h-[50px] rounded-[16px] px-[16px] py-[12px] font-['Nunito'] text-[16px] text-[#2d3748] border ${error ? 'border-[#dc2626] focus:border-[#dc2626] focus:ring-[#dc2626]/20' : 'border-[#cbd5e1] focus:border-[#1a3a52] focus:ring-[#1a3a52]/20'} focus:outline-none focus:ring-2 transition-[border-color,box-shadow] duration-150 ease-out-strong placeholder:text-[#94a3b8]`}
             />
             {error && (
                 <p className="font-['Nunito'] text-[13px] leading-[20px] text-[#dc2626] mt-1">

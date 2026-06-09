@@ -68,7 +68,7 @@ export function Footer({
             <div className="mx-auto max-w-[1280px] px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
                 <div className="grid grid-cols-1 gap-8 text-center md:grid-cols-2 md:text-left lg:grid-cols-4">
                     <div>
-                        <h3 className="mb-4 font-['Nunito'] text-[18px] font-semibold">Event-Vermietung</h3>
+                        <h3 className="mb-4 font-['Nunito'] text-[18px] font-semibold">GMF Eventmodule</h3>
                         <p className="font-['Nunito'] text-[14px] leading-[20px] text-[#e2e8f0]">
                             Ihre Experten fuer Huepfburgen und Eventmodule
                         </p>
@@ -147,7 +147,7 @@ export function Footer({
 
                 <div className="mt-7 border-t border-[#64748b] pt-7 text-center sm:mt-8 sm:pt-8">
                     <p className="font-['Nunito'] text-[12px] text-[#e2e8f0]">
-                        &copy; 2026 Event-Vermietung. Alle Rechte vorbehalten.
+                        &copy; 2026 GMF Eventmodule. Alle Rechte vorbehalten.
                     </p>
                     <div className="mt-2 flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
                         {legal.map((link) => (

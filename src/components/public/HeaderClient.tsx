@@ -89,7 +89,7 @@ export function HeaderClient({ navCatalogTypes }: HeaderClientProps) {
           {/* Logo */}
           <Link
             href="/"
-            className="group relative flex items-center rounded-[24px] border-2 border-[#1a202c] bg-[#fffef2] px-3 py-2 shadow-[5px_5px_0_#1a202c] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[6px_6px_0_#1a202c]"
+            className="group relative flex items-center rounded-[24px] border-2 border-[#1a202c] bg-[#fffef2] px-3 py-2 shadow-[5px_5px_0_#1a202c] transition-[transform,box-shadow] duration-150 ease-out-strong hover:-translate-y-0.5 hover:shadow-[6px_6px_0_#1a202c] active:scale-[0.97]"
             aria-label="GMF Eventmodule Startseite"
           >
             <span className="absolute -left-2 -top-2 h-5 w-5 rounded-full border-2 border-[#1a202c] bg-[#f13c20]" />
@@ -100,7 +100,7 @@ export function HeaderClient({ navCatalogTypes }: HeaderClientProps) {
               width={2520}
               height={1696}
               sizes="(max-width: 640px) 130px, 160px"
-              className="relative h-[56px] w-auto object-contain transition-transform duration-200 group-hover:scale-[1.03] sm:h-[68px]"
+              className="relative h-[56px] w-auto object-contain transition-transform duration-200 ease-out-strong group-hover:scale-[1.03] sm:h-[68px]"
             />
           </Link>
 
@@ -120,7 +120,7 @@ export function HeaderClient({ navCatalogTypes }: HeaderClientProps) {
                   href={link.href}
                   aria-current={isActive ? "page" : undefined}
                   style={{ fontFamily: 'var(--font-fredoka), sans-serif' }}
-                  className={`rounded-full border-2 px-4 py-2 text-[16px] font-bold transition-all duration-200 hover:-translate-y-0.5 ${linkClassName}`}
+                  className={`rounded-full border-2 px-4 py-2 text-[16px] font-bold transition-[transform,background-color,border-color,box-shadow] duration-150 ease-out-strong active:scale-[0.97] hover:-translate-y-0.5 ${linkClassName}`}
                 >
                   {link.label}
                 </Link>
@@ -129,12 +129,12 @@ export function HeaderClient({ navCatalogTypes }: HeaderClientProps) {
 
             <Link
               href="/anfragekorb"
-              className="group relative ml-1 flex h-[48px] w-[48px] items-center justify-center rounded-full border-2 border-[#1a202c] bg-[#f13c20] text-white shadow-[4px_4px_0_#1a202c] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#d93018] hover:shadow-[5px_5px_0_#1a202c]"
+              className="group relative ml-1 flex h-[48px] w-[48px] items-center justify-center rounded-full border-2 border-[#1a202c] bg-[#f13c20] text-white shadow-[4px_4px_0_#1a202c] transition-[transform,background-color,box-shadow] duration-150 ease-out-strong hover:-translate-y-0.5 hover:bg-[#d93018] hover:shadow-[5px_5px_0_#1a202c] active:scale-[0.97]"
               aria-label="Anfragekorb"
             >
-              <ShoppingCart size={22} className="transition-transform group-hover:scale-110" />
+              <ShoppingCart size={22} className="transition-transform duration-150 ease-out-strong group-hover:scale-110" />
               {hasHydrated && itemCount > 0 && (
-                <span className="absolute -right-2 -top-2 flex min-h-[24px] min-w-[24px] items-center justify-center rounded-full border-2 border-[#1a202c] bg-[#fcd01b] px-1 text-[12px] font-bold text-[#1a202c] shadow-[2px_2px_0_#1a202c] transition-transform group-hover:scale-110">
+                <span className="absolute -right-2 -top-2 flex min-h-[24px] min-w-[24px] items-center justify-center rounded-full border-2 border-[#1a202c] bg-[#fcd01b] px-1 text-[12px] font-bold text-[#1a202c] shadow-[2px_2px_0_#1a202c] transition-transform duration-150 ease-out-strong group-hover:scale-110">
                   {itemCount}
                 </span>
               )}
@@ -144,7 +144,7 @@ export function HeaderClient({ navCatalogTypes }: HeaderClientProps) {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="flex h-12 w-12 items-center justify-center rounded-[18px] border-2 border-[#1a202c] bg-[#fffef2] text-[#1a202c] shadow-[4px_4px_0_#1a202c] transition-all hover:-translate-y-0.5 hover:bg-white active:translate-y-0 lg:hidden"
+            className="flex h-12 w-12 items-center justify-center rounded-[18px] border-2 border-[#1a202c] bg-[#fffef2] text-[#1a202c] shadow-[4px_4px_0_#1a202c] transition-[transform,background-color,box-shadow] duration-150 ease-out-strong hover:-translate-y-0.5 hover:bg-white active:scale-[0.97] lg:hidden"
             aria-expanded={mobileMenuOpen}
             aria-label={mobileMenuOpen ? "Menue schliessen" : "Menue oeffnen"}
           >
@@ -170,7 +170,7 @@ export function HeaderClient({ navCatalogTypes }: HeaderClientProps) {
                   onClick={() => setMobileMenuOpen(false)}
                   aria-current={isActive ? "page" : undefined}
                   style={{ fontFamily: 'var(--font-fredoka), sans-serif' }}
-                  className={`rounded-[18px] border-2 px-5 py-3.5 text-[17px] font-bold transition-all ${mobileLinkClassName}`}
+                  className={`rounded-[18px] border-2 px-5 py-3.5 text-[17px] font-bold transition-[transform,background-color,border-color,box-shadow] duration-150 ease-out-strong active:scale-[0.97] ${mobileLinkClassName}`}
                 >
                   {link.label}
                 </Link>
@@ -180,7 +180,7 @@ export function HeaderClient({ navCatalogTypes }: HeaderClientProps) {
             <Link
               href="/anfragekorb"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-4 rounded-[18px] border-2 border-[#1a202c] bg-[#f13c20] px-5 py-3.5 text-[17px] font-bold text-white shadow-[4px_4px_0_#1a202c] transition-all hover:-translate-y-0.5 hover:bg-[#d93018]"
+              className="flex items-center gap-4 rounded-[18px] border-2 border-[#1a202c] bg-[#f13c20] px-5 py-3.5 text-[17px] font-bold text-white shadow-[4px_4px_0_#1a202c] transition-[transform,background-color,box-shadow] duration-150 ease-out-strong hover:-translate-y-0.5 hover:bg-[#d93018] active:scale-[0.97]"
               style={{ fontFamily: 'var(--font-fredoka), sans-serif' }}
             >
               <div className="relative">

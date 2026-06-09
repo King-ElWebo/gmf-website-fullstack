@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GMF Bilder Galerie</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8fafc;
+      color: #1e293b;
+      margin: 0;
+      padding: 24px;
+    }
+    h1 {
+      text-align: center;
+      color: #3b82f6;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+      margin-top: 24px;
+    }
+    .card {
+      background-color: white;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+    }
+    .img-container {
+      width: 100%;
+      height: 200px;
+      background-color: #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    img {
+      width: 100%;
+      height: 100%;
+      object-cover: cover;
+    }
+    .info {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex-grow: 1;
+    }
+    .filename {
+      font-weight: bold;
+      word-break: break-all;
+    }
+    .size {
+      color: #64748b;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>GMF Eventmodule Bilder Galerie</h1>
+  <p style="text-align: center;">Hier sind die Bilder aus dem Ordner <strong>/re</strong>, die nach <strong>/public/uploads</strong> kopiert wurden.</p>
+  
+  <div class="grid">
+  
+    <div class="card">
+      <div class="img-container">
+        <img src="/uploads/20180428_164118_resized.jpg" alt="20180428_164118_resized.jpg">
+      </div>
+      <div class="info">
+        <div class="filename">20180428_164118_resized.jpg</div>
+        <div class="size">Größe: 0.81 MB (850565 Bytes)</div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="img-container">
+        <img src="/uploads/20180908_125443_resized.jpg" alt="20180908_125443_resized.jpg">
+      </div>
+      <div class="info">
+        <div class="filename">20180908_125443_resized.jpg</div>
+        <div class="size">Größe: 1.47 MB (1546449 Bytes)</div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="img-container">
+        <img src="/uploads/20180908_125503_resized.jpg" alt="20180908_125503_resized.jpg">
+      </div>
+      <div class="info">
+        <div class="filename">20180908_125503_resized.jpg</div>
+        <div class="size">Größe: 1.01 MB (1063456 Bytes)</div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="img-container">
+        <img src="/uploads/20180908_125512_resized.jpg" alt="20180908_125512_resized.jpg">
+      </div>
+      <div class="info">
+        <div class="filename">20180908_125512_resized.jpg</div>
+        <div class="size">Größe: 1.13 MB (1184960 Bytes)</div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="img-container">
+        <img src="/uploads/20190919_132541_resized.jpg" alt="20190919_132541_resized.jpg">
+      </div>
+      <div class="info">
+        <div class="filename">20190919_132541_resized.jpg</div>
+        <div class="size">Größe: 0.90 MB (939792 Bytes)</div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="img-container">
+        <img src="/uploads/20190919_204537_resized.jpg" alt="20190919_204537_resized.jpg">
+      </div>
+      <div class="info">
+        <div class="filename">20190919_204537_resized.jpg</div>
+        <div class="size">Größe: 0.74 MB (773520 Bytes)</div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="img-container">
+        <img src="/uploads/20190920_135139_resized.jpg" alt="20190920_135139_resized.jpg">
+      </div>
+      <div class="info">
+        <div class="filename">20190920_135139_resized.jpg</div>
+        <div class="size">Größe: 1.80 MB (1887477 Bytes)</div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="img-container">
+        <img src="/uploads/20200501_161650_resized.jpg" alt="20200501_161650_resized.jpg">
+      </div>
+      <div class="info">
+        <div class="filename">20200501_161650_resized.jpg</div>
+        <div class="size">Größe: 1.09 MB (1145700 Bytes)</div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="img-container">
+        <img src="/uploads/20200501_161701_resized.jpg" alt="20200501_161701_resized.jpg">
+      </div>
+      <div class="info">
+        <div class="filename">20200501_161701_resized.jpg</div>
+        <div class="size">Größe: 0.99 MB (1039481 Bytes)</div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="img-container">
+        <img src="/uploads/20200501_161714_resized.jpg" alt="20200501_161714_resized.jpg">
+      </div>
+      <div class="info">
+        <div class="filename">20200501_161714_resized.jpg</div>
+        <div class="size">Größe: 0.79 MB (830113 Bytes)</div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="img-container">
+        <img src="/uploads/20200501_161727_resized.jpg" alt="20200501_161727_resized.jpg">
+      </div>
+      <div class="info">
+        <div class="filename">20200501_161727_resized.jpg</div>
+        <div class="size">Größe: 0.73 MB (764928 Bytes)</div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="img-container">
+        <img src="/uploads/20200501_161733_resized.jpg" alt="20200501_161733_resized.jpg">
+      </div>
+      <div class="info">
+        <div class="filename">20200501_161733_resized.jpg</div>
+        <div class="size">Größe: 0.73 MB (767071 Bytes)</div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="img-container">
+        <img src="/uploads/20200501_162012_resized.jpg" alt="20200501_162012_resized.jpg">
+      </div>
+      <div class="info">
+        <div class="filename">20200501_162012_resized.jpg</div>
+        <div class="size">Größe: 0.97 MB (1014285 Bytes)</div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="img-container">
+        <img src="/uploads/20200501_162019_resized.jpg" alt="20200501_162019_resized.jpg">
+      </div>
+      <div class="info">
+        <div class="filename">20200501_162019_resized.jpg</div>
+        <div class="size">Größe: 0.96 MB (1003803 Bytes)</div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="img-container">
+        <img src="/uploads/20200501_165813_resized.jpg" alt="20200501_165813_resized.jpg">
+      </div>
+      <div class="info">
+        <div class="filename">20200501_165813_resized.jpg</div>
+        <div class="size">Größe: 1.01 MB (1063013 Bytes)</div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="img-container">
+        <img src="/uploads/20200501_165822_resized.jpg" alt="20200501_165822_resized.jpg">
+      </div>
+      <div class="info">
+        <div class="filename">20200501_165822_resized.jpg</div>
+        <div class="size">Größe: 0.91 MB (951299 Bytes)</div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="img-container">
+        <img src="/uploads/20200501_165825_resized.jpg" alt="20200501_165825_resized.jpg">
+      </div>
+      <div class="info">
+        <div class="filename">20200501_165825_resized.jpg</div>
+        <div class="size">Größe: 0.79 MB (825905 Bytes)</div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="img-container">
+        <img src="/uploads/20200501_165829_resized.jpg" alt="20200501_165829_resized.jpg">
+      </div>
+      <div class="info">
+        <div class="filename">20200501_165829_resized.jpg</div>
+        <div class="size">Größe: 0.85 MB (895138 Bytes)</div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="img-container">
+        <img src="/uploads/20201031_184617_resized.jpg" alt="20201031_184617_resized.jpg">
+      </div>
+      <div class="info">
+        <div class="filename">20201031_184617_resized.jpg</div>
+        <div class="size">Größe: 0.86 MB (903113 Bytes)</div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="img-container">
+        <img src="/uploads/20201031_185508_resized.jpg" alt="20201031_185508_resized.jpg">
+      </div>
+      <div class="info">
+        <div class="filename">20201031_185508_resized.jpg</div>
+        <div class="size">Größe: 1.03 MB (1074797 Bytes)</div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="img-container">
+        <img src="/uploads/20201031_185512_resized.jpg" alt="20201031_185512_resized.jpg">
+      </div>
+      <div class="info">
+        <div class="filename">20201031_185512_resized.jpg</div>
+        <div class="size">Größe: 0.90 MB (945745 Bytes)</div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="img-container">
+        <img src="/uploads/20220820_201733_resized.jpg" alt="20220820_201733_resized.jpg">
+      </div>
+      <div class="info">
+        <div class="filename">20220820_201733_resized.jpg</div>
+        <div class="size">Größe: 0.99 MB (1034100 Bytes)</div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="img-container">
+        <img src="/uploads/Huepfburg-Dinopark-mit-Rutsche-kaufen1.webp" alt="Huepfburg-Dinopark-mit-Rutsche-kaufen1.webp">
+      </div>
+      <div class="info">
+        <div class="filename">Huepfburg-Dinopark-mit-Rutsche-kaufen1.webp</div>
+        <div class="size">Größe: 0.25 MB (266182 Bytes)</div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="img-container">
+        <img src="/uploads/IMG-20221014-WA0001.jpg" alt="IMG-20221014-WA0001.jpg">
+      </div>
+      <div class="info">
+        <div class="filename">IMG-20221014-WA0001.jpg</div>
+        <div class="size">Größe: 0.38 MB (393275 Bytes)</div>
+      </div>
+    </div>
+    
+  </div>
+</body>
+</html>
+  

@@ -55,7 +55,7 @@ export function ProductCard({
 
     if (variant === 'classic') {
         return (
-            <div className="group bg-white rounded-[16px] border border-[#cbd5e1] shadow-sm hover:shadow-xl hover:border-[#94a3b8] transition-all duration-300 transform hover:-translate-y-1 overflow-hidden flex flex-col">
+            <div className="group bg-white rounded-[16px] border border-[#cbd5e1] shadow-sm hover:shadow-xl hover:border-[#94a3b8] transition-[transform,box-shadow,border-color] duration-200 ease-out-strong hover:-translate-y-1 overflow-hidden flex flex-col">
                 <Link href={`/produkt/${slug}`} className="block">
                     {imageUrl ? (
                         <div className="relative overflow-hidden w-full h-[220px]">
@@ -63,7 +63,7 @@ export function ProductCard({
                                 src={imageUrl}
                                 alt={title}
                                 fill
-                                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                                className="object-cover transition-transform duration-300 ease-out-strong group-hover:scale-105"
                                 sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
                             />
                         </div>
@@ -126,7 +126,7 @@ export function ProductCard({
     }
 
     return (
-        <div className="group bg-white rounded-[32px] border-4 border-blue-200 shadow-[6px_6px_0_#bfdbfe] hover:shadow-[8px_8px_0_#60a5fa] hover:border-blue-400 transition-all duration-300 transform hover:-translate-y-2 overflow-hidden flex flex-col">
+        <div className="group bg-white rounded-[32px] border-4 border-blue-200 shadow-[6px_6px_0_#bfdbfe] hover:shadow-[8px_8px_0_#60a5fa] hover:border-blue-400 transition-[transform,box-shadow,border-color] duration-200 ease-out-strong hover:-translate-y-2 overflow-hidden flex flex-col">
             <Link href={`/produkt/${slug}`} className="block">
                 {imageUrl ? (
                     <div className="relative overflow-hidden w-full h-[190px] sm:h-[220px]">
@@ -134,7 +134,7 @@ export function ProductCard({
                             src={imageUrl}
                             alt={title}
                             fill
-                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                            className="object-cover transition-transform duration-300 ease-out-strong group-hover:scale-105"
                             sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
                         />
                     </div>
@@ -170,7 +170,7 @@ export function ProductCard({
                 </div>
                 <div className="mt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                     <Link href={`/produkt/${slug}`} className="flex-1">
-                        <span style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="flex items-center justify-center w-full bg-blue-500 text-white border-b-4 border-blue-700 py-2 rounded-full text-base sm:text-lg hover:bg-blue-400 hover:border-blue-600 transition-colors">
+                        <span style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="flex items-center justify-center w-full bg-blue-500 text-white border-b-4 border-blue-700 py-2 rounded-full text-base sm:text-lg hover:bg-blue-400 hover:border-blue-600 transition-[transform,background-color,border-color] duration-150 ease-out-strong active:scale-[0.97] transform-gpu">
                             🔍 Details
                         </span>
                     </Link>

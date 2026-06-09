@@ -39,8 +39,8 @@ export default async function FAQPage() {
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {/* 48h Storno - Kostenlos */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {/* 2 Tage Storno - Kostenlos */}
                         <div className="bg-white border border-[#e2e8f0] rounded-[16px] p-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-16 h-16 bg-[#ecfdf5] rounded-bl-full z-0"></div>
                             <div className="relative z-10 flex items-start gap-4">
@@ -49,13 +49,13 @@ export default async function FAQPage() {
                                 </div>
                                 <div>
                                     <h3 className="font-['Nunito'] font-semibold text-[18px] text-[#1a202c] mb-1">Kostenlos Stornieren</h3>
-                                    <p className="font-['Nunito'] font-medium text-[#059669] mb-2">Bis 48 Stunden vor Event-Beginn</p>
-                                    <p className="font-['Nunito'] text-[14px] text-[#4a5568] leading-normal">Bis 48 Stunden vor dem vereinbarten Mietbeginn können Sie Ihre Buchung komplett kostenlos und ohne Angabe von Gründen stornieren.</p>
+                                    <p className="font-['Nunito'] font-medium text-[#059669] mb-2">Bis 2 Tage vor Event-Beginn</p>
+                                    <p className="font-['Nunito'] text-[14px] text-[#4a5568] leading-normal">Bis zu 2 Tage vor dem vereinbarten Mietbeginn können Sie Ihre Buchung komplett kostenlos und ohne Angabe von Gründen stornieren.</p>
                                 </div>
                             </div>
                         </div>
 
-                        {/* 24h Storno */}
+                        {/* Spätere Storno */}
                         <div className="bg-white border border-[#e2e8f0] rounded-[16px] p-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-16 h-16 bg-[#fffbeb] rounded-bl-full z-0"></div>
                             <div className="relative z-10 flex items-start gap-4">
@@ -63,24 +63,9 @@ export default async function FAQPage() {
                                     <AlertTriangle size={20} />
                                 </div>
                                 <div>
-                                    <h3 className="font-['Nunito'] font-semibold text-[18px] text-[#1a202c] mb-1">Kurzfristige Stornierung</h3>
-                                    <p className="font-['Nunito'] font-medium text-[#d97706] mb-2">Bis 24 Stunden vorher: 25%</p>
-                                    <p className="font-['Nunito'] text-[14px] text-[#4a5568] leading-normal">Erfolgt die Stornierung innerhalb von 48 bis 24 Stunden vor dem Termin, verrechnen wir lediglich 25% des vereinbarten Preises.</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Vor-Ort Storno */}
-                        <div className="bg-white border border-[#e2e8f0] rounded-[16px] p-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
-                            <div className="absolute top-0 right-0 w-16 h-16 bg-[#fef2f2] rounded-bl-full z-0"></div>
-                            <div className="relative z-10 flex items-start gap-4">
-                                <div className="mt-1 shrink-0 w-10 h-10 rounded-full bg-[#fee2e2] flex items-center justify-center text-[#dc2626]">
-                                    <AlertTriangle size={20} />
-                                </div>
-                                <div>
-                                    <h3 className="font-['Nunito'] font-semibold text-[18px] text-[#1a202c] mb-1">Vor-Ort Stornierung</h3>
-                                    <p className="font-['Nunito'] font-medium text-[#dc2626] mb-2">50% + Zeit- & Anfahrtskosten</p>
-                                    <p className="font-['Nunito'] text-[14px] text-[#4a5568] leading-normal">Sollten Sie erst direkt vor Ort bei Ankunft / Übergabe stornieren, fallen 50% der Kosten zuzüglich der bereits entstandenen Zeit- und Anfahrtskosten an.</p>
+                                    <h3 className="font-['Nunito'] font-semibold text-[18px] text-[#1a202c] mb-1">Spätere Stornierung</h3>
+                                    <p className="font-['Nunito'] font-medium text-[#d97706] mb-2">Unter 2 Tage vor Termin</p>
+                                    <p className="font-['Nunito'] text-[14px] text-[#4a5568] leading-normal">Bei einer Stornierung weniger als 2 Tage vor dem Mietbeginn berechnen wir die tatsächlich entstandenen Kosten bis maximal 350 € netto.</p>
                                 </div>
                             </div>
                         </div>
@@ -93,9 +78,9 @@ export default async function FAQPage() {
                                     <CloudRain size={20} />
                                 </div>
                                 <div>
-                                    <h3 className="font-['Nunito'] font-semibold text-[18px] text-[#1a202c] mb-1">Schlechtwetter-Storno</h3>
-                                    <p className="font-['Nunito'] font-medium text-[#0284c7] mb-2">Sonderregelung bei Regen & Co.</p>
-                                    <p className="font-['Nunito'] text-[14px] text-[#4a5568] leading-normal">Für einige Outdoor-Geräte gibt es unsere kulante Schlechtwetter-Regelung. Wir bleiben in Kontakt und finden gemeinsam eine faire Lösung, falls das Wetter nicht mitspielt.</p>
+                                    <h3 className="font-['Nunito'] font-semibold text-[18px] text-[#1a202c] mb-1">Schlechtwetter-Option</h3>
+                                    <p className="font-['Nunito'] font-medium text-[#0284c7] mb-2">Bei starkem Regen oder Sturm</p>
+                                    <p className="font-['Nunito'] text-[14px] text-[#4a5568] leading-normal">Bei starkem Regen oder Sturm dürfen Hüpfburgen nicht betrieben werden. Hierfür bieten wir individuelle Vereinbarungen und kulante Lösungen an.</p>
                                 </div>
                             </div>
                         </div>

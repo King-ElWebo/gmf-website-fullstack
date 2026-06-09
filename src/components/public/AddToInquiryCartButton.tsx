@@ -48,8 +48,8 @@ export function AddToInquiryCartButton({
 
     if (iconOnly) {
         const iconOnlyClassName = variant === "playful"
-            ? "inline-flex h-[50px] w-[50px] shrink-0 items-center justify-center rounded-full border-b-4 border-yellow-600 bg-yellow-400 text-red-600 font-bold shadow-[0_4px_0_#ca8a04] hover:-translate-y-1 hover:shadow-[0_6px_0_#ca8a04] hover:bg-yellow-300 transition-all focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2"
-            : "inline-flex h-[50px] w-[50px] shrink-0 items-center justify-center rounded-[16px] border border-[#cbd5e1] bg-white text-[#1a3a52] transition-all hover:border-[#1a3a52] hover:bg-[#f7f8fa] focus:outline-none focus:ring-2 focus:ring-[#1a3a52] focus:ring-offset-2";
+            ? "inline-flex h-[50px] w-[50px] shrink-0 items-center justify-center rounded-full border-b-4 border-yellow-600 bg-yellow-400 text-red-600 font-bold shadow-[0_4px_0_#ca8a04] hover:-translate-y-1 hover:shadow-[0_6px_0_#ca8a04] hover:bg-yellow-300 transition-[transform,background-color,box-shadow,border-color] duration-150 ease-out-strong active:scale-[0.97] focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2"
+            : "inline-flex h-[50px] w-[50px] shrink-0 items-center justify-center rounded-[16px] border border-[#cbd5e1] bg-white text-[#1a3a52] transition-[transform,background-color,border-color,box-shadow] duration-150 ease-out-strong active:scale-[0.97] hover:border-[#1a3a52] hover:bg-[#f7f8fa] focus:outline-none focus:ring-2 focus:ring-[#1a3a52] focus:ring-offset-2";
         const iconSize = variant === "playful" ? 24 : 20;
         const iconStrokeClass = variant === "playful" ? "stroke-[3]" : undefined;
 
@@ -69,8 +69,8 @@ export function AddToInquiryCartButton({
     }
 
     const fullButtonClassName = variant === "playful"
-        ? "inline-flex h-[54px] shrink-0 items-center justify-center gap-2 rounded-full border-b-4 border-yellow-600 bg-yellow-400 px-6 font-bold text-[18px] text-red-600 shadow-[0_4px_0_#ca8a04] hover:-translate-y-1 hover:shadow-[0_6px_0_#ca8a04] hover:bg-yellow-300 transition-all focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2"
-        : "inline-flex h-[50px] shrink-0 items-center justify-center gap-2 rounded-[16px] bg-[#3b82f6] px-6 font-['Nunito'] font-medium text-[16px] text-[#1a3a52] shadow-sm transition-all hover:bg-[#2563eb] focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:ring-offset-2";
+        ? "inline-flex h-[54px] shrink-0 items-center justify-center gap-2 rounded-full border-b-4 border-yellow-600 bg-yellow-400 px-6 font-bold text-[18px] text-red-600 shadow-[0_4px_0_#ca8a04] hover:-translate-y-1 hover:shadow-[0_6px_0_#ca8a04] hover:bg-yellow-300 transition-[transform,background-color,box-shadow,border-color] duration-150 ease-out-strong active:scale-[0.97] focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2"
+        : "inline-flex h-[50px] shrink-0 items-center justify-center gap-2 rounded-[16px] bg-[#3b82f6] px-6 font-['Nunito'] font-medium text-[16px] text-[#1a3a52] shadow-sm transition-[transform,background-color,border-color,box-shadow] duration-150 ease-out-strong active:scale-[0.97] hover:bg-[#2563eb] focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:ring-offset-2";
     const iconSize = variant === "playful" ? 20 : 18;
     const iconStrokeClass = variant === "playful" ? "stroke-[3]" : undefined;
     const label = variant === "playful"

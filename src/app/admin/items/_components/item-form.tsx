@@ -56,8 +56,8 @@ type ItemFormState = {
 const sectionClassName = "space-y-4 rounded-lg border p-4";
 const inputClassName = "w-full rounded-md border px-3 py-2";
 const textareaClassName = "w-full rounded-md border px-3 py-2";
-const CLEANING_DEFAULT_TEXT = "Reinigung 120 Euro";
-const DRYING_DEFAULT_TEXT = "Trocknung 190 Euro";
+const CLEANING_DEFAULT_TEXT = "Reinigung: 120 € exkl. MwSt. bei grober/mutwilliger Verschmutzung";
+const DRYING_DEFAULT_TEXT = "Trocknung: 165 € netto pro Hüpfburg bei Nässe/Regen";
 
 function buildDefaultAdditionalCostsText(cleaningFeeApplies: boolean, dryingFeeApplies: boolean) {
     const lines: string[] = [];

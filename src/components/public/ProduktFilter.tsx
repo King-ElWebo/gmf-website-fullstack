@@ -90,11 +90,11 @@ export function ProduktFilter({
                                 style={variant === 'playful' ? { fontFamily: 'var(--font-fredoka), sans-serif' } : undefined}
                                 className={
                                     variant === 'classic'
-                                        ? `px-6 py-3 rounded-[16px] font-['Nunito'] font-medium text-[14px] transition-colors border ${selectedCatalogType === catalogType.slug
+                                        ? `px-6 py-3 rounded-[16px] font-['Nunito'] font-medium text-[14px] transition-[background-color,border-color,color] duration-150 ease-out-strong active:scale-[0.97] transform-gpu border ${selectedCatalogType === catalogType.slug
                                             ? 'bg-[#1a3a52] text-white border-[#1a3a52]'
                                             : 'bg-white text-[#2d3748] border-[#cbd5e1] hover:border-[#1a3a52]'
                                         }`
-                                        : `px-4 sm:px-6 py-2.5 sm:py-3 rounded-full font-bold text-[14px] sm:text-[16px] transition-all border-4 shadow-sm hover:-translate-y-1 ${selectedCatalogType === catalogType.slug
+                                        : `px-4 sm:px-6 py-2.5 sm:py-3 rounded-full font-bold text-[14px] sm:text-[16px] transition-[transform,background-color,border-color,box-shadow] duration-150 ease-out-strong active:scale-[0.97] transform-gpu border-4 shadow-sm hover:-translate-y-1 ${selectedCatalogType === catalogType.slug
                                             ? 'bg-blue-500 text-white border-blue-700 shadow-[0_4px_0_#1d4ed8]'
                                             : 'bg-white text-blue-800 border-blue-200 hover:border-blue-400 hover:shadow-[0_4px_0_#93c5fd]'
                                         }`
@@ -116,11 +116,11 @@ export function ProduktFilter({
                             style={variant === 'playful' ? { fontFamily: 'var(--font-fredoka), sans-serif' } : undefined}
                             className={
                                 variant === 'classic'
-                                    ? `px-6 py-3 rounded-[16px] font-['Nunito'] font-medium text-[14px] transition-colors border ${selectedCategory === category.slug
+                                    ? `px-6 py-3 rounded-[16px] font-['Nunito'] font-medium text-[14px] transition-[background-color,border-color,color] duration-150 ease-out-strong active:scale-[0.97] transform-gpu border ${selectedCategory === category.slug
                                         ? 'bg-[#1a3a52] text-white border-[#1a3a52]'
                                         : 'bg-white text-[#2d3748] border-[#cbd5e1] hover:border-[#1a3a52]'
                                     }`
-                                    : `px-4 sm:px-6 py-2.5 sm:py-3 rounded-full font-bold text-[14px] sm:text-[16px] transition-all border-4 shadow-sm hover:-translate-y-1 ${selectedCategory === category.slug
+                                    : `px-4 sm:px-6 py-2.5 sm:py-3 rounded-full font-bold text-[14px] sm:text-[16px] transition-[transform,background-color,border-color,box-shadow] duration-150 ease-out-strong active:scale-[0.97] transform-gpu border-4 shadow-sm hover:-translate-y-1 ${selectedCategory === category.slug
                                         ? 'bg-red-500 text-white border-red-700 shadow-[0_4px_0_#b91c1c]'
                                         : 'bg-white text-red-700 border-red-200 hover:border-red-400 hover:shadow-[0_4px_0_#fca5a5]'
                                     }`

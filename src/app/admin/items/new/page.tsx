@@ -21,8 +21,8 @@ export default async function NewItemPage() {
                 depositRequired: false,
                 cleaningFeeApplies: false,
                 dryingFeeApplies: false,
-                deliveryAvailable: false,
-                pickupAvailable: false,
+                deliveryAvailable: true,
+                pickupAvailable: true,
                 requiresDeliveryAddress: false,
             }}
         />

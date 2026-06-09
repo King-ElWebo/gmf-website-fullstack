@@ -11,7 +11,7 @@ import type { BookingEmailAddress, BookingEmailContext, BookingEmailItem } from 
 // Brand / Config
 // ──────────────────────────────────────────────
 
-const BRAND_NAME = process.env.EMAIL_BRAND_NAME || "GMF Events";
+const BRAND_NAME = process.env.EMAIL_BRAND_NAME || "GMF Eventmodule";
 const BRAND_COLOR = "#2563eb";       // Primary blue
 const BRAND_COLOR_LIGHT = "#eff6ff"; // Light blue tint for backgrounds
 const TEXT_COLOR = "#1f2937";

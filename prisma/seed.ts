@@ -126,17 +126,20 @@ async function main() {
     // Eventmodule Categories
     { name: "Hüpfburgen", slug: "huepfburgen", catalogTypeId: eventmoduleType.id, sortOrder: 1, description: "Action und Spaß für die Kleinen." },
     { name: "Rutschen", slug: "rutschen", catalogTypeId: eventmoduleType.id, sortOrder: 2, description: "Riesige Rutschen für leuchtende Kinderaugen." },
-    { name: "Candybar", slug: "candybar", catalogTypeId: eventmoduleType.id, sortOrder: 3, description: "Süße Highlights für jede Feier." },
-    { name: "Kinderspiele", slug: "kinderspiele", catalogTypeId: eventmoduleType.id, sortOrder: 4, description: "Kreative Spielepakete für Kinder." },
-    { name: "Partyspiele", slug: "partyspiele", catalogTypeId: eventmoduleType.id, sortOrder: 5, description: "Spaß für Jung und Alt." },
-    { name: "Eventmodule", slug: "eventmodule-misc", catalogTypeId: eventmoduleType.id, sortOrder: 6, description: "Weitere spannende Module für Ihr Event." },
+    { name: "Hindernisbahn / Parcours", slug: "hindernisbahn-parcours", catalogTypeId: eventmoduleType.id, sortOrder: 3, description: "Actiongeladene Hindernisbahnen für sportliche Events." },
+    { name: "Candybar", slug: "candybar", catalogTypeId: eventmoduleType.id, sortOrder: 4, description: "Süße Highlights für jede Feier." },
+    { name: "Kinderspiele", slug: "kinderspiele", catalogTypeId: eventmoduleType.id, sortOrder: 5, description: "Kreative Spielepakete für Kinder." },
+    { name: "Partyspiele", slug: "partyspiele", catalogTypeId: eventmoduleType.id, sortOrder: 6, description: "Spaß für Jung und Alt." },
+    { name: "Eventmodule", slug: "eventmodule-misc", catalogTypeId: eventmoduleType.id, sortOrder: 7, description: "Weitere spannende Module für Ihr Event." },
     
     // Licht & Tontechnik Categories
     { name: "Tontechnik", slug: "tontechnik", catalogTypeId: lichtTonType.id, sortOrder: 1, description: "Kristallklarer Sound für Ihre Gäste." },
     { name: "Lichttechnik", slug: "lichttechnik", catalogTypeId: lichtTonType.id, sortOrder: 2, description: "Stimmungsvolle Beleuchtung für jedes Ambiente." },
-    { name: "Komplettsets", slug: "komplettsets", catalogTypeId: lichtTonType.id, sortOrder: 3, description: "Sorglos-Pakete für Ihre Party." },
-    { name: "Lautsprecher", slug: "lautsprecher", catalogTypeId: lichtTonType.id, sortOrder: 4, description: "Einzelne Lautsprecher und Subwoofer." },
-    { name: "Partybeleuchtung", slug: "partybeleuchtung", catalogTypeId: lichtTonType.id, sortOrder: 5, description: "Effekte, die jede Tanzfläche beleben." },
+    { name: "Ambientebeleuchtung", slug: "ambientebeleuchtung", catalogTypeId: lichtTonType.id, sortOrder: 3, description: "Indirekte Beleuchtung für eine besondere Atmosphäre." },
+    { name: "Spezialbeleuchtung", slug: "spezialbeleuchtung", catalogTypeId: lichtTonType.id, sortOrder: 4, description: "Effektbeleuchtung und Grusel-Effekte für Ihr Event." },
+    { name: "Komplettsets", slug: "komplettsets", catalogTypeId: lichtTonType.id, sortOrder: 5, description: "Sorglos-Pakete für Ihre Party." },
+    { name: "Lautsprecher", slug: "lautsprecher", catalogTypeId: lichtTonType.id, sortOrder: 6, description: "Einzelne Lautsprecher und Subwoofer." },
+    { name: "Partybeleuchtung", slug: "partybeleuchtung", catalogTypeId: lichtTonType.id, sortOrder: 7, description: "Effekte, die jede Tanzfläche beleben." },
   ];
 
   const categoryMap: Record<string, string> = {};
@@ -170,19 +173,19 @@ async function main() {
       longDescription: "Unsere Hüpfburg Dschungel bietet jede Menge Platz zum Springen und Entdecken. Mit integrierten Hindernissen und einer kleinen Rutsche ist sie der Hit auf jedem Kindergeburtstag. Maße: 5m x 4m. Geeignet für bis zu 8 Kinder gleichzeitig.",
       depositRequired: true,
       depositLabel: "Kaution",
-      depositInfo: "100 € Kaution bei Abholung fällig.",
+      depositInfo: "100 € Kaution bei Übergabe fällig.",
       cleaningFeeApplies: true,
       cleaningFeeLabel: "Reinigungskosten",
-      cleaningFeeInfo: "Reinigungspauschale 120 €, falls Reinigung notwendig.",
+      cleaningFeeInfo: "Reinigungspauschale 120 € exkl. MwSt. (144 € inkl. MwSt.) bei grober/mutwilliger Verschmutzung.",
       dryingFeeApplies: true,
       dryingFeeLabel: "Trocknungskosten",
-      dryingFeeInfo: "Trocknungspauschale 190 €, nur bei Nässe.",
+      dryingFeeInfo: "Trocknungspauschale 165 € netto (198 € inkl. MwSt.) pro Hüpfburg bei Nässe/Regen.",
       setupRequirements: "Ebener Untergrund, Stromanschluss 230V erforderlich. Platzbedarf mind. 6m x 5m.",
       accessRequirements: "Türbreite mindestens 1 m, gute Zufahrt empfohlen, möglichst keine Stufen.",
       deliveryAvailable: true,
-      pickupAvailable: true,
+      pickupAvailable: false,
       deliveryInfo: "Lieferung abhängig von Entfernung. Selbstabholung und Rückgabe nach Vereinbarung möglich.",
-      imageUrl: "https://images.unsplash.com/photo-1598967912204-7e71dbbc8cc4?q=80&w=800",
+      imageUrl: "/uploads/b2daf481-de54-45cd-889e-3ad322874728.jpg",
     },
     {
       title: "Hüpfburg Schloss",
@@ -195,16 +198,54 @@ async function main() {
       longDescription: "Ein wunderschönes Hüpfburg-Schloss in leuchtenden Farben. Ideal für Gartenpartys und Vereinsfeste. Maße: 4m x 4m. Inklusive Gebläse und Unterlegplane.",
       depositRequired: true,
       depositLabel: "Kaution",
-      depositInfo: "80 € Kaution bei Abholung fällig.",
+      depositInfo: "80 € Kaution bei Übergabe fällig.",
       cleaningFeeApplies: true,
-      cleaningFeeInfo: "Reinigungspauschale 120 €, falls Reinigung notwendig.",
+      cleaningFeeInfo: "Reinigungspauschale 120 € exkl. MwSt. (144 € inkl. MwSt.) bei grober/mutwilliger Verschmutzung.",
       dryingFeeApplies: true,
-      dryingFeeInfo: "Trocknungspauschale 190 €, nur bei Nässe.",
+      dryingFeeInfo: "Trocknungspauschale 165 € netto (198 € inkl. MwSt.) pro Hüpfburg bei Nässe/Regen.",
       setupRequirements: "Ebener Untergrund, Stromanschluss 230V. Gebläse muss trocken und staubfrei stehen.",
       accessRequirements: "Türbreite mind. 1m erforderlich.",
       deliveryAvailable: true,
-      pickupAvailable: true,
-      imageUrl: "https://images.unsplash.com/photo-1549480608-f46fae85df64?q=80&w=800",
+      pickupAvailable: false,
+      imageUrl: "/uploads/4a098394-c0d5-4ad3-b3a1-bbf82ed996d1.jpg",
+    },
+    {
+      title: "Hüpfburg Minion",
+      slug: "huepfburg-minion",
+      categorySlug: "huepfburgen",
+      priceType: ItemPriceType.ON_REQUEST,
+      priceLabel: "Preis auf Anfrage",
+      shortDescription: "Der absolute Hit für alle Minions-Fans.",
+      longDescription: "Unsere bunte Hüpfburg im beliebten Minions-Design bietet riesigen Springspaß. Ideal für Kinderfeiern, Vereinsfeste und private Veranstaltungen. Details zu Platzbedarf, Lieferung und Aufbau werden im Zuge der Anfrage abgestimmt.",
+      depositRequired: true,
+      depositLabel: "Kaution",
+      depositInfo: "Kaution abhängig vom Produkt und wird im Angebot bekanntgegeben.",
+      cleaningFeeApplies: true,
+      cleaningFeeInfo: "Reinigungspauschale 120 € exkl. MwSt. (144 € inkl. MwSt.) bei grober/mutwilliger Verschmutzung.",
+      dryingFeeApplies: true,
+      dryingFeeInfo: "Trocknungspauschale 165 € netto (198 € inkl. MwSt.) pro Hüpfburg bei Nässe/Regen.",
+      deliveryAvailable: true,
+      pickupAvailable: false,
+      imageUrl: "/uploads/20180428_164118_resized.jpg",
+    },
+    {
+      title: "Dinopark Rutschen-Hüpfburg",
+      slug: "dinopark-rutschen-huepfburg",
+      categorySlug: "huepfburgen",
+      priceType: ItemPriceType.ON_REQUEST,
+      priceLabel: "Preis auf Anfrage",
+      shortDescription: "Dinosaurier-Abenteuer mit einer eingebauten Rutsche.",
+      longDescription: "Ein tolles Abenteuer-Erlebnis mit Dinos und einer integrierten Rutsche. Ideal für Kinderfeiern, Vereinsfeste und private Veranstaltungen. Details zu Platzbedarf, Lieferung und Aufbau werden im Zuge der Anfrage abgestimmt. Bilder dienen der Orientierung.",
+      depositRequired: true,
+      depositLabel: "Kaution",
+      depositInfo: "Kaution abhängig vom Produkt und wird im Angebot bekanntgegeben.",
+      cleaningFeeApplies: true,
+      cleaningFeeInfo: "Reinigungspauschale 120 € exkl. MwSt. (144 € inkl. MwSt.) bei grober/mutwilliger Verschmutzung.",
+      dryingFeeApplies: true,
+      dryingFeeInfo: "Trocknungspauschale 165 € netto (198 € inkl. MwSt.) pro Hüpfburg bei Nässe/Regen.",
+      deliveryAvailable: true,
+      pickupAvailable: false,
+      imageUrl: "/uploads/Huepfburg-Dinopark-mit-Rutsche-kaufen1.webp",
     },
     // Rutschen
     {
@@ -219,13 +260,47 @@ async function main() {
       depositRequired: true,
       depositInfo: "150 € Kaution erforderlich.",
       cleaningFeeApplies: true,
-      cleaningFeeInfo: "Reinigungspauschale 120 €, falls Reinigung notwendig.",
+      cleaningFeeInfo: "Reinigungspauschale 120 € exkl. MwSt. (144 € inkl. MwSt.) bei grober/mutwilliger Verschmutzung.",
       dryingFeeApplies: true,
-      dryingFeeInfo: "Trocknungspauschale 190 €, nur bei Nässe.",
+      dryingFeeInfo: "Trocknungspauschale 165 € netto (198 € inkl. MwSt.) pro Hüpfburg bei Nässe/Regen.",
       requiresDeliveryAddress: true,
+      deliveryAvailable: true,
+      pickupAvailable: false,
       deliveryInfo: "Lieferadresse erforderlich. Aufgrund der Größe wird eine Lieferung durch uns empfohlen.",
       setupRequirements: "Stabile, ebene Fläche. Platzbedarf mind. 10m x 6m. 2x 230V Anschlüsse.",
-      imageUrl: "https://images.unsplash.com/photo-1596435327244-1506505779c1?q=80&w=800",
+      imageUrl: "/uploads/221936ab-29f9-4c70-b5bb-91c5036e9912.jpg",
+    },
+    // Hindernisbahn / Parcours
+    {
+      title: "Abenteuer Parcours",
+      slug: "abenteuer-parcours",
+      categorySlug: "hindernisbahn-parcours",
+      priceType: ItemPriceType.ON_REQUEST,
+      priceLabel: "Preis auf Anfrage",
+      shortDescription: "Riesiger Hindernis-Parcours für sportliche Action.",
+      longDescription: "Eine große Hindernisbahn mit verschiedenen Kletter-, Krabbel- und Rutschelementen. Ideal für Kinderfeiern, Vereinsfeste und private Veranstaltungen. Details zu Platzbedarf, Lieferung und Aufbau werden im Zuge der Anfrage abgestimmt.",
+      depositRequired: true,
+      depositLabel: "Kaution",
+      depositInfo: "Kaution abhängig vom Produkt und wird im Angebot bekanntgegeben.",
+      cleaningFeeApplies: true,
+      cleaningFeeInfo: "Reinigungspauschale 120 € exkl. MwSt. (144 € inkl. MwSt.) bei grober/mutwilliger Verschmutzung.",
+      dryingFeeApplies: true,
+      dryingFeeInfo: "Trocknungspauschale 165 € netto (198 € inkl. MwSt.) pro Hüpfburg bei Nässe/Regen.",
+      deliveryAvailable: true,
+      pickupAvailable: false,
+      images: [
+        { url: "/uploads/20200501_161650_resized.jpg", alt: "Abenteuer Parcours Gesamtansicht" },
+        { url: "/uploads/20200501_161701_resized.jpg", alt: "Abenteuer Parcours Kletterelement" },
+        { url: "/uploads/20200501_161714_resized.jpg", alt: "Abenteuer Parcours Innenbereich" },
+        { url: "/uploads/20200501_161727_resized.jpg", alt: "Abenteuer Parcours Hindernis" },
+        { url: "/uploads/20200501_161733_resized.jpg", alt: "Abenteuer Parcours Draufsicht" },
+        { url: "/uploads/20200501_162012_resized.jpg", alt: "Abenteuer Parcours Spieledetails" },
+        { url: "/uploads/20200501_162019_resized.jpg", alt: "Abenteuer Parcours Seitenansicht" },
+        { url: "/uploads/20200501_165813_resized.jpg", alt: "Abenteuer Parcours Aufbauphase" },
+        { url: "/uploads/20200501_165822_resized.jpg", alt: "Abenteuer Parcours Detailaufbau" },
+        { url: "/uploads/20200501_165825_resized.jpg", alt: "Abenteuer Parcours Rückseite" },
+        { url: "/uploads/20200501_165829_resized.jpg", alt: "Abenteuer Parcours Luftansicht" }
+      ]
     },
     // Candybar
     {
@@ -272,7 +347,11 @@ async function main() {
       depositRequired: true,
       depositInfo: "200 € Kaution für das gesamte Paket.",
       cleaningFeeApplies: true,
-      cleaningFeeInfo: "Reinigungspauschale 120 €, falls Reinigung notwendig (hauptsächlich Hüpfburg).",
+      cleaningFeeInfo: "Reinigungspauschale 120 € exkl. MwSt. (144 € inkl. MwSt.) bei grober/mutwilliger Verschmutzung.",
+      dryingFeeApplies: true,
+      dryingFeeInfo: "Trocknungspauschale 165 € netto (198 € inkl. MwSt.) pro Hüpfburg bei Nässe/Regen.",
+      deliveryAvailable: true,
+      pickupAvailable: false,
       deliveryInfo: "Kostenlose Lieferung im Umkreis von 20km ab Bisamberg.",
       imageUrl: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?q=80&w=800",
     },
@@ -291,25 +370,22 @@ async function main() {
       pickupAvailable: true,
       deliveryAvailable: true,
       usageInfo: "Technik muss staubfrei und trocken aufgestellt werden.",
-      imageUrl: "https://images.unsplash.com/photo-1520166012956-add9ba0ee37f?q=80&w=800",
+      imageUrl: "/uploads/9736ca54-1e4d-4a72-8884-e4e3ca81dd19.jpg",
     },
-    // Lichttechnik
     {
-      title: "Lichttechnik Ambiente Set",
-      slug: "lichttechnik-ambiente-set",
-      categorySlug: "lichttechnik",
-      priceType: ItemPriceType.FROM_PRICE,
-      basePriceCents: 7500,
-      priceLabel: "ab 75 €",
-      shortDescription: "Indirekte Beleuchtung für eine besondere Atmosphäre.",
-      longDescription: "Set bestehend aus 6x Akku-LED-Spots. Kabellos, steuerbar per Fernbedienung oder App. Jede Farbe einstellbar. Akkulaufzeit bis zu 12 Stunden.",
-      depositRequired: true,
-      depositInfo: "Kaution 100 €.",
+      title: "Mikrofon Set",
+      slug: "mikrofon-set",
+      categorySlug: "tontechnik",
+      priceType: ItemPriceType.FIXED,
+      basePriceCents: 3500,
+      priceLabel: "35 €",
+      shortDescription: "Hochwertiges Funkmikrofon für Reden.",
+      longDescription: "Set bestehend aus 1x Funkmikrofon (Handheld) und Empfänger. Reichweite bis zu 50m.",
+      depositRequired: false,
       pickupAvailable: true,
       deliveryAvailable: true,
-      imageUrl: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?q=80&w=800",
+      imageUrl: "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?q=80&w=800",
     },
-    // Komplettsets
     {
       title: "Tontechnik Komplettset",
       slug: "tontechnik-komplettset",
@@ -320,8 +396,32 @@ async function main() {
       longDescription: "Enthält Lautsprecher, Subwoofer, Mischpult und Funkmikrofon. Ideal für Hochzeiten und Firmenevents bis 150 Personen.",
       depositRequired: true,
       depositInfo: "Kaution nach Vereinbarung.",
+      pickupAvailable: true,
+      deliveryAvailable: true,
       deliveryInfo: "Lieferung und Aufbau durch unser Fachpersonal empfohlen.",
-      imageUrl: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=800",
+      images: [
+        { url: "/uploads/20220820_201733_resized.jpg", alt: "Tontechnik Komplettset DJ-Setup" },
+        { url: "/uploads/IMG-20221014-WA0001.jpg", alt: "Tontechnik Komplettset Detail" }
+      ]
+    },
+    // Lichttechnik
+    {
+      title: "Lichttechnik Ambiente Set",
+      slug: "lichttechnik-ambiente-set",
+      categorySlug: "ambientebeleuchtung",
+      priceType: ItemPriceType.FROM_PRICE,
+      basePriceCents: 7500,
+      priceLabel: "ab 75 €",
+      shortDescription: "Indirekte Beleuchtung für eine besondere Atmosphäre.",
+      longDescription: "Set bestehend aus 6x Akku-LED-Spots. Kabellos, steuerbar per Fernbedienung oder App. Jede Farbe einstellbar. Akkulaufzeit bis zu 12 Stunden.",
+      depositRequired: true,
+      depositInfo: "Kaution 100 €.",
+      pickupAvailable: true,
+      deliveryAvailable: true,
+      images: [
+        { url: "/uploads/20190919_132541_resized.jpg", alt: "Lichttechnik Ambiente Set Spots" },
+        { url: "/uploads/20190919_204537_resized.jpg", alt: "Lichttechnik Ambiente Set Abendstimmung" }
+      ]
     },
     {
       title: "Party Licht Set",
@@ -335,21 +435,13 @@ async function main() {
       depositRequired: true,
       depositInfo: "Kaution 100 €.",
       pickupAvailable: true,
+      deliveryAvailable: true,
       usageInfo: "Nebelmaschine nur in gut belüfteten Räumen verwenden.",
-      imageUrl: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?q=80&w=800",
-    },
-    {
-      title: "Mikrofon Set",
-      slug: "mikrofon-set",
-      categorySlug: "tontechnik",
-      priceType: ItemPriceType.FIXED,
-      basePriceCents: 3500,
-      priceLabel: "35 €",
-      shortDescription: "Hochwertiges Funkmikrofon für Reden.",
-      longDescription: "Set bestehend aus 1x Funkmikrofon (Handheld) und Empfänger. Reichweite bis zu 50m.",
-      depositRequired: false,
-      pickupAvailable: true,
-      imageUrl: "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?q=80&w=800",
+      images: [
+        { url: "/uploads/20180908_125443_resized.jpg", alt: "Party Licht Set Scheinwerfer" },
+        { url: "/uploads/20180908_125503_resized.jpg", alt: "Party Licht Set Bar" },
+        { url: "/uploads/20180908_125512_resized.jpg", alt: "Party Licht Set Stativ" }
+      ]
     },
     {
       title: "DJ Lichtpaket",
@@ -360,10 +452,30 @@ async function main() {
       shortDescription: "Professionelles Licht-Setup für DJs.",
       longDescription: "Inklusive Moving Heads, Lasereffekten und DMX-Steuerung für eine synchrone Lichtshow.",
       depositRequired: true,
+      pickupAvailable: true,
       deliveryAvailable: true,
-      pickupAvailable: false,
       deliveryInfo: "Nur mit Lieferung und Aufbau durch uns.",
-      imageUrl: "https://images.unsplash.com/photo-1514525253361-bee8718a300a?q=80&w=800",
+      imageUrl: "/uploads/20190920_135139_resized.jpg",
+    },
+    // Spezialbeleuchtung
+    {
+      title: "Halloween Beleuchtung",
+      slug: "halloween-beleuchtung",
+      categorySlug: "spezialbeleuchtung",
+      priceType: ItemPriceType.ON_REQUEST,
+      priceLabel: "Preis auf Anfrage",
+      shortDescription: "Gruselig-schöne Lichteffekte für Ihre Halloween-Party.",
+      longDescription: "Set aus UV-Schwarzlicht, farbigen Scheinwerfern und Spezialeffekten für die perfekte schaurige Atmosphäre auf Ihrer Halloween-Veranstaltung.",
+      depositRequired: true,
+      depositLabel: "Kaution",
+      depositInfo: "Kaution abhängig vom Produkt und wird im Angebot bekanntgegeben.",
+      pickupAvailable: true,
+      deliveryAvailable: true,
+      images: [
+        { url: "/uploads/20201031_185508_resized.jpg", alt: "Halloween Beleuchtung UV-Schwarzlicht" },
+        { url: "/uploads/20201031_184617_resized.jpg", alt: "Halloween Beleuchtung UV-Effekte" },
+        { url: "/uploads/20201031_185512_resized.jpg", alt: "Halloween Beleuchtung Atmosphäre" }
+      ]
     },
   ];
 
@@ -375,7 +487,7 @@ async function main() {
       continue;
     }
 
-    const { categorySlug, imageUrl, ...itemData } = item;
+    const { categorySlug, imageUrl, images: itemImages, ...itemData } = item as any;
     
     const createdItem = await db.item.upsert({
       where: { slug: item.slug },
@@ -393,7 +505,27 @@ async function main() {
       },
     });
 
-    if (imageUrl) {
+    if (itemImages && Array.isArray(itemImages) && itemImages.length > 0) {
+      // First clear old images to ensure no duplicates / ordering issues
+      await db.itemImage.deleteMany({
+        where: { itemId: createdItem.id }
+      });
+
+      for (let i = 0; i < itemImages.length; i++) {
+        const img = itemImages[i];
+        const imgId = `img-${item.slug}-${i}`;
+        await db.itemImage.create({
+          data: {
+            id: imgId,
+            url: img.url,
+            alt: img.alt ?? item.title,
+            itemId: createdItem.id,
+            sortOrder: i,
+            key: `seed-${item.slug}-${i}`,
+          },
+        });
+      }
+    } else if (imageUrl) {
       await db.itemImage.upsert({
         where: { id: `img-${item.slug}` },
         update: {

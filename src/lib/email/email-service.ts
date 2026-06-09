@@ -13,7 +13,7 @@ import type {
 
 /** Sender address — must match a verified domain in Resend */
 const DEFAULT_FROM =
-  process.env.EMAIL_FROM || "GMF Events <noreply@example.com>";
+  process.env.EMAIL_FROM || "GMF Eventmodule <noreply@example.com>";
 
 /** Admin/operator email that receives new-booking notifications */
 const ADMIN_EMAIL = process.env.EMAIL_ADMIN || "";

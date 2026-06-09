@@ -17,7 +17,7 @@ export function Button({
     type = 'button',
     className = ''
 }: ButtonProps) {
-    const baseStyles = "h-[50px] inline-flex items-center justify-center rounded-[16px] px-6 font-['Nunito'] font-medium text-[16px] leading-[24px] transition-all focus:outline-none focus:ring-2 focus:ring-offset-2";
+    const baseStyles = "h-[50px] inline-flex items-center justify-center rounded-[16px] px-6 font-['Nunito'] font-medium text-[16px] leading-[24px] transition-[transform,background-color,border-color,box-shadow] duration-150 ease-out-strong active:scale-[0.97] focus:outline-none focus:ring-2 focus:ring-offset-2";
 
     const variantStyles = {
         primary: "bg-[#3b82f6] text-white hover:bg-[#2563eb] focus:ring-[#3b82f6] shadow-sm",

@@ -49,7 +49,6 @@ export default async function WiderrufPage() {
                             </p>
                             <div className="mt-3 whitespace-pre-line font-['Nunito'] text-[14px] leading-[22px] text-[#4a5568]">
                                 {`An:
-${COMPANY_CONFIG.brandingName}
 ${COMPANY_CONFIG.legalName}
 ${settings.address || COMPANY_CONFIG.address}
 E-Mail: ${settings.email || COMPANY_CONFIG.emailPrimary}

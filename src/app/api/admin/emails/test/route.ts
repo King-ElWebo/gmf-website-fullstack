@@ -26,7 +26,7 @@ export async function POST(req: Request) {
 
     const result = await sendEmail({
       to,
-      subject: subject || "GMF Events Test-E-Mail",
+      subject: subject || "GMF Eventmodule Test-E-Mail",
       text: bodyText || "Dies ist eine Test-E-Mail zur Überprüfung der Resend-Integration.",
       html: html || undefined,
     });

@@ -122,7 +122,7 @@ export function HeroCarousel({ images = [], title, text, noticeText }: HeroCarou
                         </p>
                         <div className="flex flex-wrap gap-4 justify-center md:justify-start">
                             <Link href="/produkte">
-                                <button style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="w-full sm:w-auto bg-[#fcd01b] text-black border-4 border-black text-base sm:text-xl md:text-2xl px-6 sm:px-8 py-3 sm:py-4 rounded-full font-bold shadow-[4px_4px_0_#000] hover:-translate-y-1 hover:shadow-[6px_6px_0_#000] transition-all">
+                                <button style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="w-full sm:w-auto bg-[#fcd01b] text-black border-4 border-black text-base sm:text-xl md:text-2xl px-6 sm:px-8 py-3 sm:py-4 rounded-full font-bold shadow-[4px_4px_0_#000] hover:-translate-y-1 hover:shadow-[6px_6px_0_#000] transition-[transform,box-shadow,background-color,border-color] duration-150 ease-out-strong active:scale-[0.97] active:shadow-[2px_2px_0_#000] active:translate-y-0.5 transform-gpu">
                                     🥳 Jetzt entdecken!
                                 </button>
                             </Link>
@@ -142,14 +142,14 @@ export function HeroCarousel({ images = [], title, text, noticeText }: HeroCarou
                 <>
                     <button
                         onClick={prevSlide}
-                        className="absolute left-2 sm:left-4 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 transition-colors hover:bg-white"
+                        className="absolute left-2 sm:left-4 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 transition-[transform,background-color] duration-150 ease-out-strong hover:bg-white active:scale-95 transform-gpu"
                         aria-label="Previous slide"
                     >
                         <ChevronLeft className="text-[#1a3a52]" size={20} />
                     </button>
                     <button
                         onClick={nextSlide}
-                        className="absolute right-2 sm:right-4 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 transition-colors hover:bg-white"
+                        className="absolute right-2 sm:right-4 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 transition-[transform,background-color] duration-150 ease-out-strong hover:bg-white active:scale-95 transform-gpu"
                         aria-label="Next slide"
                     >
                         <ChevronRight className="text-[#1a3a52]" size={20} />
@@ -161,10 +161,10 @@ export function HeroCarousel({ images = [], title, text, noticeText }: HeroCarou
                                 key={index}
                                 onClick={() => setCurrentSlide(index)}
                                 aria-label={`Go to slide ${index + 1}`}
-                                className="flex h-12 min-w-12 items-center justify-center rounded-full"
+                                className="flex h-12 min-w-12 items-center justify-center rounded-full active:scale-90 transition-transform duration-150 ease-out-strong transform-gpu"
                             >
                                 <span
-                                    className={`h-2 rounded-full transition-all ${index === currentSlide ? "w-8 bg-white" : "w-2 bg-white/50"}`}
+                                    className={`h-2 rounded-full transition-[width,background-color] duration-250 ease-out-strong ${index === currentSlide ? "w-8 bg-white" : "w-2 bg-white/50"}`}
                                 />
                             </button>
                         ))}
