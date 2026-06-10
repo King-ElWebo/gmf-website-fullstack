@@ -493,12 +493,14 @@ async function main() {
       where: { slug: item.slug },
       update: {
         ...itemData,
+        description: itemData.longDescription ?? itemData.description ?? null,
         categoryId,
         published: true,
         sortOrder: itemSortOrder++,
       },
       create: {
         ...itemData,
+        description: itemData.longDescription ?? itemData.description ?? null,
         categoryId,
         published: true,
         sortOrder: itemSortOrder++,
