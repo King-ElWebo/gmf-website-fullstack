@@ -78,7 +78,7 @@ export function HeroCarousel({ images = [], title, text, noticeText }: HeroCarou
     };
 
     return (
-        <section className="relative h-[460px] sm:h-[520px] md:h-[600px] overflow-hidden">
+        <section className="relative h-[460px] sm:h-[540px] md:h-[620px] overflow-hidden">
             {activeImage ? (
                 <div key={`${activeImage.url}-${currentSlide}`} className="absolute inset-0">
                     <Image
@@ -91,8 +91,8 @@ export function HeroCarousel({ images = [], title, text, noticeText }: HeroCarou
                         quality={68}
                         sizes="100vw"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-tr from-blue-600/40 via-transparent to-yellow-400/30" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-red-600/60 to-transparent opacity-80" />
+                    <div className="absolute inset-0 bg-gradient-to-tr from-[#1a3a52]/50 via-transparent to-[#fcd01b]/15" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/25 to-transparent" />
                 </div>
             ) : (
                 <div
@@ -105,8 +105,8 @@ export function HeroCarousel({ images = [], title, text, noticeText }: HeroCarou
                 <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 w-full">
                     <div className="mx-auto w-full max-w-[1180px] text-center md:text-left">
                         {noticeText && (
-                            <div className="mb-4 sm:mb-6 inline-block transform -rotate-2">
-                                <span style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="inline-flex rounded-full border-4 border-black bg-[#f13c20] px-4 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-lg md:text-xl font-bold text-white shadow-[4px_4px_0px_#000]">
+                            <div className="mb-5 sm:mb-7 inline-block transform -rotate-2">
+                                <span style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="inline-flex rounded-full bg-gradient-to-r from-[#f13c20] to-[#ff7a3d] px-5 sm:px-7 py-2.5 sm:py-3 text-sm sm:text-lg md:text-xl font-bold text-white shadow-xl shadow-red-500/40 border border-white/10">
                                     🎈 {noticeText} 🎈
                                 </span>
                             </div>
@@ -120,9 +120,9 @@ export function HeroCarousel({ images = [], title, text, noticeText }: HeroCarou
                         <p className="mx-auto max-w-[860px] font-['Nunito'] font-bold text-[15px] leading-[1.5] tracking-wide text-white drop-shadow-md sm:mb-8 sm:text-[18px] md:mx-0 md:text-[22px]">
                             {text}
                         </p>
-                        <div className="flex flex-wrap gap-4 justify-center md:justify-start">
+                        <div className="flex flex-wrap gap-4 justify-center md:justify-start mt-7 sm:mt-2">
                             <Link href="/produkte">
-                                <button style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="w-full sm:w-auto bg-[#fcd01b] text-black border-4 border-black text-base sm:text-xl md:text-2xl px-6 sm:px-8 py-3 sm:py-4 rounded-full font-bold shadow-[4px_4px_0_#000] hover:-translate-y-1 hover:shadow-[6px_6px_0_#000] transition-[transform,box-shadow,background-color,border-color] duration-150 ease-out-strong active:scale-[0.97] active:shadow-[2px_2px_0_#000] active:translate-y-0.5 transform-gpu">
+                                <button style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="gmf-pulse-glow w-full sm:w-auto bg-gradient-to-r from-[#fcd01b] to-[#ff7a3d] text-[#332600] text-base sm:text-xl md:text-2xl px-10 py-4 rounded-full font-bold shadow-xl shadow-orange-500/30 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-orange-500/40 transition-all duration-200 active:scale-[0.97] transform-gpu border border-white/20">
                                     🥳 Jetzt entdecken!
                                 </button>
                             </Link>
@@ -131,12 +131,7 @@ export function HeroCarousel({ images = [], title, text, noticeText }: HeroCarou
                 </div>
             </div>
 
-            {/* Bottom wave decoration overlaying the carousel */}
-            <div className="absolute bottom-0 left-0 right-0 z-20 w-full overflow-hidden leading-none">
-                <svg className="relative block w-[calc(100%+1.3px)] h-[40px] md:h-[60px]" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
-                    <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C59.71,118.08,130.83,123.15,192.27,108.83,235.15,98.81,278.4,79.91,321.39,56.44Z" className="fill-[#fefce8]"></path>
-                </svg>
-            </div>
+
 
             {showCarouselControls && (
                 <>
@@ -164,7 +159,7 @@ export function HeroCarousel({ images = [], title, text, noticeText }: HeroCarou
                                 className="flex h-12 min-w-12 items-center justify-center rounded-full active:scale-90 transition-transform duration-150 ease-out-strong transform-gpu"
                             >
                                 <span
-                                    className={`h-2 rounded-full transition-[width,background-color] duration-250 ease-out-strong ${index === currentSlide ? "w-8 bg-white" : "w-2 bg-white/50"}`}
+                                    className={`h-2.5 rounded-full transition-all duration-300 ease-out-strong ${index === currentSlide ? "w-9 bg-gradient-to-r from-[#fcd01b] to-[#ff7a3d] shadow-md shadow-yellow-500/40" : "w-2.5 bg-white/40 hover:bg-white/60"}`}
                                 />
                             </button>
                         ))}
@@ -174,3 +169,4 @@ export function HeroCarousel({ images = [], title, text, noticeText }: HeroCarou
         </section>
     );
 }
+

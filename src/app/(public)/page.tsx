@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Instagram, Facebook } from "lucide-react";
+import { Instagram, Facebook, Sparkles, PartyPopper, Truck, Heart } from "lucide-react";
 import { DisplayArea } from "@/lib/display-area";
 import { HeroCarousel } from "@/components/public/HeroCarousel";
 import { CategoryCarousel } from "@/components/public/CategoryCarousel";
@@ -44,12 +44,9 @@ export default async function HomePage() {
     const heroText =
         settings.heroText?.trim() ||
         "Hüpfburgen und Eventmodule für Ihre Feier. Einfach buchen, sicher aufbauen, Spaß haben.";
-    const locationInfo =
-        settings.additionalInfo?.trim() ||
-        "Wir liefern je nach Entfernung direkt zu Ihnen. Die Lieferkosten werden individuell anhand der Strecke berechnet und im Zuge der Anfrage bekanntgegeben.\n\nSelbstabholung ist nach Vereinbarung an unserem Standort möglich. Bitte beachten Sie, dass die gemieteten Produkte auch wieder selbstständig und termingerecht retourniert werden müssen.";
 
     return (
-        <div className="min-h-screen bg-[#fefce8]">
+        <div className="min-h-screen bg-[#fffdf8]">
             <HeroCarousel
                 images={heroCarouselImages}
                 title={heroTitle}
@@ -57,6 +54,7 @@ export default async function HomePage() {
                 noticeText={settings.noticeText?.trim() || null}
             />
 
+            {/* === Kategorie Carousel === */}
             <CategoryCarousel
                 categories={categories.map((category) => ({
                     id: category.id,
@@ -69,121 +67,144 @@ export default async function HomePage() {
                 }))}
             />
 
-            <section className="py-20 sm:py-32 bg-[#fefce8]">
-                <div className="max-w-[850px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <div className="inline-block bg-[#f13c20] text-white px-3 py-1 rounded-lg text-[12px] font-bold uppercase tracking-widest mb-6">
-                        Willkommen
+            {/* === Willkommenstext === */}
+            <section className="relative py-20 sm:py-28 overflow-hidden">
+                {/* Subtle warm gradient background */}
+                <div className="absolute inset-0 bg-gradient-to-b from-[#fffdf8] via-[#fef9e7] to-[#fdf2d1]" />
+                {/* Decorative confetti dots */}
+                <div className="absolute inset-0 gmf-dots-pattern pointer-events-none" />
+
+                <div className="relative max-w-[850px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#f13c20] to-[#ff7a3d] text-white px-5 py-2 rounded-full text-[13px] font-bold uppercase tracking-widest mb-8 shadow-lg shadow-red-500/20">
+                        <Sparkles size={16} />
+                        Willkommen bei GMF Eventmodule
+                        <Sparkles size={16} />
                     </div>
-                    <h2 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[clamp(2.2rem,8vw,3.2rem)] text-[#f13c20] mb-8 leading-tight">
-                        Ihr bunter Eventmodule Verleih
+                    <h2 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[clamp(2rem,7vw,3rem)] text-[#1a3a52] mb-8 leading-tight">
+                        Ihr Verleih für{" "}
+                        <span className="bg-gradient-to-r from-[#f13c20] via-[#ff7a3d] to-[#fcd01b] bg-clip-text text-transparent">
+                            Eventmodule
+                        </span>
                     </h2>
-                    <div className="space-y-6">
-                        <p className="font-['Nunito'] text-[18px] sm:text-[20px] text-[#2d3748] leading-relaxed font-medium">
+                    <div className="space-y-5">
+                        <p className="font-['Nunito'] text-[17px] sm:text-[19px] text-[#2d3748] leading-relaxed font-medium">
                             Planen Sie eine unvergessliche <strong>Hochzeit</strong>, einen aufregenden <strong>Kindergeburtstag</strong> oder ein professionelles <strong>Outdoor Event</strong>?
                         </p>
-                        <p className="font-['Nunito'] text-[16px] sm:text-[17px] text-[#4a5568] leading-[1.8]">
-                            Bei uns können Sie hochwertige <strong>Eventmodule mieten</strong> – flexibel buchbar und perfekt für jede Art von privaten Feiern oder Sommerfesten.
-                            Egal ob Sie eine bunte <strong>Hüpfburg mieten</strong> möchten für strahlende Kinderaugen, eine romantische <strong>Candybar</strong> für Ihre Hozeit ausstatten wollen oder professionelle <strong>Ton- und Lichttechnik mieten</strong>.
+                        <p className="font-['Nunito'] text-[15px] sm:text-[17px] text-[#4a5568] leading-[1.8] max-w-[780px] mx-auto">
+                            Bei uns können Sie hochwertige <strong className="text-[#1a3a52]">Eventmodule mieten</strong> – flexibel buchbar und perfekt für jede Art von privaten Feiern oder Sommerfesten.
+                            Egal ob Sie eine bunte <strong className="text-[#1a3a52]">Hüpfburg mieten</strong> möchten für strahlende Kinderaugen, eine romantische <strong className="text-[#1a3a52]">Candybar</strong> für Ihre Hochzeit ausstatten wollen oder professionelle <strong className="text-[#1a3a52]">Licht- &amp; Tontechnik mieten</strong>.
                         </p>
-                        <p className="font-['Nunito'] text-[16px] sm:text-[17px] text-[#4a5568] leading-[1.8]">
-                            Wir sind Ihr Ansprechpartner für <strong>Party Soundanlagen</strong>, Rutschen, Kinderspiele und Eventtechnik in der Region. Vertrauen Sie auf unseren Eventservice mit Abholung oder bequemer Lieferung direkt zu Ihrer <strong>Feier in Niederösterreich</strong>.
+                        <p className="font-['Nunito'] text-[15px] sm:text-[17px] text-[#4a5568] leading-[1.8] max-w-[780px] mx-auto">
+                            Wir sind Ihr Ansprechpartner für <strong className="text-[#1a3a52]">Party Soundanlagen</strong>, Rutschen, Kinderspiele und Eventtechnik in der Region. Vertrauen Sie auf unseren Eventservice mit Abholung oder bequemer Lieferung direkt zu Ihrer <strong className="text-[#1a3a52]">Feier in Niederösterreich</strong>.
                         </p>
                     </div>
                 </div>
             </section>
 
-            <section className="py-14 sm:py-20 bg-cover bg-center relative" style={{ backgroundColor: '#dbf4ff', backgroundImage: 'radial-gradient(circle, #fff 10%, transparent 11%), radial-gradient(circle, #fff 10%, transparent 11%)', backgroundSize: '40px 40px', backgroundPosition: '0 0, 20px 20px' }}>
-                {/* Top soft wave */}
-                <div className="absolute top-0 left-0 right-0 w-full overflow-hidden leading-none rotate-180">
-                    <svg className="relative block w-[calc(100%+1.3px)] h-[40px] md:h-[60px]" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
-                        <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C59.71,118.08,130.83,123.15,192.27,108.83,235.15,98.81,278.4,79.91,321.39,56.44Z" className="fill-[#fefce8]"></path>
-                    </svg>
-                </div>
-                <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                    <div className="inline-block bg-white px-5 sm:px-8 py-2 sm:py-3 rounded-full border-4 border-black shadow-[4px_4px_0_#000] mb-8 sm:mb-12 mx-auto justify-center flex hover:rotate-2 transition-transform">
-                        <h2 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[22px] sm:text-[28px] md:text-[36px] text-black">
+            {/* === So funktioniert's === */}
+            <section className="relative py-16 sm:py-24 overflow-hidden">
+                {/* Warm gradient background */}
+                <div className="absolute inset-0 bg-gradient-to-br from-[#fff4e6] via-[#fef9e7] to-[#e8f4fd]" />
+
+                <div className="relative max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center mb-10 sm:mb-14">
+                        <span className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-6 py-2 rounded-full text-[13px] font-bold uppercase tracking-widest text-[#f13c20] border border-orange-100 shadow-sm mb-6">
+                            <PartyPopper size={16} />
+                            In 3 einfachen Schritten
+                        </span>
+                        <h2 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[clamp(1.8rem,6vw,2.8rem)] text-[#1a3a52]">
                             So funktioniert&apos;s! 🎈
                         </h2>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-8">
-                        <div className="bg-white rounded-[24px] p-5 sm:p-8 border-4 border-black text-center shadow-[6px_6px_0_#000] hover:-translate-y-2 hover:shadow-[8px_8px_0_#000] transition-all relative">
-                            <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 bg-[#f13c20] rounded-full flex items-center justify-center border-4 border-black shadow-[2px_2px_0_#000]">
-                                <span style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[24px] text-white">1</span>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+                        {/* Step 1 */}
+                        <div className="bg-white rounded-[28px] p-7 sm:p-8 text-center shadow-lg shadow-red-500/5 border border-red-50 hover:-translate-y-2 hover:shadow-xl hover:shadow-red-500/10 transition-all duration-300 relative group">
+                            <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-12 h-12 bg-gradient-to-br from-[#f13c20] to-[#ff7a3d] rounded-2xl rotate-3 flex items-center justify-center shadow-lg shadow-red-500/30 group-hover:rotate-6 transition-transform">
+                                <span style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[22px] text-white">1</span>
                             </div>
-                            <h3 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[20px] sm:text-[22px] text-black mb-2 sm:mb-3 mt-4">
+                            <div className="text-3xl mb-3 mt-4">🎪</div>
+                            <h3 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[18px] sm:text-[20px] text-[#1a3a52] mb-3">
                                 Eventausstattung wählen
                             </h3>
-                            <p className="font-['Nunito'] text-[14px] text-[#4a5568] leading-[20px]">
-                                Ob Hüpfburg für Kinder, Partyzubehör oder Candybar für die Hochzeit – wählen Sie passendes Zubehör in unserem Verleih.
+                            <p className="font-['Nunito'] text-[14px] text-[#64748b] leading-[1.6]">
+                                Ob Hüpfburg für Kinder, Partyzubehör oder Eventtechnik – wählen Sie passendes Zubehör für Ihre Feier aus unserem Sortiment.
                             </p>
                         </div>
 
-                        <div className="bg-white rounded-[24px] p-5 sm:p-8 border-4 border-black text-center shadow-[6px_6px_0_#000] hover:-translate-y-2 hover:shadow-[8px_8px_0_#000] transition-all relative mt-6 md:mt-0">
-                            <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 bg-[#fcd01b] rounded-full flex items-center justify-center border-4 border-black shadow-[2px_2px_0_#000]">
-                                <span style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[24px] text-black">2</span>
+                        {/* Step 2 */}
+                        <div className="bg-white rounded-[28px] p-7 sm:p-8 text-center shadow-lg shadow-yellow-500/5 border border-yellow-50 hover:-translate-y-2 hover:shadow-xl hover:shadow-yellow-500/10 transition-all duration-300 relative group mt-6 md:mt-0">
+                            <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-12 h-12 bg-gradient-to-br from-[#fcd01b] to-[#ff7a3d] rounded-2xl -rotate-3 flex items-center justify-center shadow-lg shadow-yellow-500/30 group-hover:-rotate-6 transition-transform">
+                                <span style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[22px] text-[#332600]">2</span>
                             </div>
-                            <h3 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[20px] sm:text-[22px] text-black mb-2 sm:mb-3 mt-4">
+                            <div className="text-3xl mb-3 mt-4">📋</div>
+                            <h3 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[18px] sm:text-[20px] text-[#1a3a52] mb-3">
                                 Unverbindliche Anfrage
                             </h3>
-                            <p className="font-['Nunito'] text-[14px] text-[#4a5568] leading-[20px]">
-                                Senden Sie uns unverbindlich Ihre Wunschliste für das anstehende Vereinsfest, Sommerfest oder den Geburtstag.
+                            <p className="font-['Nunito'] text-[14px] text-[#64748b] leading-[1.6]">
+                                Senden Sie uns unverbindlich Ihre Wunschliste für Ihre geplante Feier, das Sommerfest oder den Kindergeburtstag.
                             </p>
                         </div>
 
-                        <div className="bg-white rounded-[24px] p-5 sm:p-8 border-4 border-black text-center shadow-[6px_6px_0_#000] hover:-translate-y-2 hover:shadow-[8px_8px_0_#000] transition-all relative mt-6 md:mt-0">
-                            <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 bg-[#066bb7] rounded-full flex items-center justify-center border-4 border-black shadow-[2px_2px_0_#000]">
-                                <span style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[24px] text-white">3</span>
+                        {/* Step 3 */}
+                        <div className="bg-white rounded-[28px] p-7 sm:p-8 text-center shadow-lg shadow-blue-500/5 border border-blue-50 hover:-translate-y-2 hover:shadow-xl hover:shadow-blue-500/10 transition-all duration-300 relative group mt-6 md:mt-0">
+                            <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-12 h-12 bg-gradient-to-br from-[#066bb7] to-[#1a3a52] rounded-2xl rotate-3 flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:rotate-6 transition-transform">
+                                <span style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[22px] text-white">3</span>
                             </div>
-                            <h3 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[20px] sm:text-[22px] text-black mb-2 sm:mb-3 mt-4">
-                                Lieferung & Service
+                            <div className="text-3xl mb-3 mt-4">🚚</div>
+                            <h3 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[18px] sm:text-[20px] text-[#1a3a52] mb-3">
+                                Lieferung &amp; Service
                             </h3>
-                            <p className="font-['Nunito'] text-[14px] text-[#4a5568] leading-[20px]">
-                                Egal ob flexible Selbstabholung oder bequeme Lieferung samt Aufbau Service in Niederösterreich.
+                            <p className="font-['Nunito'] text-[14px] text-[#64748b] leading-[1.6]">
+                                Wir besprechen individuell, ob für die gewählten Produkte eine Lieferung samt Aufbau oder Selbstabholung in Frage kommt.
                             </p>
                         </div>
                     </div>
                 </div>
-
-                {/* Bottom soft wave */}
-                <div className="absolute bottom-0 left-0 right-0 w-full overflow-hidden leading-none">
-                    <svg className="relative block w-[calc(100%+1.3px)] h-[40px] md:h-[60px]" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
-                        <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C59.71,118.08,130.83,123.15,192.27,108.83,235.15,98.81,278.4,79.91,321.39,56.44Z" className="fill-white"></path>
-                    </svg>
-                </div>
             </section>
 
-            <section className="py-14 sm:py-20 bg-white">
-                <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 items-center">
-                        <div className="bg-[#e7ff19] p-5 sm:p-8 md:p-10 rounded-[24px] sm:rounded-[32px] border-4 border-black shadow-[8px_8px_0_#000] rotate-0 sm:rotate-[-1deg]">
-                            <h2 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[24px] sm:text-[28px] md:text-[36px] text-black mb-5 sm:mb-6">
-                                📍 Standort & Abholung
-                            </h2>
-                            <p className="font-['Nunito'] text-[15px] sm:text-[16px] text-[#4a5568] leading-[1.7] sm:leading-[25.6px] whitespace-pre-line mb-6">
-                                {locationInfo}
-                            </p>
-                            <div className="space-y-3">
+            {/* === Standort & Abholung === */}
+            <section className="relative py-16 sm:py-24 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-b from-[#fffdf8] to-[#f0f7ff]" />
+                <div className="relative max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center mb-10 sm:mb-14">
+                        <span className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-6 py-2 rounded-full text-[13px] font-bold uppercase tracking-widest text-[#066bb7] border border-blue-100 shadow-sm mb-6">
+                            <Truck size={16} />
+                            Lieferung &amp; Abholung
+                        </span>
+                        <h2 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[clamp(1.8rem,6vw,2.8rem)] text-[#1a3a52]">
+                            📍 Standort &amp; Service
+                        </h2>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 items-stretch">
+                        <div className="bg-white p-6 sm:p-8 md:p-10 rounded-[28px] border border-yellow-100 shadow-xl shadow-yellow-500/5 flex flex-col">
+                            <div className="flex-1">
+                                <p className="font-['Nunito'] text-[15px] sm:text-[16px] text-[#4a5568] leading-[1.7] mb-6">
+                                    Selbstabholung ist nach Vereinbarung nur bei dafür geeigneten Produkten (z.B. Kleinmaterial oder Technik) möglich. Hüpfburgen werden in der Regel direkt durch uns angeliefert. Die Liefer- und Anfahrtskosten werden individuell anhand der Entfernung berechnet.
+                                </p>
+                            </div>
+                            <div className="space-y-3 bg-[#fef9e7] rounded-2xl p-5 border border-yellow-100">
                                 <p className="font-['Nunito'] text-[14px] text-[#2d3748]">
-                                    <strong>Adresse:</strong> {settings.address?.trim() || COMPANY_CONFIG.address}
+                                    <strong>📍 Adresse:</strong> {settings.address?.trim() || COMPANY_CONFIG.address}
                                 </p>
                                 <p className="font-['Nunito'] text-[14px] text-[#2d3748]">
-                                    <strong>Öffnungszeiten:</strong> {settings.openingHours?.trim() || "nach telefonischer Vereinbarung"}
+                                    <strong>🕐 Öffnungszeiten:</strong> {settings.openingHours?.trim() || "nach telefonischer Vereinbarung"}
                                 </p>
                                 {settings.phone && (
                                     <div className="font-['Nunito'] text-[14px] text-[#2d3748] flex items-center gap-1 break-all">
-                                        <strong>Telefon:</strong> <CopyableContact value={settings.phone} type="phone" textClassName="text-[#2d3748]" />
+                                        <strong>📞 Telefon:</strong> <CopyableContact value={settings.phone} type="phone" textClassName="text-[#2d3748]" />
                                     </div>
                                 )}
                                 {settings.email && (
                                     <div className="font-['Nunito'] text-[14px] text-[#2d3748] flex items-center gap-1 break-all">
-                                        <strong>E-Mail:</strong> <CopyableContact value={settings.email} type="email" textClassName="text-[#2d3748]" />
+                                        <strong>✉️ E-Mail:</strong> <CopyableContact value={settings.email} type="email" textClassName="text-[#2d3748]" />
                                     </div>
                                 )}
                             </div>
                         </div>
 
-                        <div className="bg-[#fef9c3] rounded-[16px] h-[240px] sm:h-[300px] flex items-center justify-center border border-[#cbd5e1] overflow-hidden">
+                        <div className="rounded-[28px] h-[280px] sm:h-[340px] lg:h-auto flex items-center justify-center border border-blue-100 overflow-hidden shadow-xl shadow-blue-500/5">
                             <iframe
                                 title="Google Maps Karte zum Standort GMF Eventmodule"
                                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2652.3718250777197!2d16.357130356852537!3d48.3341579974037!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x476d0fbf7cc77e57%3A0x6d03f6c40f987f39!2sSpargelfeldgasse%2022%2C%202102%20Bisamberg!5e0!3m2!1sde!2sat!4v1773320289705!5m2!1sde!2sat"
@@ -199,31 +220,39 @@ export default async function HomePage() {
                 </div>
             </section>
 
+            {/* === Impressionen === */}
             {(socialPreviewImages.length > 0 || socialLinks.length > 0) && (
-                <section className="py-14 sm:py-20 bg-[#fde047] relative">
-                    {/* Top soft wave */}
-                    <div className="absolute top-0 left-0 right-0 w-full overflow-hidden leading-none rotate-180">
-                        <svg className="relative block w-[calc(100%+1.3px)] h-[40px] md:h-[60px]" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
-                            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C59.71,118.08,130.83,123.15,192.27,108.83,235.15,98.81,278.4,79.91,321.39,56.44Z" className="fill-white"></path>
-                        </svg>
-                    </div>
-                    <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                        <h2 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[clamp(1.85rem,8vw,2.6rem)] text-black mb-3 sm:mb-4 text-center">
-                            📸 Folgen Sie uns!
-                        </h2>
-                        <p className="font-['Nunito'] text-[15px] sm:text-[16px] text-[#64748b] mb-6 sm:mb-8 text-center">
-                            Sehen Sie Impressionen von unseren Events auf Instagram und Facebook.
-                        </p>
+                <section className="relative py-16 sm:py-24 overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-b from-[#f0f7ff] via-[#fef9e7] to-[#fffdf8]" />
+                    <div className="absolute inset-0 gmf-dots-pattern pointer-events-none" />
+
+                    <div className="relative max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="text-center mb-10 sm:mb-14">
+                            <span className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-6 py-2 rounded-full text-[13px] font-bold uppercase tracking-widest text-[#d43ca5] border border-pink-100 shadow-sm mb-6">
+                                <Heart size={16} />
+                                Einblicke
+                            </span>
+                            <h2 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[clamp(1.8rem,6vw,2.8rem)] text-[#1a3a52]">
+                                📸 Impressionen unserer Eventmodule
+                            </h2>
+                            <p className="font-['Nunito'] text-[15px] sm:text-[16px] text-[#64748b] mt-3 max-w-[600px] mx-auto">
+                                Einblicke in unser Sortiment und Inspirationen für Ihre nächste Feier.
+                            </p>
+                        </div>
 
                         {socialPreviewImages.length > 0 && (
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                                {socialPreviewImages.map((image) => (
-                                    <div key={image.id} className="relative bg-white rounded-[16px] aspect-square border border-[#cbd5e1]">
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-5 mb-10">
+                                {socialPreviewImages.map((image, idx) => (
+                                    <div
+                                        key={image.id}
+                                        className="relative bg-white rounded-[20px] aspect-square border border-white shadow-lg shadow-blue-500/5 overflow-hidden group hover:-translate-y-1 hover:shadow-xl transition-all duration-300"
+                                        style={{ transform: `rotate(${idx % 2 === 0 ? -1 : 1}deg)` }}
+                                    >
                                         <Image
                                             src={image.url}
-                                            alt={image.alt ?? "Social Media Image"}
+                                            alt={image.alt ?? "Impressionen von GMF Eventmodule"}
                                             fill
-                                            className="object-cover rounded-[16px]"
+                                            className="object-cover group-hover:scale-105 transition-transform duration-300"
                                             sizes="(max-width: 768px) 50vw, 25vw"
                                         />
                                     </div>
@@ -231,34 +260,36 @@ export default async function HomePage() {
                             </div>
                         )}
 
-                        <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
-                            {instagramLink && (
-                                <a
-                                    href={instagramLink.url}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="flex min-h-12 items-center gap-2 bg-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-[16px] border-2 border-black hover:-translate-y-1 hover:shadow-[4px_4px_0_#000] transition-all"
-                                >
-                                    <Instagram size={20} className="text-[#1a3a52]" />
-                                    <span className="font-['Nunito'] font-bold text-[15px] text-[#2d3748]">
-                                        {instagramLink.label?.trim() || "Instagram"}
-                                    </span>
-                                </a>
-                            )}
-                            {facebookLink && (
-                                <a
-                                    href={facebookLink.url}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="flex min-h-12 items-center gap-2 bg-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-[16px] border-2 border-black hover:-translate-y-1 hover:shadow-[4px_4px_0_#000] transition-all"
-                                >
-                                    <Facebook size={20} className="text-[#1a3a52]" />
-                                    <span className="font-['Nunito'] font-bold text-[15px] text-[#2d3748]">
-                                        {facebookLink.label?.trim() || "Facebook"}
-                                    </span>
-                                </a>
-                            )}
-                        </div>
+                        {(instagramLink || facebookLink) && (
+                            <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
+                                {instagramLink && (
+                                    <a
+                                        href={instagramLink.url}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="flex min-h-12 items-center gap-2.5 bg-white px-6 py-3 rounded-full shadow-md shadow-pink-500/10 border border-pink-100 hover:-translate-y-1 hover:shadow-lg hover:shadow-pink-500/20 hover:border-pink-200 transition-all duration-200"
+                                    >
+                                        <Instagram size={20} className="text-[#d43ca5]" />
+                                        <span className="font-['Nunito'] font-bold text-[15px] text-[#1a3a52]">
+                                            {instagramLink.label?.trim() || "Instagram"}
+                                        </span>
+                                    </a>
+                                )}
+                                {facebookLink && (
+                                    <a
+                                        href={facebookLink.url}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="flex min-h-12 items-center gap-2.5 bg-white px-6 py-3 rounded-full shadow-md shadow-blue-500/10 border border-blue-100 hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-500/20 hover:border-blue-200 transition-all duration-200"
+                                    >
+                                        <Facebook size={20} className="text-[#066bb7]" />
+                                        <span className="font-['Nunito'] font-bold text-[15px] text-[#1a3a52]">
+                                            {facebookLink.label?.trim() || "Facebook"}
+                                        </span>
+                                    </a>
+                                )}
+                            </div>
+                        )}
                     </div>
                 </section>
             )}

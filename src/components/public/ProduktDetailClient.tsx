@@ -89,7 +89,7 @@ export function ProduktDetailClient({ item, deliveryTerms }: { item: ProduktDeta
     };
 
     return (
-        <div className="min-h-screen bg-[#fefce8]">
+        <div className="min-h-screen bg-[#fffdf8]">
             <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <div className="mb-8">
                     <nav className="flex items-center gap-2 text-[14px]">
@@ -109,7 +109,7 @@ export function ProduktDetailClient({ item, deliveryTerms }: { item: ProduktDeta
                     <div>
                         {item.images.length > 0 ? (
                             <>
-                                <div className="relative bg-[#fef9c3] rounded-[16px] overflow-hidden mb-4 aspect-[4/3]">
+                                <div className="relative bg-gradient-to-br from-[#fef9e7] to-[#fdf2d1] rounded-[20px] overflow-hidden mb-4 aspect-[4/3]">
                                     <Image
                                         src={item.images[currentImageIndex]}
                                         alt={item.title}
@@ -146,7 +146,7 @@ export function ProduktDetailClient({ item, deliveryTerms }: { item: ProduktDeta
                                             <button
                                                 key={index}
                                                 onClick={() => setCurrentImageIndex(index)}
-                                                className={`relative aspect-[4/3] min-h-12 rounded-[16px] overflow-hidden border-2 transition-colors ${currentImageIndex === index ? 'border-[#1a3a52]' : 'border-[#cbd5e1]'}`}
+                                                className={`relative aspect-[4/3] min-h-12 rounded-[12px] overflow-hidden border-2 transition-all duration-200 ${currentImageIndex === index ? 'border-[#f13c20] shadow-md shadow-red-500/20' : 'border-[#e2e8f0] hover:border-[#fcd01b]'}`}
                                                 aria-label={`Produktbild ${index + 1} anzeigen`}
                                             >
                                                 <Image
@@ -162,7 +162,7 @@ export function ProduktDetailClient({ item, deliveryTerms }: { item: ProduktDeta
                                 )}
                             </>
                         ) : (
-                            <div className="bg-[#fef9c3] rounded-[16px] aspect-[4/3] flex items-center justify-center">
+                            <div className="bg-gradient-to-br from-[#fef9e7] to-[#fdf2d1] rounded-[20px] aspect-[4/3] flex items-center justify-center">
                                 <p className="font-['Nunito'] text-[14px] text-[#64748b]">Kein Bild vorhanden</p>
                             </div>
                         )}
@@ -196,7 +196,7 @@ export function ProduktDetailClient({ item, deliveryTerms }: { item: ProduktDeta
                             </span>
                         </div>
 
-                        <h1 className="font-['Nunito'] font-semibold text-[32px] text-[#1a202c] mb-4">
+                        <h1 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[28px] sm:text-[34px] text-[#1a3a52] mb-4">
                             {item.title}
                         </h1>
 
@@ -210,7 +210,7 @@ export function ProduktDetailClient({ item, deliveryTerms }: { item: ProduktDeta
                             <PriceDisplay
                                 price={item.price}
                                 priceType={item.priceType}
-                                priceClassName="font-['Nunito'] font-semibold text-[24px] text-[#4a5568]"
+                                priceClassName="font-['Nunito'] font-bold text-[24px] text-[#f13c20]"
                                 noteClassName="font-['Nunito'] text-[13px] text-[#64748b]"
                             />
                         </div>
@@ -239,7 +239,7 @@ export function ProduktDetailClient({ item, deliveryTerms }: { item: ProduktDeta
 
                         {/* Technische Details & Inklusivleistungen für Eventmodule */}
                         {item.catalogType.toLowerCase().includes("event") && (
-                            <div className="mb-8 rounded-[24px] border-4 border-black bg-white p-6 shadow-[6px_6px_0_#000] hover:rotate-[-0.5deg] transition-transform">
+                            <div className="mb-8 rounded-[24px] border border-orange-100 bg-white p-6 shadow-lg shadow-orange-500/5">
                                 <h3 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[20px] text-black mb-4">
                                     🎈 Wichtige Infos & Inklusivleistungen
                                 </h3>

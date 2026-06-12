@@ -24,7 +24,7 @@ export function ContactClient({ settings }: ContactClientProps) {
 
     if (isSubmitted) {
         return (
-            <div className="min-h-screen bg-[#fefce8]">
+            <div className="min-h-screen bg-[#fffdf8]">
                 <div className="max-w-[800px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
                     <div className="bg-white rounded-[16px] border border-[#cbd5e1] p-6 sm:p-8 md:p-12 text-center">
                         <div className="w-16 h-16 bg-[#3b82f6] rounded-full flex items-center justify-center mx-auto mb-6">
@@ -53,10 +53,13 @@ export function ContactClient({ settings }: ContactClientProps) {
     };
 
     return (
-        <div className="min-h-screen bg-[#fefce8]">
+        <div className="min-h-screen bg-[#fffdf8]">
             <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-                <div className="mb-8 sm:mb-12 text-center">
-                    <h1 className="font-['Nunito'] font-semibold text-[28px] sm:text-[32px] text-[#1a202c] mb-3 sm:mb-4">Kontakt</h1>
+                <div className="mb-10 sm:mb-14 text-center">
+                    <span className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-6 py-2 rounded-full text-[13px] font-bold uppercase tracking-widest text-[#066bb7] border border-blue-100 shadow-sm mb-6">
+                        📩 Kontakt
+                    </span>
+                    <h1 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[28px] sm:text-[34px] text-[#1a3a52] mb-3 sm:mb-4">Kontakt</h1>
                     <p className="font-['Nunito'] text-[15px] sm:text-[16px] text-[#64748b] leading-[1.6] sm:leading-[25.6px] max-w-[600px] mx-auto">
                         Haben Sie Fragen oder möchten Sie ein Angebot einholen? Wir sind gerne für Sie da!
                     </p>
@@ -65,7 +68,7 @@ export function ContactClient({ settings }: ContactClientProps) {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12">
                     {/* LINKE SPALTE: Infos & Karte */}
                     <div>
-                        <h2 className="font-['Nunito'] font-semibold text-[22px] sm:text-[24px] text-[#1a202c] mb-5 sm:mb-6">Kontaktinformationen</h2>
+                        <h2 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[22px] sm:text-[24px] text-[#1a3a52] mb-5 sm:mb-6">Kontaktinformationen</h2>
                         <div className="space-y-6 mb-8">
                             <div className="flex items-start gap-4">
                                 <div className="w-10 h-10 bg-[#fef9c3] rounded-full flex items-center justify-center shrink-0"><MapPin size={20} className="text-[#1a3a52]" /></div>
@@ -97,8 +100,8 @@ export function ContactClient({ settings }: ContactClientProps) {
                             </div>
                         </div>
 
-                        <div className="bg-[#fef9c3] rounded-[16px] p-5 sm:p-6 mb-8">
-                            <h3 className="font-['Nunito'] font-medium text-[18px] text-[#1a202c] mb-3">Lieferung & Abholung</h3>
+                        <div className="bg-gradient-to-r from-[#fef9e7] to-[#fff4e6] rounded-[20px] p-5 sm:p-6 mb-8 border border-yellow-100">
+                            <h3 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[18px] text-[#1a3a52] mb-3">🚚 Lieferung &amp; Abholung</h3>
                             <p className="font-['Nunito'] text-[14px] text-[#4a5568] leading-[20px] mb-3">{additionalInfo || "Wir liefern je nach Entfernung direkt zu Ihnen. Die Lieferkosten werden individuell anhand der Strecke berechnet und im Zuge der Anfrage bekanntgegeben."}</p>
                             <p className="font-['Nunito'] text-[14px] text-[#4a5568] leading-[20px]">Selbstabholung ist nach Vereinbarung an unserem Standort möglich. Bitte beachten Sie, dass die gemieteten Produkte auch wieder selbstständig und termingerecht retourniert werden müssen.</p>
                         </div>
@@ -114,7 +117,7 @@ export function ContactClient({ settings }: ContactClientProps) {
                                         else if (platformStr.includes('facebook')) Icon = Facebook;
 
                                         return (
-                                            <a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer" className="h-12 w-12 bg-[#fef9c3] hover:bg-[#cbd5e1] rounded-full flex items-center justify-center transition-colors">
+                                            <a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer" className="h-12 w-12 bg-gradient-to-br from-[#fef9e7] to-[#fdf2d1] hover:from-[#fcd01b] hover:to-[#ff7a3d] rounded-full flex items-center justify-center transition-all duration-200 hover:-translate-y-1 hover:scale-105 shadow-sm hover:shadow-md border border-yellow-100 hover:border-orange-200 group">
                                                 {Icon ? <Icon size={20} className="text-[#1a3a52]" /> : <span className="text-[#1a3a52] text-xs font-bold">{link.platform.substring(0, 2).toUpperCase()}</span>}
                                             </a>
                                         );
@@ -143,7 +146,7 @@ export function ContactClient({ settings }: ContactClientProps) {
 
                     {/* RECHTE SPALTE: Formular */}
                     <div>
-                        <h2 className="font-['Nunito'] font-semibold text-[22px] sm:text-[24px] text-[#1a202c] mb-5 sm:mb-6">Schreiben Sie uns</h2>
+                        <h2 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[22px] sm:text-[24px] text-[#1a3a52] mb-5 sm:mb-6">✍️ Schreiben Sie uns</h2>
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <Input label="Name" type="text" name="name" placeholder="Max Mustermann" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
                             <Input label="E-Mail" type="email" name="email" placeholder="max@beispiel.de" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} required />

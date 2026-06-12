@@ -64,24 +64,24 @@ export function Footer({
           ];
 
     return (
-        <footer className="mt-auto bg-[#2d3748] text-white">
-            <div className="mx-auto max-w-[1280px] px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
-                <div className="grid grid-cols-1 gap-8 text-center md:grid-cols-2 md:text-left lg:grid-cols-4">
+        <footer className="mt-auto bg-gradient-to-b from-[#1a3a52] to-[#0f2535] text-white">
+            <div className="mx-auto max-w-[1280px] px-4 py-12 sm:px-6 sm:py-14 lg:px-8">
+                <div className="grid grid-cols-1 gap-10 text-center md:grid-cols-2 md:text-left lg:grid-cols-4">
                     <div>
-                        <h3 className="mb-4 font-['Nunito'] text-[18px] font-semibold">GMF Eventmodule</h3>
-                        <p className="font-['Nunito'] text-[14px] leading-[20px] text-[#e2e8f0]">
-                            Ihre Experten fuer Huepfburgen und Eventmodule
+                        <h3 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="mb-4 text-[20px] text-[#fcd01b]">🎪 GMF Eventmodule</h3>
+                        <p className="font-['Nunito'] text-[14px] leading-[22px] text-[#c8d8e8]">
+                            Ihre Experten für Hüpfburgen, Eventmodule und Eventtechnik in Niederösterreich.
                         </p>
                     </div>
 
                     <div>
-                        <h3 className="mb-4 font-['Nunito'] text-[18px] font-semibold">Navigation</h3>
-                        <nav className="flex flex-col items-center gap-2 md:items-start">
+                        <h3 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="mb-4 text-[20px] text-[#fcd01b]">🧭 Navigation</h3>
+                        <nav className="flex flex-col items-center gap-2.5 md:items-start">
                             {links.map((link) => (
                                 <Link
                                     key={link.href}
                                     href={link.href}
-                                    className="font-['Nunito'] text-[14px] text-[#e2e8f0] transition-colors hover:text-white"
+                                    className="font-['Nunito'] text-[14px] text-[#c8d8e8] transition-colors hover:text-[#fcd01b] hover:translate-x-1 transition-all duration-200"
                                 >
                                     {link.label}
                                 </Link>
@@ -90,13 +90,13 @@ export function Footer({
                     </div>
 
                     <div>
-                        <h3 className="mb-4 font-['Nunito'] text-[18px] font-semibold">Rechtliches</h3>
-                        <nav className="flex flex-col items-center gap-2 md:items-start">
+                        <h3 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="mb-4 text-[20px] text-[#fcd01b]">📜 Rechtliches</h3>
+                        <nav className="flex flex-col items-center gap-2.5 md:items-start">
                             {legal.map((link) => (
                                 <Link
                                     key={link.href}
                                     href={link.href}
-                                    className="font-['Nunito'] text-[14px] text-[#e2e8f0] transition-colors hover:text-white"
+                                    className="font-['Nunito'] text-[14px] text-[#c8d8e8] transition-colors hover:text-[#fcd01b] hover:translate-x-1 transition-all duration-200"
                                 >
                                     {link.label}
                                 </Link>
@@ -105,24 +105,24 @@ export function Footer({
                     </div>
 
                     <div>
-                        <h3 className="mb-4 font-['Nunito'] text-[18px] font-semibold">Kontakt</h3>
-                        <div className="mb-4 space-y-1 font-['Nunito'] text-[14px] leading-[20px] text-[#e2e8f0]">
+                        <h3 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="mb-4 text-[20px] text-[#fcd01b]">📞 Kontakt</h3>
+                        <div className="mb-5 space-y-2 font-['Nunito'] text-[14px] leading-[22px] text-[#c8d8e8]">
                             {address && <p className="whitespace-pre-line break-words">{address}</p>}
                             {email && (
                                 <div className="flex items-center justify-center gap-1 break-all md:justify-start">
-                                    <span>Mail:</span>
-                                    <CopyableContact value={email} type="email" textClassName="text-[#e2e8f0] hover:text-[#93c5fd]" />
+                                    <span>✉️</span>
+                                    <CopyableContact value={email} type="email" textClassName="text-[#c8d8e8] hover:text-[#fcd01b]" />
                                 </div>
                             )}
                             {phone && (
                                 <div className="flex items-center justify-center gap-1 md:justify-start">
-                                    <span>Tel:</span>
-                                    <CopyableContact value={phone} type="phone" textClassName="text-[#e2e8f0] hover:text-[#93c5fd]" />
+                                    <span>📞</span>
+                                    <CopyableContact value={phone} type="phone" textClassName="text-[#c8d8e8] hover:text-[#fcd01b]" />
                                 </div>
                             )}
                         </div>
                         {socialLinks.length > 0 && (
-                            <div className="flex justify-center gap-4 md:justify-start">
+                            <div className="flex justify-center gap-3 md:justify-start">
                                 {socialLinks.map((link) => {
                                     const icon = renderSocialIcon(link.platform);
                                     if (!icon) return null;
@@ -134,7 +134,7 @@ export function Footer({
                                             target="_blank"
                                             rel="noreferrer"
                                             aria-label={link.label?.trim() || link.platform}
-                                            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#64748b] text-[#e2e8f0] transition-colors hover:border-white hover:text-white"
+                                            className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-all duration-200 hover:bg-gradient-to-br hover:from-[#fcd01b] hover:to-[#ff7a3d] hover:text-[#1a3a52] hover:-translate-y-1 hover:scale-110 shadow-md"
                                         >
                                             {icon}
                                         </a>
@@ -145,16 +145,16 @@ export function Footer({
                     </div>
                 </div>
 
-                <div className="mt-7 border-t border-[#64748b] pt-7 text-center sm:mt-8 sm:pt-8">
-                    <p className="font-['Nunito'] text-[12px] text-[#e2e8f0]">
-                        &copy; 2026 GMF Eventmodule. Alle Rechte vorbehalten.
+                <div className="mt-8 border-t border-white/10 pt-8 text-center">
+                    <p className="font-['Nunito'] text-[13px] text-[#8ba4bc]">
+                        &copy; 2026 GMF Eventmodule. Alle Rechte vorbehalten. 🎉
                     </p>
-                    <div className="mt-2 flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+                    <div className="mt-3 flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
                         {legal.map((link) => (
                             <Link
                                 key={`bottom-${link.href}`}
                                 href={link.href}
-                                className="font-['Nunito'] text-[12px] text-[#cbd5e1] transition-colors hover:text-white"
+                                className="font-['Nunito'] text-[12px] text-[#6d8fa8] transition-colors hover:text-[#fcd01b]"
                             >
                                 {link.label}
                             </Link>

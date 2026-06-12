@@ -550,7 +550,7 @@ export function InquiryCartPageClient({ settings }: { settings?: SiteSettingsRec
                 </div>
 
                 {items.length === 0 ? (
-                    <div className="rounded-[16px] border border-[#cbd5e1] bg-[#f7f8fa] p-10 text-center">
+                    <div className="rounded-[32px] border border-blue-100 bg-white p-10 text-center shadow-xl shadow-blue-500/5">
                         <p className="font-['Nunito'] text-[18px] text-[#1a202c] mb-3">Ihr Anfragekorb ist leer.</p>
                         <p className="font-['Nunito'] text-[14px] text-[#64748b] mb-6">
                             Fuegen Sie zuerst Produkte hinzu, bevor Sie eine Sammelanfrage absenden.
@@ -562,7 +562,7 @@ export function InquiryCartPageClient({ settings }: { settings?: SiteSettingsRec
                 ) : (
                     <div className="grid grid-cols-1 xl:grid-cols-[1.1fr_0.9fr] gap-8">
                         <div className="space-y-4">
-                            <div className="rounded-[16px] border border-[#cbd5e1] bg-white p-6">
+                            <div className="rounded-[32px] border border-blue-100 bg-white p-6 shadow-xl shadow-blue-500/5">
                                 <div className="mb-4 flex items-center justify-between gap-4">
                                     <h2 className="font-['Nunito'] font-semibold text-[24px] text-[#1a202c]">
                                         Ausgewaehlte Produkte ({itemCount})
@@ -578,7 +578,7 @@ export function InquiryCartPageClient({ settings }: { settings?: SiteSettingsRec
 
                                 <div className="space-y-4">
                                     {items.map((item) => (
-                                        <div key={item.id} className="flex flex-col gap-4 rounded-[16px] border border-[#e2e8f0] p-4 sm:flex-row">
+                                        <div key={item.id} className="flex flex-col gap-4 rounded-[24px] border border-blue-50 bg-[#f8fafc] p-4 sm:flex-row hover:shadow-md transition-shadow">
                                             <div className="relative h-[110px] w-full overflow-hidden rounded-[16px] bg-[#fef9c3] sm:w-[160px]">
                                                 {item.imageUrl ? (
                                                     <Image
@@ -764,7 +764,7 @@ export function InquiryCartPageClient({ settings }: { settings?: SiteSettingsRec
                             </div>
                         </div>
 
-                        <div className="rounded-[16px] border border-[#cbd5e1] bg-white p-6">
+                        <div className="rounded-[32px] border border-blue-100 bg-white p-6 shadow-xl shadow-blue-500/5">
                             <h2 className="font-['Nunito'] font-semibold text-[24px] text-[#1a202c] mb-6">Sammelanfrage senden</h2>
 
                             <form onSubmit={handleSubmit} className="space-y-5">
@@ -787,7 +787,7 @@ export function InquiryCartPageClient({ settings }: { settings?: SiteSettingsRec
                                     </div>
                                 )}
 
-                                <div className="rounded-[16px] border border-[#e2e8f0] bg-[#fffbeb] p-4">
+                                <div className="rounded-[24px] border border-amber-100 bg-[#fffbeb] p-4 shadow-sm">
                                     <h3 className="font-['Nunito'] font-semibold text-[16px] text-[#1a202c] mb-2">Preisuebersicht</h3>
                                     <div className="space-y-1">
                                         <p className="font-['Nunito'] text-[14px] text-[#4a5568]">
@@ -973,7 +973,7 @@ export function InquiryCartPageClient({ settings }: { settings?: SiteSettingsRec
 
                                 <DeliveryNoticeBox deliveryTerms={settings?.deliveryTerms} />
 
-                                <div className="space-y-4 rounded-[16px] border border-[#e2e8f0] bg-[#f8fafc] p-4">
+                                <div className="space-y-4 rounded-[24px] border border-blue-50 bg-[#f8fafc] p-5 shadow-sm">
                                     <div>
                                         <h3 className="font-['Nunito'] font-semibold text-[16px] text-[#1a202c]">
                                             {formState.deliveryType === "delivery" ? "Lieferadresse" : "Kundenadresse"}
@@ -1021,7 +1021,7 @@ export function InquiryCartPageClient({ settings }: { settings?: SiteSettingsRec
                                 </div>
 
                                 {formState.billingAddressDiffers && (
-                                    <div className="space-y-4 rounded-[16px] border border-[#cbd5e1] bg-white p-4">
+                                    <div className="space-y-4 rounded-[24px] border border-blue-100 bg-white p-5 shadow-sm">
                                         <div>
                                             <h3 className="font-['Nunito'] font-semibold text-[16px] text-[#1a202c]">Rechnungsadresse</h3>
                                             <p className="mt-1 font-['Nunito'] text-[13px] leading-[20px] text-[#64748b]">
@@ -1113,7 +1113,7 @@ export function InquiryCartPageClient({ settings }: { settings?: SiteSettingsRec
                                 />
 
                                 {/* STORNO INFO */}
-                                <div className="mt-8 bg-[#fffbeb] border border-[#cbd5e1] rounded-[16px] p-5">
+                                <div className="mt-8 bg-[#fffbeb] border border-amber-100 rounded-[24px] p-6 shadow-sm">
                                     <div className="flex items-center gap-3 mb-4">
                                         <div className="w-8 h-8 rounded-full bg-[#fef3c7] flex items-center justify-center text-[#d97706] shrink-0">
                                             <ShieldCheck size={18} />
@@ -1146,7 +1146,7 @@ export function InquiryCartPageClient({ settings }: { settings?: SiteSettingsRec
                                 </div>
 
                                 {/* HAFTUNG INFO */}
-                                <div className="mt-4 bg-[#fffbeb] border border-[#cbd5e1] rounded-[16px] p-5">
+                                <div className="mt-4 bg-[#f0f7ff] border border-blue-100 rounded-[24px] p-6 shadow-sm">
                                     <div className="flex items-center gap-3 mb-3">
                                         <div className="w-8 h-8 rounded-full bg-[#eff6ff] flex items-center justify-center text-[#3b82f6] shrink-0">
                                             <Info size={18} />

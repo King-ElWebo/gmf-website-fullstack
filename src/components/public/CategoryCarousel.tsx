@@ -96,13 +96,17 @@ export function CategoryCarousel({ categories }: { categories: CategoryCard[] })
 
     if (categoryCount <= itemsPerView) {
         return (
-            <section className="py-14 sm:py-20 relative bg-white">
-                <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-8 sm:mb-12">
-                        <h2 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[clamp(1.85rem,8vw,2.6rem)] text-blue-600 mb-3 sm:mb-4 drop-shadow-sm">
+            <section className="py-16 sm:py-24 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-b from-[#fffdf8] to-white" />
+                <div className="relative max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center mb-10 sm:mb-14">
+                        <span className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-6 py-2 rounded-full text-[13px] font-bold uppercase tracking-widest text-[#f13c20] border border-orange-100 shadow-sm mb-6">
+                            🎪 Unser Sortiment
+                        </span>
+                        <h2 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[clamp(2rem,7vw,3rem)] text-[#1a3a52] mb-3">
                             Unsere Kategorien
                         </h2>
-                        <p className="font-['Nunito'] text-[15px] sm:text-[16px] text-[#64748b]">
+                        <p className="font-['Nunito'] text-[15px] sm:text-[16px] text-[#64748b] max-w-[500px] mx-auto">
                             Entdecken Sie unsere große Auswahl an Eventmodulen für Ihre Veranstaltung.
                         </p>
                     </div>
@@ -111,9 +115,9 @@ export function CategoryCarousel({ categories }: { categories: CategoryCard[] })
                         {categories.map((category) => (
                             <div
                                 key={category.id}
-                                className="h-full bg-white rounded-[32px] border-4 border-blue-200 shadow-[6px_6px_0_#bfdbfe] hover:shadow-[8px_8px_0_#60a5fa] hover:border-blue-400 transition-[transform,box-shadow,border-color] duration-200 ease-out-strong hover:-translate-y-2 overflow-hidden flex flex-col group"
+                                className="h-full bg-white rounded-[28px] border border-orange-100/60 shadow-lg shadow-orange-500/5 hover:shadow-xl hover:shadow-orange-500/10 hover:border-orange-200 transition-all duration-300 hover:-translate-y-2 overflow-hidden flex flex-col group"
                             >
-                                <div className="relative w-full shrink-0 bg-[#fef9c3]" style={{ paddingBottom: '62%' }}>
+                                <div className="relative w-full shrink-0 bg-gradient-to-br from-[#fef9e7] to-[#fdf2d1]" style={{ paddingBottom: '62%' }}>
                                     {category.imageUrl ? (
                                         <>
                                             <Image
@@ -124,31 +128,31 @@ export function CategoryCarousel({ categories }: { categories: CategoryCard[] })
                                                 sizes="(max-width: 768px) 100vw, (max-width: 1100px) 50vw, 33vw"
                                                 draggable={false}
                                             />
-                                            <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent" />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
                                         </>
                                     ) : (
-                                        <div className="absolute inset-0 bg-[linear-gradient(135deg,#1a3a52,#3f6a8f)]" />
+                                        <div className="absolute inset-0 bg-gradient-to-br from-[#1a3a52] to-[#066bb7]" />
                                     )}
                                 </div>
 
-                                <div className="p-5 sm:p-8 flex flex-col flex-1 bg-[#f8fafc]">
-                                    <div className="mb-4 text-center">
-                                        <span className="inline-flex rounded-full bg-yellow-300 px-4 py-1 text-[13px] font-bold text-red-600 shadow-sm border-2 border-yellow-400 uppercase tracking-wide">
+                                <div className="p-5 sm:p-7 flex flex-col flex-1">
+                                    <div className="mb-3 text-center">
+                                        <span className="inline-flex rounded-full bg-gradient-to-r from-[#fef08a] to-[#fde68a] px-4 py-1.5 text-[12px] font-bold text-[#92400e] shadow-sm uppercase tracking-wide border border-yellow-200/50">
                                             {category.catalogTypeName}
                                         </span>
                                     </div>
-                                    <h3 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[20px] sm:text-[24px] text-[#1e293b] mb-2 sm:mb-3 text-center">
+                                    <h3 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[20px] sm:text-[22px] text-[#1a3a52] mb-2 text-center">
                                         {category.title}
                                     </h3>
-                                    <p className="font-['Nunito'] text-[14px] sm:text-[15px] text-[#64748b] leading-[22px] flex-1 mb-6 sm:mb-8 text-center">
+                                    <p className="font-['Nunito'] text-[14px] sm:text-[15px] text-[#64748b] leading-[1.6] flex-1 mb-5 sm:mb-6 text-center">
                                         {category.description?.trim() || 'Produkte und Eventmodule aus dieser Kategorie ansehen.'}
                                     </p>
                                     <Link
                                         href={`/produkte?bereich=${encodeURIComponent(category.catalogTypeSlug)}&kategorie=${encodeURIComponent(category.slug)}`}
                                         className="block shrink-0"
                                     >
-                                        <span style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="flex items-center justify-center w-full h-[48px] sm:h-[54px] rounded-full bg-red-500 border-b-4 border-red-700 text-white text-[16px] sm:text-[18px] transition-[transform,background-color,border-color] duration-150 ease-out-strong active:scale-[0.97] transform-gpu hover:bg-red-400 hover:border-red-600 focus:outline-none">
-                                            Entdecken! 🚀
+                                        <span style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="flex items-center justify-center w-full h-[48px] sm:h-[52px] rounded-full bg-gradient-to-r from-[#f13c20] to-[#ff7a3d] shadow-lg shadow-red-500/25 text-white text-[16px] sm:text-[17px] transition-all duration-200 active:scale-[0.97] transform-gpu hover:shadow-xl hover:shadow-red-500/35 hover:-translate-y-0.5">
+                                            Jetzt entdecken 🚀
                                         </span>
                                     </Link>
                                 </div>
@@ -164,11 +168,15 @@ export function CategoryCarousel({ categories }: { categories: CategoryCard[] })
     const translatePct = -(currentIndex * (100 / total));
 
     return (
-        <section className="py-14 sm:py-20 relative bg-white">
-            <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="mb-8 sm:mb-12 flex flex-col gap-4 sm:gap-6 md:flex-row md:items-center md:justify-between">
+        <section className="py-16 sm:py-24 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-b from-[#fffdf8] to-white" />
+            <div className="relative max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="mb-10 sm:mb-14 flex flex-col gap-4 sm:gap-6 md:flex-row md:items-center md:justify-between">
                     <div className="text-center md:text-left">
-                        <h2 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[clamp(1.85rem,8vw,2.6rem)] text-blue-600 mb-3 sm:mb-4 drop-shadow-sm">
+                        <span className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-5 py-2 rounded-full text-[12px] font-bold uppercase tracking-widest text-[#f13c20] border border-orange-100 shadow-sm mb-4">
+                            🎪 Unser Sortiment
+                        </span>
+                        <h2 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[clamp(2rem,7vw,3rem)] text-[#1a3a52] mb-2">
                             Unsere Kategorien
                         </h2>
                         <p className="font-['Nunito'] text-[15px] sm:text-[16px] text-[#64748b]">
@@ -178,7 +186,7 @@ export function CategoryCarousel({ categories }: { categories: CategoryCard[] })
                     <div className="flex gap-3 sm:gap-4 shrink-0 self-center md:self-auto">
                         <button
                             onClick={() => navigate(-1)}
-                            className="h-12 w-12 rounded-full border-4 border-yellow-400 bg-yellow-300 flex items-center justify-center text-red-600 hover:bg-yellow-400 hover:scale-105 active:scale-[0.95] transition-[transform,background-color,box-shadow] duration-150 ease-out-strong disabled:opacity-30 shadow-[0_4px_0_#facc15] active:shadow-[0_2px_0_#facc15] translate-y-0 active:translate-y-[2px] transform-gpu"
+                            className="h-11 w-11 rounded-full bg-white border border-orange-100 flex items-center justify-center text-[#f13c20] hover:bg-[#fff4f0] hover:scale-105 active:scale-[0.95] transition-all duration-200 disabled:opacity-30 shadow-md hover:shadow-lg transform-gpu"
                             aria-label="Vorherige Kategorie"
                             disabled={categoryCount <= 1}
                         >
@@ -186,7 +194,7 @@ export function CategoryCarousel({ categories }: { categories: CategoryCard[] })
                         </button>
                         <button
                             onClick={() => navigate(1)}
-                            className="h-12 w-12 rounded-full border-4 border-yellow-400 bg-yellow-300 flex items-center justify-center text-red-600 hover:bg-yellow-400 hover:scale-105 active:scale-[0.95] transition-[transform,background-color,box-shadow] duration-150 ease-out-strong disabled:opacity-30 shadow-[0_4px_0_#facc15] active:shadow-[0_2px_0_#facc15] translate-y-0 active:translate-y-[2px] transform-gpu"
+                            className="h-11 w-11 rounded-full bg-white border border-orange-100 flex items-center justify-center text-[#f13c20] hover:bg-[#fff4f0] hover:scale-105 active:scale-[0.95] transition-all duration-200 disabled:opacity-30 shadow-md hover:shadow-lg transform-gpu"
                             aria-label="Nächste Kategorie"
                             disabled={categoryCount <= 1}
                         >
@@ -213,8 +221,8 @@ export function CategoryCarousel({ categories }: { categories: CategoryCard[] })
                                 style={{ width: `${100 / total}%` }}
                                 className="px-2 sm:px-3"
                             >
-                                <div className="h-full bg-white rounded-[32px] border-4 border-blue-200 shadow-[6px_6px_0_#bfdbfe] hover:shadow-[8px_8px_0_#60a5fa] hover:border-blue-400 transition-[transform,box-shadow,border-color] duration-200 ease-out-strong hover:-translate-y-2 overflow-hidden flex flex-col group mx-1 sm:mx-2">
-                                    <div className="relative w-full shrink-0 bg-[#fef9c3]" style={{ paddingBottom: '62%' }}>
+                                <div className="h-full bg-white rounded-[28px] border border-orange-100/60 shadow-lg shadow-orange-500/5 hover:shadow-xl hover:shadow-orange-500/10 hover:border-orange-200 transition-all duration-300 hover:-translate-y-2 overflow-hidden flex flex-col group mx-1 sm:mx-2">
+                                    <div className="relative w-full shrink-0 bg-gradient-to-br from-[#fef9e7] to-[#fdf2d1]" style={{ paddingBottom: '62%' }}>
                                         {category.imageUrl ? (
                                             <>
                                                 <Image
@@ -225,31 +233,31 @@ export function CategoryCarousel({ categories }: { categories: CategoryCard[] })
                                                     sizes="(max-width: 768px) 100vw, (max-width: 1100px) 50vw, 33vw"
                                                     draggable={false}
                                                 />
-                                                <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent" />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
                                             </>
                                         ) : (
-                                            <div className="absolute inset-0 bg-[linear-gradient(135deg,#1a3a52,#3f6a8f)]" />
+                                            <div className="absolute inset-0 bg-gradient-to-br from-[#1a3a52] to-[#066bb7]" />
                                         )}
                                     </div>
 
-                                    <div className="p-5 sm:p-8 flex flex-col flex-1 bg-[#f8fafc]">
-                                        <div className="mb-4 text-center">
-                                            <span className="inline-flex rounded-full bg-yellow-300 px-4 py-1 text-[13px] font-bold text-red-600 shadow-sm border-2 border-yellow-400 uppercase tracking-wide">
+                                    <div className="p-5 sm:p-7 flex flex-col flex-1">
+                                        <div className="mb-3 text-center">
+                                            <span className="inline-flex rounded-full bg-gradient-to-r from-[#fef08a] to-[#fde68a] px-4 py-1.5 text-[12px] font-bold text-[#92400e] shadow-sm uppercase tracking-wide border border-yellow-200/50">
                                                 {category.catalogTypeName}
                                             </span>
                                         </div>
-                                        <h3 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[20px] sm:text-[24px] text-[#1e293b] mb-2 sm:mb-3 text-center">
+                                        <h3 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[20px] sm:text-[22px] text-[#1a3a52] mb-2 text-center">
                                             {category.title}
                                         </h3>
-                                        <p className="font-['Nunito'] text-[14px] sm:text-[15px] text-[#64748b] leading-[22px] flex-1 mb-6 sm:mb-8 text-center">
+                                        <p className="font-['Nunito'] text-[14px] sm:text-[15px] text-[#64748b] leading-[1.6] flex-1 mb-5 sm:mb-6 text-center">
                                             {category.description?.trim() || 'Produkte und Eventmodule aus dieser Kategorie ansehen.'}
                                         </p>
                                         <Link
                                             href={`/produkte?bereich=${encodeURIComponent(category.catalogTypeSlug)}&kategorie=${encodeURIComponent(category.slug)}`}
                                             className="block shrink-0"
                                         >
-                                            <span style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="flex items-center justify-center w-full h-[48px] sm:h-[54px] rounded-full bg-red-500 border-b-4 border-red-700 text-white text-[16px] sm:text-[18px] transition-[transform,background-color,border-color] duration-150 ease-out-strong active:scale-[0.97] transform-gpu hover:bg-red-400 hover:border-red-600 focus:outline-none">
-                                                Entdecken! 🚀
+                                            <span style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="flex items-center justify-center w-full h-[48px] sm:h-[52px] rounded-full bg-gradient-to-r from-[#f13c20] to-[#ff7a3d] shadow-lg shadow-red-500/25 text-white text-[16px] sm:text-[17px] transition-all duration-200 active:scale-[0.97] transform-gpu hover:shadow-xl hover:shadow-red-500/35 hover:-translate-y-0.5">
+                                                Jetzt entdecken 🚀
                                             </span>
                                         </Link>
                                     </div>
@@ -260,7 +268,7 @@ export function CategoryCarousel({ categories }: { categories: CategoryCard[] })
                 </div>
 
                 {categoryCount > 1 && (
-                    <div className="flex justify-center gap-[6px] mt-6 sm:mt-8">
+                    <div className="flex justify-center gap-2 mt-8 sm:mt-12 pb-2">
                         {categories.map((_, idx) => (
                             <button
                                 key={idx}
@@ -270,10 +278,10 @@ export function CategoryCarousel({ categories }: { categories: CategoryCard[] })
                                     isJumping.current = false;
                                 }}
                                 aria-label={`Kategorie ${idx + 1}`}
-                                className="flex h-12 min-w-12 items-center justify-center rounded-full"
+                                className="flex h-10 min-w-10 items-center justify-center rounded-full"
                             >
                                 <span
-                                    className={`rounded-full transition-[width,background-color,transform] duration-200 ease-out-strong border-2 border-white shadow-sm ${activeDot === idx ? 'h-4 w-8 bg-red-500' : 'h-4 w-4 bg-blue-300 hover:bg-blue-400'}`}
+                                    className={`rounded-full transition-all duration-300 ease-out-strong ${activeDot === idx ? 'h-3 w-8 bg-gradient-to-r from-[#f13c20] to-[#ff7a3d] shadow-md shadow-red-500/30' : 'h-3 w-3 bg-orange-200 hover:bg-orange-300'}`}
                                 />
                             </button>
                         ))}
