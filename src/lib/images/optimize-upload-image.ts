@@ -1,4 +1,3 @@
-import sharp from "sharp";
 import path from "path";
 
 export interface OptimizationResult {
@@ -60,8 +59,11 @@ export async function optimizeUploadImage(
         const newFilename = `${cleanBase}.webp`;
         const newMimeType = "image/webp";
 
-        // Optimize using sharp
-        const optimizedBuffer = await sharp(buffer)
+        // Optimize using sharp (imported dynamically to catch native loading errors gracefully)
+        const sharpModule = await import("sharp");
+        const sharp = sharpModule.default || sharpModule;
+
+        const optimizedBuffer = await (sharp as any)(buffer)
             .resize({
                 width: 1920,
                 height: 1920,
