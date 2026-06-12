@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 import { addImages, listByItemId } from "@/lib/repositories/item-images";
 import storage from "@/lib/storage";
 import { ITEM_UPLOAD_MAX_BATCH_BYTES, validateItemUploadFiles } from "@/lib/uploads/item-upload-limits";
+import { optimizeUploadImage } from "@/lib/images/optimize-upload-image";
 
 // Required for fs writes (local storage) and proper multipart/form-data handling
 export const runtime = "nodejs";
@@ -67,9 +68,20 @@ export async function POST(
     try {
         const saved = await Promise.all(
             files.map(async (file) => {
-                const { url, key } = await storage.save(file);
-                const type = file.type.startsWith("video/") ? "VIDEO" : "IMAGE";
-                return { url, key, type: type as "VIDEO" | "IMAGE" };
+                const isVideo = file.type.startsWith("video/");
+                let fileToSave = file;
+                let type: "IMAGE" | "VIDEO" = isVideo ? "VIDEO" : "IMAGE";
+
+                if (!isVideo) {
+                    const buffer = Buffer.from(await file.arrayBuffer());
+                    const optimized = await optimizeUploadImage(buffer, file.name, file.type);
+                    fileToSave = new File([optimized.buffer as any], optimized.filename, {
+                        type: optimized.mimeType
+                    });
+                }
+
+                const { url, key } = await storage.save(fileToSave);
+                return { url, key, type };
             })
         );
 

@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 import { deleteCategory, getCategoryById, updateCategory } from "@/lib/repositories/categories";
 import { getCatalogTypeById } from "@/lib/repositories/catalog-types";
 import storage from "@/lib/storage";
+import { optimizeUploadImage } from "@/lib/images/optimize-upload-image";
 
 export const runtime = "nodejs";
 
@@ -53,7 +54,14 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
                 if (existing.imageKey) {
                     await storage.delete(existing.imageKey).catch(() => {});
                 }
-                const saved = await storage.save(file);
+                
+                const buffer = Buffer.from(await file.arrayBuffer());
+                const optimized = await optimizeUploadImage(buffer, file.name, file.type);
+                const fileToSave = new File([optimized.buffer as any], optimized.filename, {
+                    type: optimized.mimeType
+                });
+
+                const saved = await storage.save(fileToSave);
                 imageUrl = saved.url;
                 imageKey = saved.key;
             }

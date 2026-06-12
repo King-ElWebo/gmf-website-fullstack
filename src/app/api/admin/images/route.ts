@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 import { listGlobalImages, createGlobalImage } from "@/lib/repositories/global-images";
 import { DisplayArea } from "@/lib/display-area";
 import storage from "@/lib/storage";
+import { optimizeUploadImage } from "@/lib/images/optimize-upload-image";
 
 export const runtime = "nodejs";
 
@@ -59,7 +60,13 @@ export async function POST(req: NextRequest) {
 
         const savedImages = [];
         for (const file of files) {
-            const { url, key } = await storage.save(file);
+            const buffer = Buffer.from(await file.arrayBuffer());
+            const optimized = await optimizeUploadImage(buffer, file.name, file.type);
+            const fileToSave = new File([optimized.buffer as any], optimized.filename, {
+                type: optimized.mimeType
+            });
+
+            const { url, key } = await storage.save(fileToSave);
             const image = await createGlobalImage(url, key, area, alt ?? undefined, published);
             savedImages.push(image);
         }

@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 import { DisplayArea } from "@/lib/display-area";
 import { getGlobalImageById, listGlobalImages, updateGlobalImage, deleteGlobalImage } from "@/lib/repositories/global-images";
 import storage from "@/lib/storage";
+import { optimizeUploadImage } from "@/lib/images/optimize-upload-image";
 
 export const runtime = "nodejs";
 
@@ -60,7 +61,14 @@ export async function PATCH(
 
             if (file instanceof File && file.size > 0) {
                 await storage.delete(existing.key).catch(() => undefined);
-                const saved = await storage.save(file);
+                
+                const buffer = Buffer.from(await file.arrayBuffer());
+                const optimized = await optimizeUploadImage(buffer, file.name, file.type);
+                const fileToSave = new File([optimized.buffer as any], optimized.filename, {
+                    type: optimized.mimeType
+                });
+
+                const saved = await storage.save(fileToSave);
                 nextUrl = saved.url;
                 nextKey = saved.key;
             }
