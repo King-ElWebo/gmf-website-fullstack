@@ -288,8 +288,9 @@ export default function ItemForm(props: {
         setDeleting(false);
 
         if (!res.ok) {
-            const text = await res.text();
-            setError(`Delete failed (${res.status}): ${text}`);
+            const data = await res.json().catch(() => null);
+            const msg = data?.error || `Delete failed (${res.status})`;
+            setError(msg);
             return;
         }
 
