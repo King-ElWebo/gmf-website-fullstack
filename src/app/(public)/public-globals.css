@@ -37,6 +37,22 @@
   --gmf-cream: #fffdf8;
   --gmf-cream-warm: #fef9e7;
   --gmf-cream-deep: #fdf2d1;
+
+  /* === Surface System (4 types for visual rhythm) === */
+  /* Type A: Cream Base – the default neutral canvas */
+  --gmf-surface-cream: #fffdf8;
+  /* Type B: Cream Accent – slightly warmer, subtle distinction */
+  --gmf-surface-cream-accent: #fef9e7;
+  /* Type C: Blue Accent – soft cool surface for contrast */
+  --gmf-surface-blue-light: #eef5fb;
+  --gmf-surface-blue-light-end: #e3effa;
+  /* Type D: Brand Dark – deep brand section (footer-adjacent) */
+  --gmf-surface-dark: #1a3a52;
+  --gmf-surface-dark-deep: #132d42;
+  --gmf-surface-dark-text: #e2ecf4;
+  --gmf-surface-dark-heading: #ffffff;
+  --gmf-surface-dark-muted: #8ba4bc;
+  --gmf-surface-dark-highlight: #fcd01b;
 }
 
 .public-site {
@@ -97,8 +113,8 @@
 /* === Hero title letter bounce animation === */
 .hero-title-letter {
   text-shadow:
-    2px 2px 0 rgba(0,0,0,0.25),
-    0 4px 12px rgba(0,0,0,0.15);
+    0 4px 12px rgba(26, 58, 82, 0.25),
+    0 12px 24px rgba(26, 58, 82, 0.15);
 }
 
 /* === Confetti / celebration dots pattern === */
@@ -111,6 +127,18 @@
   background-size: 80px 80px;
   background-position: 10px 10px, 50px 30px, 30px 60px, 70px 50px;
   opacity: 0.06;
+}
+
+/* === Dots pattern for dark sections (lighter, subtler) === */
+.gmf-dots-pattern-light {
+  background-image:
+    radial-gradient(circle, rgba(252, 208, 27, 0.25) 1.5px, transparent 1.5px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.08) 1.5px, transparent 1.5px),
+    radial-gradient(circle, rgba(6, 107, 183, 0.2) 1.5px, transparent 1.5px),
+    radial-gradient(circle, rgba(255, 122, 61, 0.15) 1.5px, transparent 1.5px);
+  background-size: 90px 90px;
+  background-position: 15px 15px, 55px 35px, 35px 65px, 75px 55px;
+  opacity: 0.5;
 }
 
 /* === Smooth gradient separator === */

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import SortableRowList from "../_components/sortable-row-list";
 
 type CatalogTypeRow = {
@@ -15,6 +16,31 @@ type CatalogTypeRow = {
 };
 
 export default function CatalogTypesSortableList({ initialCatalogTypes }: { initialCatalogTypes: CatalogTypeRow[] }) {
+    const router = useRouter();
+
+    const handleDelete = async (id: string, name: string) => {
+        if (!window.confirm(`Möchten Sie den Katalog-Bereich "${name}" wirklich löschen?`)) {
+            return;
+        }
+
+        try {
+            const res = await fetch(`/api/admin/catalog-types/${id}`, {
+                method: "DELETE",
+            });
+
+            if (!res.ok) {
+                const data = await res.json().catch(() => ({}));
+                alert(data.error || "Löschen fehlgeschlagen.");
+                return;
+            }
+
+            router.refresh();
+        } catch (err) {
+            console.error("Delete error:", err);
+            alert("Ein unerwarteter Fehler ist aufgetreten.");
+        }
+    };
+
     return (
         <SortableRowList
             items={initialCatalogTypes}
@@ -51,9 +77,18 @@ export default function CatalogTypesSortableList({ initialCatalogTypes }: { init
                 },
             ]}
             renderActions={(type) => (
-                <Link className="font-medium text-blue-600 hover:text-blue-800" href={`/admin/catalog-types/${type.id}/edit`}>
-                    Edit
-                </Link>
+                <div className="flex items-center gap-3">
+                    <Link className="font-medium text-blue-600 hover:text-blue-800" href={`/admin/catalog-types/${type.id}/edit`}>
+                        Bearbeiten
+                    </Link>
+                    <button
+                        type="button"
+                        onClick={() => handleDelete(type.id, type.name)}
+                        className="font-medium text-red-600 hover:text-red-800 transition-colors"
+                    >
+                        Löschen
+                    </button>
+                </div>
             )}
             onReorder={async (orderedIds) => {
                 const res = await fetch("/api/admin/catalog-types/reorder", {

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { createCategory, listCategories } from "@/lib/repositories/categories";
 import { getCatalogTypeById } from "@/lib/repositories/catalog-types";
 import storage from "@/lib/storage";
@@ -71,6 +72,8 @@ export async function POST(req: NextRequest) {
         }
 
         const created = await createCategory({ name, slug, description, imageUrl, imageKey, catalogTypeId });
+        revalidatePath("/");
+        revalidatePath("/produkte");
         return NextResponse.json({ category: created }, { status: 201 });
     } catch (err) {
         const error = err as { code?: string };

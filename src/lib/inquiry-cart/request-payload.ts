@@ -119,9 +119,14 @@ function parseCustomer(value: unknown): ParseResult<BookingCustomer> {
     const firstName = toOptionalTrimmedString(value.firstName);
     const lastName = toOptionalTrimmedString(value.lastName);
     const email = toOptionalTrimmedString(value.email);
+    const phone = toOptionalTrimmedString(value.phone);
 
-    if (!firstName || !lastName || !email) {
-        return { ok: false, error: "Bitte Vorname, Nachname und E-Mail angeben." };
+    if (!firstName || !lastName || !email || !phone) {
+        return { ok: false, error: "Bitte Vorname, Nachname, E-Mail-Adresse und Telefonnummer angeben." };
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        return { ok: false, error: "Bitte eine gültige E-Mail-Adresse angeben." };
     }
 
     return {
@@ -130,7 +135,7 @@ function parseCustomer(value: unknown): ParseResult<BookingCustomer> {
             firstName,
             lastName,
             email,
-            phone: toOptionalTrimmedString(value.phone),
+            phone,
             addressLine1: toOptionalTrimmedString(value.addressLine1),
             zip: toOptionalTrimmedString(value.zip),
             city: toOptionalTrimmedString(value.city),

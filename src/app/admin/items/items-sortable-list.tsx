@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { getItemPriceDisplay } from "@/lib/items/price";
 import SortableRowList from "../_components/sortable-row-list";
 
@@ -8,6 +9,11 @@ type ItemRow = {
     id: string;
     title: string;
     slug: string;
+    images?: {
+        id: string;
+        url: string;
+        alt: string | null;
+    }[];
     priceType: "FIXED" | "ON_REQUEST" | "FROM_PRICE";
     basePriceCents: number | null;
     priceLabel: string | null;
@@ -27,6 +33,31 @@ export default function ItemsSortableList({
     initialItems: ItemRow[];
     reorderEnabled?: boolean;
 }) {
+    const router = useRouter();
+
+    const handleDelete = async (id: string, title: string) => {
+        if (!window.confirm(`Möchten Sie das Produkt "${title}" wirklich löschen?`)) {
+            return;
+        }
+
+        try {
+            const res = await fetch(`/api/admin/items/${id}`, {
+                method: "DELETE",
+            });
+
+            if (!res.ok) {
+                const data = await res.json().catch(() => ({}));
+                alert(data.error || "Löschen fehlgeschlagen.");
+                return;
+            }
+
+            router.refresh();
+        } catch (err) {
+            console.error("Delete error:", err);
+            alert("Ein unerwarteter Fehler ist aufgetreten.");
+        }
+    };
+
     return (
         <SortableRowList
             items={initialItems}
@@ -36,12 +67,32 @@ export default function ItemsSortableList({
                 {
                     key: "title",
                     header: "Title",
-                    render: (item) => <div className="font-semibold text-slate-900">{item.title}</div>,
-                },
-                {
-                    key: "slug",
-                    header: "Slug",
-                    render: (item) => <span className="text-slate-500">{item.slug}</span>,
+                    render: (item) => {
+                        const image = item.images?.[0];
+
+                        return (
+                            <div className="flex min-w-0 items-center gap-3">
+                                <div className="h-12 w-16 shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+                                    {image ? (
+                                        // eslint-disable-next-line @next/next/no-img-element
+                                        <img
+                                            src={image.url}
+                                            alt={image.alt ?? item.title}
+                                            className="h-full w-full object-cover"
+                                            loading="lazy"
+                                        />
+                                    ) : (
+                                        <div className="flex h-full w-full items-center justify-center text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-300">
+                                            Bild
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="min-w-0">
+                                    <div className="truncate font-semibold text-slate-900">{item.title}</div>
+                                </div>
+                            </div>
+                        );
+                    },
                 },
                 {
                     key: "category",
@@ -72,9 +123,18 @@ export default function ItemsSortableList({
                 },
             ]}
             renderActions={(item) => (
-                <Link className="font-medium text-blue-600 hover:text-blue-800" href={`/admin/items/${item.id}/edit`}>
-                    Edit
-                </Link>
+                <div className="flex items-center gap-3">
+                    <Link className="font-medium text-blue-600 hover:text-blue-800" href={`/admin/items/${item.id}/edit`}>
+                        Bearbeiten
+                    </Link>
+                    <button
+                        type="button"
+                        onClick={() => handleDelete(item.id, item.title)}
+                        className="font-medium text-red-600 hover:text-red-800 transition-colors"
+                    >
+                        Löschen
+                    </button>
+                </div>
             )}
             onReorder={async (orderedIds) => {
                 const res = await fetch("/api/admin/items/reorder", {

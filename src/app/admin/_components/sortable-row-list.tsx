@@ -37,7 +37,7 @@ function StaticRow<TItem extends SortableItemBase>({
     columns: ColumnDefinition<TItem>[];
     renderActions?: (item: TItem) => React.ReactNode;
 }) {
-    const desktopGridTemplate = `40px repeat(${columns.length}, minmax(0, 1fr)) 120px`;
+    const desktopGridTemplate = `40px repeat(${columns.length}, minmax(0, 1fr)) 160px`;
 
     return (
         <div className="grid items-center gap-3 border-t border-slate-200/70 bg-white/90 px-4 py-4 text-sm">
@@ -83,7 +83,7 @@ function SortableRow<TItem extends SortableItemBase>({
         transition,
     };
 
-    const desktopGridTemplate = `40px repeat(${columns.length}, minmax(0, 1fr)) 120px`;
+    const desktopGridTemplate = `40px repeat(${columns.length}, minmax(0, 1fr)) 160px`;
 
     return (
         <div
@@ -200,7 +200,7 @@ export default function SortableRowList<TItem extends SortableItemBase>({
         return <div className="admin-surface rounded-[24px] p-6 text-sm text-slate-600">{emptyText}</div>;
     }
 
-    const desktopGridTemplate = `40px repeat(${columns.length}, minmax(0, 1fr)) 120px`;
+    const desktopGridTemplate = `40px repeat(${columns.length}, minmax(0, 1fr)) 160px`;
 
     return (
         <div className="space-y-3">
@@ -219,7 +219,7 @@ export default function SortableRowList<TItem extends SortableItemBase>({
                             {column.header}
                         </div>
                     ))}
-                    <div>Actions</div>
+                    <div>Aktionen</div>
                 </div>
                 {!mounted || !reorderEnabled ? (
                     <div>

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { deleteImage, listByItemId } from "@/lib/repositories/item-images";
 import storage from "@/lib/storage";
 
@@ -15,6 +16,10 @@ export async function DELETE(
             console.warn("[image DELETE] storage.delete failed:", e)
         );
         const images = await listByItemId(row.itemId);
+        
+        revalidatePath("/");
+        revalidatePath("/produkte");
+
         return NextResponse.json({ ok: true, images });
     } catch (e: unknown) {
         const msg = e instanceof Error ? e.message : "Delete failed";

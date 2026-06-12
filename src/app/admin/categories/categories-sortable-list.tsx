@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import SortableRowList from "../_components/sortable-row-list";
 
 type CategoryRow = {
@@ -14,6 +15,31 @@ type CategoryRow = {
 };
 
 export default function CategoriesSortableList({ initialCategories }: { initialCategories: CategoryRow[] }) {
+    const router = useRouter();
+
+    const handleDelete = async (id: string, name: string) => {
+        if (!window.confirm(`Möchten Sie die Kategorie "${name}" wirklich löschen?`)) {
+            return;
+        }
+
+        try {
+            const res = await fetch(`/api/admin/categories/${id}`, {
+                method: "DELETE",
+            });
+
+            if (!res.ok) {
+                const data = await res.json().catch(() => ({}));
+                alert(data.error || "Löschen fehlgeschlagen.");
+                return;
+            }
+
+            router.refresh();
+        } catch (err) {
+            console.error("Delete error:", err);
+            alert("Ein unerwarteter Fehler ist aufgetreten.");
+        }
+    };
+
     return (
         <SortableRowList
             items={initialCategories}
@@ -41,9 +67,18 @@ export default function CategoriesSortableList({ initialCategories }: { initialC
                 },
             ]}
             renderActions={(category) => (
-                <Link className="font-medium text-blue-600 hover:text-blue-800" href={`/admin/categories/${category.id}/edit`}>
-                    Edit
-                </Link>
+                <div className="flex items-center gap-3">
+                    <Link className="font-medium text-blue-600 hover:text-blue-800" href={`/admin/categories/${category.id}/edit`}>
+                        Bearbeiten
+                    </Link>
+                    <button
+                        type="button"
+                        onClick={() => handleDelete(category.id, category.name)}
+                        className="font-medium text-red-600 hover:text-red-800 transition-colors"
+                    >
+                        Löschen
+                    </button>
+                </div>
             )}
             onReorder={async (orderedIds) => {
                 const res = await fetch("/api/admin/categories/reorder", {

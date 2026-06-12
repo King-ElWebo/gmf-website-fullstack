@@ -101,7 +101,10 @@ export async function listItems(options: { sort?: ItemListSort; categoryId?: str
     return db.item.findMany({
         where: options.categoryId ? { categoryId: options.categoryId } : undefined,
         orderBy: getItemOrderBy(sort),
-        include: { category: { include: { catalogType: true } } },
+        include: {
+            category: { include: { catalogType: true } },
+            images: { orderBy: { sortOrder: "asc" }, take: 1 },
+        },
     });
 }
 

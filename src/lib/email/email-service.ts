@@ -62,6 +62,16 @@ export async function sendEmail(
 
     if (error) {
       console.error("[Email] Resend API error:", error);
+      if (error.message && error.message.includes("You can only send testing emails to your own email address")) {
+        console.warn(
+          "\n================================================================================\n" +
+          "[Email Sandbox Warning] Resend is in Sandbox mode. It rejected this email because\n" +
+          "the recipient is not the account owner (wilkbenjamin757@gmail.com).\n" +
+          "-> To test email delivery locally, please use the owner email address as the customer\n" +
+          "   email and set EMAIL_ADMIN to the owner email in your .env file.\n" +
+          "================================================================================\n"
+        );
+      }
       return { success: false, error: error.message };
     }
 

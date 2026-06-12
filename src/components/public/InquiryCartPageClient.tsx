@@ -3,18 +3,20 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Trash2, ShoppingCart, AlertTriangle, ShieldCheck, Clock, CloudRain, Info, Truck, Store } from "lucide-react";
+import { ShoppingCart, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/public/Button";
-import { Input } from "@/components/public/Input";
-import { Textarea } from "@/components/public/Textarea";
-import { DateRangePicker } from "@/components/public/DateRangePicker";
-import "@/components/public/DateRangePicker.css";
 import { useInquiryCart } from "@/components/public/InquiryCartProvider";
-import { DeliveryNoticeBox, InquiryPricingNotice, PriceDisplay } from "@/components/public/PricingNotice";
-import { formatPriceCents } from "@/lib/items/price";
 import { calculateInquiryCartItemPrice, getBookingDurationDays } from "@/lib/inquiry-cart/pricing";
 import type { InquiryBookingRequestPayload } from "@/lib/inquiry-cart/request-payload";
 import type { SiteSettingsRecord } from "@/lib/repositories/site-settings";
+
+// Wizard step imports
+import { WizardStepper, type WizardStep } from "./wizard/WizardStepper";
+import { CartStep } from "./wizard/CartStep";
+import { DatesStep } from "./wizard/DatesStep";
+import { DeliveryStep } from "./wizard/DeliveryStep";
+import { ContactStep } from "./wizard/ContactStep";
+import { SummaryStep } from "./wizard/SummaryStep";
 
 type FormState = {
     startDate: string;
@@ -159,6 +161,118 @@ export function InquiryCartPageClient({ settings }: { settings?: SiteSettingsRec
         [formState.endDate, formState.startDate]
     );
 
+    // Wizard step state
+    const [currentStep, setCurrentStep] = useState<WizardStep>("cart");
+    const [stepValidationError, setStepValidationError] = useState<string | null>(null);
+
+    const WIZARD_STEPS: WizardStep[] = ["cart", "dates", "delivery", "contact", "summary"];
+
+    const getStepValidationError = (step: WizardStep): string | null => {
+        switch (step) {
+            case "cart":
+                if (items.length === 0) {
+                    return "Bitte wählen Sie zuerst mindestens ein Produkt aus.";
+                }
+                return null;
+            case "dates":
+                if (!formState.startDate || !formState.endDate) {
+                    return "Bitte wählen Sie den gewünschten Mietzeitraum aus.";
+                }
+                if (bookingDuration.reason === "invalid_date_range") {
+                    return "Das Enddatum darf nicht vor dem Startdatum liegen.";
+                }
+                const hasUnavailableItem = Object.values(availabilityByItemId).some((entry) => !entry.isAvailable);
+                if (hasUnavailableItem) {
+                    return "Mindestens ein Produkt ist im gewählten Zeitraum nicht verfügbar.";
+                }
+                return null;
+            case "delivery":
+                if (formState.deliveryType === "delivery") {
+                    if (!formState.addressLine1.trim() || !formState.zip.trim() || !formState.city.trim()) {
+                        return "Bitte ergänzen Sie die Veranstaltungs-/Lieferadresse.";
+                    }
+                }
+                if (formState.billingAddressDiffers) {
+                    if (formState.billingCustomerType === "private") {
+                        if (!formState.billingFirstName.trim() || !formState.billingLastName.trim()) {
+                            return "Bitte ergänzen Sie den Namen für die abweichende Rechnungsadresse.";
+                        }
+                    } else {
+                        if (!formState.billingCompanyName.trim()) {
+                            return "Bitte ergänzen Sie den Firmennamen für die abweichende Rechnungsadresse.";
+                        }
+                    }
+                    if (!formState.billingAddressLine1.trim() || !formState.billingZip.trim() || !formState.billingCity.trim()) {
+                        return "Bitte ergänzen Sie die Rechnungsadresse vollständig.";
+                    }
+                }
+                return null;
+            case "contact":
+                if (!formState.firstName.trim() || !formState.lastName.trim() || !formState.email.trim() || !formState.phone.trim()) {
+                    return "Bitte geben Sie Name, E-Mail-Adresse und Telefonnummer an.";
+                }
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formState.email.trim())) {
+                    return "Bitte geben Sie eine gültige E-Mail-Adresse an.";
+                }
+                return null;
+            default:
+                return null;
+        }
+    };
+
+    const isStepValid = (step: WizardStep): boolean => {
+        return getStepValidationError(step) === null;
+    };
+
+    const isStepCompleted = (step: WizardStep): boolean => {
+        const targetIdx = WIZARD_STEPS.indexOf(step);
+        const currentIdx = WIZARD_STEPS.indexOf(currentStep);
+        return targetIdx < currentIdx && isStepValid(step);
+    };
+
+    const isStepSelectable = (step: WizardStep): boolean => {
+        const targetIdx = WIZARD_STEPS.indexOf(step);
+        const currentIdx = WIZARD_STEPS.indexOf(currentStep);
+        
+        if (targetIdx <= currentIdx) return true;
+        
+        for (let i = 0; i < targetIdx; i++) {
+            if (!isStepValid(WIZARD_STEPS[i])) {
+                return false;
+            }
+        }
+        return true;
+    };
+
+    const handleStepClick = (step: WizardStep) => {
+        setStepValidationError(null);
+        setCurrentStep(step);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+
+    const handleNextStep = () => {
+        const errorMsg = getStepValidationError(currentStep);
+        if (errorMsg) {
+            setStepValidationError(errorMsg);
+            return;
+        }
+        setStepValidationError(null);
+        const currentIdx = WIZARD_STEPS.indexOf(currentStep);
+        if (currentIdx < WIZARD_STEPS.length - 1) {
+            setCurrentStep(WIZARD_STEPS[currentIdx + 1]);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+    };
+
+    const handlePrevStep = () => {
+        setStepValidationError(null);
+        const currentIdx = WIZARD_STEPS.indexOf(currentStep);
+        if (currentIdx > 0) {
+            setCurrentStep(WIZARD_STEPS[currentIdx - 1]);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+    };
+
     // Compute allowed shipping types based on product flags
     const {
         hasDeliveryOnlyItem,
@@ -294,7 +408,9 @@ export function InquiryCartPageClient({ settings }: { settings?: SiteSettingsRec
         const hasRequiredCustomerData = Boolean(
             formState.firstName.trim() &&
             formState.lastName.trim() &&
-            formState.email.trim()
+            formState.email.trim() &&
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formState.email.trim()) &&
+            formState.phone.trim()
         );
         const hasRequiredDeliveryAddress = formState.deliveryType === "pickup" || Boolean(
             formState.addressLine1.trim() &&
@@ -491,7 +607,7 @@ export function InquiryCartPageClient({ settings }: { settings?: SiteSettingsRec
 
     if (!hasHydrated) {
         return (
-            <div className="min-h-screen bg-[#fefce8]">
+            <div className="min-h-screen bg-[#fffdf8]">
                 <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
                     <p className="font-['Nunito'] text-[16px] text-[#64748b]">Anfragekorb wird geladen...</p>
                 </div>
@@ -501,18 +617,18 @@ export function InquiryCartPageClient({ settings }: { settings?: SiteSettingsRec
 
     if (success) {
         return (
-            <div className="min-h-screen bg-[#fefce8]">
+            <div className="min-h-screen bg-[#fffdf8]">
                 <div className="max-w-[900px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                    <div className="rounded-[16px] border border-[#cbd5e1] bg-white p-8 text-center">
-                        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-[#3b82f6]">
-                            <ShoppingCart className="text-[#1a3a52]" size={30} />
+                    <div className="rounded-[28px] border border-blue-100 bg-white p-10 text-center shadow-xl shadow-blue-500/5">
+                        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-[#066bb7] text-white">
+                            <ShoppingCart size={30} />
                         </div>
-                        <h1 className="font-['Nunito'] font-semibold text-[32px] text-[#1a202c] mb-4">Anfrage erfolgreich gesendet!</h1>
-                        <p className="font-['Nunito'] text-[16px] text-[#4a5568] leading-[25.6px] mb-4">
-                            Vielen Dank. Ihre Sammelanfrage wurde erfolgreich uebermittelt.
+                        <h1 className="font-['Fredoka'] font-semibold text-[32px] text-[#1a202c] mb-4">Anfrage erfolgreich gesendet!</h1>
+                        <p className="font-['Nunito'] text-[16px] text-[#4a5568] leading-relaxed mb-4">
+                            Vielen Dank. Ihre Sammelanfrage wurde erfolgreich übermittelt. Sie erhalten eine Eingangsbestätigung per E-Mail. Falls keine E-Mail ankommt, prüfen Sie bitte Ihren Spam-Ordner oder kontaktieren Sie uns telefonisch.
                         </p>
                         <p className="font-['Nunito'] text-[14px] text-[#64748b] mb-8">
-                            Referenz: <strong>{success.bookingId}</strong>
+                            Referenznummer: <strong className="text-[#1a3a52]">{success.bookingId}</strong>
                         </p>
                         <div className="flex flex-col sm:flex-row justify-center gap-4">
                             <Link href="/produkte"><Button variant="primary">Weitere Produkte ansehen</Button></Link>
@@ -524,667 +640,180 @@ export function InquiryCartPageClient({ settings }: { settings?: SiteSettingsRec
         );
     }
 
+    const steps = [
+        { id: "cart" as WizardStep, label: "Produkte" },
+        { id: "dates" as WizardStep, label: "Zeitraum" },
+        { id: "delivery" as WizardStep, label: "Lieferung" },
+        { id: "contact" as WizardStep, label: "Kontakt" },
+        { id: "summary" as WizardStep, label: "Zusammenfassung" },
+    ];
+
     return (
-        <div className="min-h-screen bg-[#fefce8]">
+        <div className="min-h-screen bg-[#fffdf8]">
             <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <div className="mb-8">
                     <nav className="flex items-center gap-2 text-[14px]">
-                        <Link href="/" className="font-['Nunito'] text-[#64748b] hover:text-[#1a3a52]">Start</Link>
+                        <Link href="/" className="font-['Nunito'] text-[#64748b] hover:text-[#1a3a52] transition-colors">Start</Link>
                         <span className="text-[#cbd5e1]">/</span>
-                        <Link href="/produkte" className="font-['Nunito'] text-[#64748b] hover:text-[#1a3a52]">Produkte</Link>
+                        <Link href="/produkte" className="font-['Nunito'] text-[#64748b] hover:text-[#1a3a52] transition-colors">Produkte</Link>
                         <span className="text-[#cbd5e1]">/</span>
-                        <span className="font-['Nunito'] text-[#1a202c]">Anfragekorb</span>
+                        <span className="font-['Nunito'] text-[#1a202c]">Anfrage-Assistent</span>
                     </nav>
                 </div>
 
                 <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
                     <div>
-                        <h1 className="font-['Nunito'] font-semibold text-[32px] text-[#1a202c] mb-3">Anfragekorb</h1>
-                        <p className="font-['Nunito'] text-[16px] text-[#64748b] leading-[25.6px] max-w-[700px]">
-                            Sammeln Sie mehrere Produkte und senden Sie anschliessend eine gemeinsame Anfrage.
+                        <h1 className="font-['Fredoka'] font-semibold text-[32px] text-[#1a202c] mb-3">
+                            {items.length === 0 ? "Anfragekorb" : "Anfrage-Assistent"}
+                        </h1>
+                        <p className="font-['Nunito'] text-[16px] text-[#64748b] leading-relaxed max-w-[700px]">
+                            {items.length === 0 
+                                ? "Fügen Sie Produkte hinzu, um eine Sammelanfrage zu senden."
+                                : "Sammeln Sie mehrere Produkte und senden Sie anschließend eine gemeinsame Anfrage."}
                         </p>
                     </div>
-                    <Link href="/produkte">
-                        <Button variant="secondary">Weitere Produkte hinzufuegen</Button>
-                    </Link>
+                    {items.length > 0 && currentStep === "cart" && (
+                        <Link href="/produkte">
+                            <Button variant="secondary">Weitere Produkte hinzufügen</Button>
+                        </Link>
+                    )}
                 </div>
 
                 {items.length === 0 ? (
                     <div className="rounded-[32px] border border-blue-100 bg-white p-10 text-center shadow-xl shadow-blue-500/5">
                         <p className="font-['Nunito'] text-[18px] text-[#1a202c] mb-3">Ihr Anfragekorb ist leer.</p>
                         <p className="font-['Nunito'] text-[14px] text-[#64748b] mb-6">
-                            Fuegen Sie zuerst Produkte hinzu, bevor Sie eine Sammelanfrage absenden.
+                            Fügen Sie zuerst Produkte hinzu, bevor Sie eine Sammelanfrage absenden.
                         </p>
                         <Link href="/produkte">
                             <Button variant="primary">Zu den Produkten</Button>
                         </Link>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 xl:grid-cols-[1.1fr_0.9fr] gap-8">
-                        <div className="space-y-4">
-                            <div className="rounded-[32px] border border-blue-100 bg-white p-6 shadow-xl shadow-blue-500/5">
-                                <div className="mb-4 flex items-center justify-between gap-4">
-                                    <h2 className="font-['Nunito'] font-semibold text-[24px] text-[#1a202c]">
-                                        Ausgewaehlte Produkte ({itemCount})
-                                    </h2>
-                                    <button
-                                        type="button"
-                                        onClick={clearCart}
-                                        className="font-['Nunito'] text-[14px] text-[#64748b] hover:text-[#1a3a52]"
-                                    >
-                                        Alles entfernen
-                                    </button>
-                                </div>
+                    <div className="space-y-6">
+                        {/* Wizard Stepper */}
+                        <WizardStepper
+                            currentStep={currentStep}
+                            steps={steps}
+                            onStepClick={handleStepClick}
+                            isStepCompleted={isStepCompleted}
+                            isStepSelectable={isStepSelectable}
+                        />
 
-                                <div className="space-y-4">
-                                    {items.map((item) => (
-                                        <div key={item.id} className="flex flex-col gap-4 rounded-[24px] border border-blue-50 bg-[#f8fafc] p-4 sm:flex-row hover:shadow-md transition-shadow">
-                                            <div className="relative h-[110px] w-full overflow-hidden rounded-[16px] bg-[#fef9c3] sm:w-[160px]">
-                                                {item.imageUrl ? (
-                                                    <Image
-                                                        src={item.imageUrl}
-                                                        alt={item.title}
-                                                        fill
-                                                        sizes="(max-width: 640px) 100vw, 160px"
-                                                        className="object-cover"
-                                                    />
-                                                ) : (
-                                                    <div className="flex h-full w-full items-center justify-center text-sm text-[#64748b]">
-                                                        Kein Bild
-                                                    </div>
-                                                )}
-                                            </div>
-
-                                            <div className="flex flex-1 flex-col gap-3">
-                                                <div className="flex items-start justify-between gap-4">
-                                                    <div>
-                                                        <Link href={`/produkt/${item.slug}`} className="font-['Nunito'] font-medium text-[18px] text-[#1a202c] hover:text-[#1a3a52]">
-                                                            {item.title}
-                                                        </Link>
-                                                        {item.summary && (
-                                                            <p className="mt-1 font-['Nunito'] text-[14px] leading-[20px] text-[#64748b]">
-                                                                {item.summary}
-                                                            </p>
-                                                        )}
-                                                    </div>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => removeItem(item.id)}
-                                                        className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#f7f8fa] text-[#64748b] transition-colors hover:bg-[#fee2e2] hover:text-[#b91c1c]"
-                                                        aria-label={`${item.title} entfernen`}
-                                                    >
-                                                        <Trash2 size={18} />
-                                                    </button>
-                                                </div>
-
-                                                <div className="flex flex-wrap items-center justify-between gap-3">
-                                                    <div className="space-y-1">
-                                                        <PriceDisplay
-                                                            price={item.price}
-                                                            priceType={item.priceType}
-                                                            priceClassName="font-['Nunito'] font-semibold text-[16px] text-[#4a5568]"
-                                                        />
-                                                        {(() => {
-                                                            const pricing = pricingByItemId.get(item.id);
-                                                            if (!pricing) return null;
-                                                            const availability = availabilityByItemId[item.id];
-
-                                                            const periodText = pricing.bookingDays != null
-                                                                ? `${selectedRangeLabel} (${pricing.bookingDays} Tag${pricing.bookingDays === 1 ? "" : "e"})`
-                                                                : selectedRangeLabel;
-                                                            const stockLabel =
-                                                                availability && availability.trackInventory && availability.availableQuantity != null
-                                                                    ? availability.isAvailable
-                                                                        ? `Verfuegbar im Zeitraum: ${availability.availableQuantity}`
-                                                                        : availability.availableQuantity === 0
-                                                                            ? "Nicht verfügbar im gewählten Zeitraum"
-                                                                            : `Nicht ausreichend verfuegbar im Zeitraum (max. ${availability.availableQuantity})`
-                                                                    : item.trackInventory
-                                                                        ? `Bestand: ${item.totalStock}`
-                                                                        : null;
-
-                                                            if (
-                                                                pricing.isAutoCalculated &&
-                                                                pricing.calculatedUnitPriceCents != null &&
-                                                                pricing.calculatedTotalPriceCents != null
-                                                            ) {
-                                                                return (
-                                                                    <div className="space-y-1">
-                                                                        <p className="font-['Nunito'] text-[12px] text-[#64748b]">
-                                                                            Zeitraum: {periodText}
-                                                                        </p>
-                                                                        <p className="font-['Nunito'] text-[13px] text-[#1a3a52]">
-                                                                            Berechnet: {formatPriceCents(pricing.calculatedUnitPriceCents)} inkl. MwSt. x {item.quantity} ={" "}
-                                                                            <span className="font-semibold">{formatPriceCents(pricing.calculatedTotalPriceCents)} inkl. MwSt.</span>
-                                                                        </p>
-                                                                        {stockLabel && (
-                                                                            availability && !availability.isAvailable ? (
-                                                                                <span className="inline-flex items-center gap-1.5 mt-1 rounded-[6px] bg-[#fef2f2] border border-[#fecaca] px-2.5 py-1">
-                                                                                    <AlertTriangle size={12} className="text-[#dc2626] shrink-0" />
-                                                                                    <span className="font-['Nunito'] text-[11px] font-medium text-[#991b1b]">
-                                                                                        {stockLabel}
-                                                                                    </span>
-                                                                                </span>
-                                                                            ) : (
-                                                                                <p className="font-['Nunito'] text-[12px] text-[#64748b]">
-                                                                                    {stockLabel}
-                                                                                </p>
-                                                                            )
-                                                                        )}
-                                                                    </div>
-                                                                );
-                                                            }
-
-                                                            const label = getPricingReasonLabel(pricing.reason);
-                                                            if (!label && !stockLabel) return null;
-
-                                                            return (
-                                                                <div className="space-y-1">
-                                                                    <p className="font-['Nunito'] text-[12px] text-[#64748b]">
-                                                                        Zeitraum: {periodText}
-                                                                    </p>
-                                                                    {label && (
-                                                                        <p className="font-['Nunito'] text-[13px] text-[#64748b]">
-                                                                            {label}
-                                                                        </p>
-                                                                    )}
-                                                                    {stockLabel && (
-                                                                        availability && !availability.isAvailable ? (
-                                                                            <span className="inline-flex items-center gap-1.5 mt-1 rounded-[6px] bg-[#fef2f2] border border-[#fecaca] px-2.5 py-1">
-                                                                                <AlertTriangle size={12} className="text-[#dc2626] shrink-0" />
-                                                                                <span className="font-['Nunito'] text-[11px] font-medium text-[#991b1b]">
-                                                                                    {stockLabel}
-                                                                                </span>
-                                                                            </span>
-                                                                        ) : (
-                                                                            <p className="font-['Nunito'] text-[12px] text-[#64748b]">
-                                                                                {stockLabel}
-                                                                            </p>
-                                                                        )
-                                                                    )}
-                                                                </div>
-                                                            );
-                                                        })()}
-                                                    </div>
-                                                    <div className="flex items-center gap-3">
-                                                        <span className="font-['Nunito'] text-[14px] text-[#64748b]">Menge</span>
-                                                        <div className="flex items-center rounded-[16px] border border-[#cbd5e1]">
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                                                                className="h-10 w-10 text-[#1a3a52]"
-                                                            >
-                                                                -
-                                                            </button>
-                                                            <span className="min-w-[40px] text-center font-['Nunito'] text-[14px] text-[#1a202c]">
-                                                                {item.quantity}
-                                                            </span>
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => {
-                                                                    const availability = availabilityByItemId[item.id];
-                                                                    const stockMaxFromAvailability =
-                                                                        availability && availability.trackInventory && availability.availableQuantity != null
-                                                                            ? Math.max(0, availability.availableQuantity)
-                                                                            : null;
-                                                                    const stockMax =
-                                                                        stockMaxFromAvailability ??
-                                                                        (item.trackInventory ? Math.max(0, item.totalStock) : null);
-
-                                                                    if (stockMax == null) {
-                                                                        updateQuantity(item.id, item.quantity + 1);
-                                                                        return;
-                                                                    }
-
-                                                                    if (stockMax === 0) return;
-                                                                    updateQuantity(item.id, Math.min(stockMax, item.quantity + 1));
-                                                                }}
-                                                                className="h-10 w-10 text-[#1a3a52]"
-                                                                disabled={(() => {
-                                                                    const availability = availabilityByItemId[item.id];
-                                                                    const stockMaxFromAvailability =
-                                                                        availability && availability.trackInventory && availability.availableQuantity != null
-                                                                            ? Math.max(0, availability.availableQuantity)
-                                                                            : null;
-                                                                    const stockMax =
-                                                                        stockMaxFromAvailability ??
-                                                                        (item.trackInventory ? Math.max(0, item.totalStock) : null);
-                                                                    return stockMax != null && item.quantity >= stockMax;
-                                                                })()}
-                                                            >
-                                                                +
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="rounded-[32px] border border-blue-100 bg-white p-6 shadow-xl shadow-blue-500/5">
-                            <h2 className="font-['Nunito'] font-semibold text-[24px] text-[#1a202c] mb-6">Sammelanfrage senden</h2>
-
-                            <form onSubmit={handleSubmit} className="space-y-5">
-                                <DateRangePicker
-                                    startDate={formState.startDate}
-                                    endDate={formState.endDate}
-                                    onStartDateChange={(value) => setFormState((current) => ({ ...current, startDate: value }))}
-                                    onEndDateChange={(value) => setFormState((current) => ({ ...current, endDate: value }))}
-                                    unavailableDates={unavailableDates}
-                                    isLoadingDates={isLoadingDates}
-                                    onMonthChange={handleMonthChange}
+                        {/* Step Form Wrapper */}
+                        <form onSubmit={handleSubmit}>
+                            {currentStep === "summary" ? (
+                                <SummaryStep
+                                    items={items}
+                                    formState={formState}
+                                    pricingByItemId={pricingByItemId}
+                                    pricingSummary={pricingSummary}
+                                    selectedRangeLabel={selectedRangeLabel}
+                                    bookingDuration={bookingDuration}
+                                    submitting={submitting}
+                                    error={error}
                                 />
-
-                                {formState.startDate && formState.endDate && bookingDuration.reason === "invalid_date_range" && (
-                                    <div className="flex items-center gap-2 rounded-[16px] bg-[#fef2f2] border border-[#fecaca] px-4 py-3">
-                                        <AlertTriangle size={16} className="text-[#dc2626] shrink-0" />
-                                        <p className="font-['Nunito'] text-[13px] text-[#991b1b]">
-                                            Das Enddatum darf nicht vor dem Startdatum liegen.
-                                        </p>
-                                    </div>
-                                )}
-
-                                <div className="rounded-[24px] border border-amber-100 bg-[#fffbeb] p-4 shadow-sm">
-                                    <h3 className="font-['Nunito'] font-semibold text-[16px] text-[#1a202c] mb-2">Preisuebersicht</h3>
-                                    <div className="space-y-1">
-                                        <p className="font-['Nunito'] text-[14px] text-[#4a5568]">
-                                            Zeitraum: <span className="font-medium">{selectedRangeLabel}</span>
-                                        </p>
-                                        <p className="font-['Nunito'] text-[14px] text-[#4a5568]">
-                                            Buchungsdauer:{" "}
-                                            <span className="font-medium">
-                                                {bookingDuration.days != null ? `${bookingDuration.days} Tag${bookingDuration.days === 1 ? "" : "e"}` : "-"}
-                                            </span>
-                                        </p>
-                                        <p className="font-['Nunito'] text-[14px] text-[#4a5568]">
-                                            Automatisch berechenbar:{" "}
-                                            <span className="font-medium">{pricingSummary.autoCalculatedItemCount}</span> Produkt
-                                            {pricingSummary.autoCalculatedItemCount === 1 ? "" : "e"}
-                                        </p>
-                                        <p className="font-['Nunito'] text-[14px] text-[#4a5568]">
-                                            Individuell / auf Anfrage:{" "}
-                                            <span className="font-medium">{pricingSummary.individualItemCount}</span> Produkt
-                                            {pricingSummary.individualItemCount === 1 ? "" : "e"}
-                                        </p>
-                                    </div>
-
-                                    <div className="mt-3 border-t border-[#e2e8f0] pt-3">
-                                        {pricingSummary.autoCalculatedItemCount > 0 ? (
-                                            <>
-                                                <p className="font-['Nunito'] text-[14px] text-[#4a5568]">Voraussichtliche Gesamtsumme</p>
-                                                <p className="font-['Nunito'] text-[12px] text-[#64748b] mb-1">
-                                                    Nur fuer automatisch berechenbare Produktpreise, inkl. MwSt.
-                                                </p>
-                                                <p className="font-['Nunito'] font-semibold text-[28px] leading-[1.1] text-[#1a202c]">
-                                                    {formatPriceCents(pricingSummary.autoCalculatedTotalCents)}
-                                                </p>
-                                                <p className="mt-1 font-['Nunito'] text-[12px] text-[#64748b]">
-                                                    inkl. MwSt.; Anfahrt/Lieferung sind nicht enthalten.
-                                                </p>
-                                                {pricingSummary.hasMixedPricing && (
-                                                    <p className="mt-1 font-['Nunito'] text-[12px] text-[#64748b]">
-                                                        Hinweis: Individuelle Positionen sind in dieser Summe nicht enthalten.
-                                                    </p>
-                                                )}
-                                            </>
-                                        ) : (
-                                            <div className="flex items-start gap-3 rounded-[16px] bg-[#fffbeb] border border-[#fde68a] px-4 py-3">
-                                                <span className="text-[20px] leading-none mt-0.5">💬</span>
-                                                <div>
-                                                    <p className="font-['Nunito'] font-semibold text-[14px] text-[#92400e] mb-1">
-                                                        Individuelles Angebot
-                                                    </p>
-                                                    <p className="font-['Nunito'] text-[13px] text-[#a16207] leading-[1.4]">
-                                                        {bookingDuration.days != null && bookingDuration.days > 3
-                                                            ? `Bei einer Buchungsdauer von ${bookingDuration.days} Tagen erstellen wir Ihnen gerne ein individuelles Angebot.`
-                                                            : "Für die ausgewählten Produkte wird ein individuelles Angebot erstellt."
-                                                        }
-                                                        {" "}Senden Sie Ihre Anfrage ab und wir melden uns zeitnah bei Ihnen.
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        )}
-                                        {Object.values(availabilityByItemId).some((entry) => !entry.isAvailable) && (
-                                            <div className="mt-2 flex items-center gap-2 rounded-[16px] bg-[#fef2f2] border border-[#fecaca] px-3 py-2">
-                                                <AlertTriangle size={14} className="text-[#dc2626] shrink-0" />
-                                                <p className="font-['Nunito'] text-[12px] text-[#991b1b]">
-                                                    Für mindestens ein Produkt ist die gewünschte Menge im gewählten Zeitraum nicht verfügbar.
-                                                </p>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-
-                                <InquiryPricingNotice />
-
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <Input
-                                        label="Vorname"
-                                        value={formState.firstName}
-                                        onChange={(e) => setFormState((current) => ({ ...current, firstName: e.target.value }))}
-                                        required
-                                    />
-                                    <Input
-                                        label="Nachname"
-                                        value={formState.lastName}
-                                        onChange={(e) => setFormState((current) => ({ ...current, lastName: e.target.value }))}
-                                        required
-                                    />
-                                </div>
-
-                                <Input
-                                    label="E-Mail"
-                                    type="email"
-                                    value={formState.email}
-                                    onChange={(e) => setFormState((current) => ({ ...current, email: e.target.value }))}
-                                    required
-                                />
-
-                                <Input
-                                    label="Telefon"
-                                    type="tel"
-                                    value={formState.phone}
-                                    onChange={(e) => setFormState((current) => ({ ...current, phone: e.target.value.replace(/[^0-9+\s\-()/]/g, "") }))}
-                                />
-
-                                <div className="space-y-2">
-                                    <label className="font-['Nunito'] font-medium text-[14px] leading-[21px] text-[#1a202c]">
-                                        Lieferart
-                                    </label>
-                                    {showDeliveryDropdown ? (
-                                        <select
-                                            value={formState.deliveryType}
-                                            onChange={(e) => setFormState((current) => ({ ...current, deliveryType: e.target.value as "pickup" | "delivery" }))}
-                                            className="bg-white h-[50px] w-full rounded-[16px] px-[16px] py-[12px] font-['Nunito'] text-[16px] text-[#2d3748] border border-[#cbd5e1] focus:outline-none focus:border-[#1a3a52]"
-                                        >
-                                            {allowedDeliveryTypes.includes("pickup") && (
-                                                <option value="pickup">Selbstabholung</option>
-                                            )}
-                                            {allowedDeliveryTypes.includes("delivery") && (
-                                                <option value="delivery">Lieferung</option>
-                                            )}
-                                        </select>
-                                    ) : (
-                                        <div className="space-y-2">
-                                            {hasDeliveryOnlyItem && hasPickupOnlyItem ? (
-                                                <div className="flex flex-col gap-2 rounded-[16px] border border-[#fef08a] bg-[#fffbf2] p-4 shadow-sm">
-                                                    <div className="flex items-center gap-2.5">
-                                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#ca8a04]/10 text-[#ca8a04] shrink-0">
-                                                            <AlertTriangle size={18} />
-                                                        </div>
-                                                        <div>
-                                                             <h4 className="font-['Nunito'] font-semibold text-[15px] text-[#854d0e]">
-                                                                 Lieferung & Selbstabholung (Mischbestellung)
-                                                             </h4>
-                                                             <p className="font-['Nunito'] text-[12px] text-[#854d0e]/80">
-                                                                 Vorgegeben durch Artikelauswahl
-                                                             </p>
-                                                        </div>
-                                                    </div>
-                                                    <p className="font-['Nunito'] text-[13px] leading-[20px] text-[#854d0e] mt-1">
-                                                        Ihr Warenkorb enthält sowohl Produkte zur <em>reinen Selbstabholung</em> als auch Produkte zur <em>reinen Lieferung</em>. Die genaue Logistik wird individuell mit Ihnen im Angebot vereinbart.
-                                                    </p>
-                                                </div>
-                                            ) : hasDeliveryOnlyItem ? (
-                                                <div className="flex flex-col gap-2 rounded-[16px] border border-[#bfdbfe] bg-[#f0f7ff] p-4 shadow-sm">
-                                                    <div className="flex items-center gap-2.5">
-                                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#2563eb]/10 text-[#2563eb] shrink-0">
-                                                            <Truck size={18} />
-                                                        </div>
-                                                        <div>
-                                                             <h4 className="font-['Nunito'] font-semibold text-[15px] text-[#1e40af]">
-                                                                 Nur Lieferung möglich
-                                                             </h4>
-                                                             <p className="font-['Nunito'] text-[12px] text-[#1e40af]/80">
-                                                                 Vorgegeben durch Artikelauswahl
-                                                             </p>
-                                                        </div>
-                                                    </div>
-                                                    <p className="font-['Nunito'] text-[13px] leading-[20px] text-[#1e40af] mt-1">
-                                                        Da sich Produkte im Warenkorb befinden, die <em>nur geliefert</em> werden können, ist für diese Anfrage nur Lieferung möglich.
-                                                    </p>
-                                                </div>
-                                            ) : (
-                                                <div className="flex flex-col gap-2 rounded-[16px] border border-[#bbf7d0] bg-[#f0fdf4] p-4 shadow-sm">
-                                                    <div className="flex items-center gap-2.5">
-                                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#16a34a]/10 text-[#15803d] shrink-0">
-                                                            <Store size={18} />
-                                                        </div>
-                                                        <div>
-                                                             <h4 className="font-['Nunito'] font-semibold text-[15px] text-[#15803d]">
-                                                                 Nur Selbstabholung möglich
-                                                             </h4>
-                                                             <p className="font-['Nunito'] text-[12px] text-[#15803d]/80">
-                                                                 Vorgegeben durch Artikelauswahl
-                                                             </p>
-                                                        </div>
-                                                    </div>
-                                                    <p className="font-['Nunito'] text-[13px] leading-[20px] text-[#15803d] mt-1">
-                                                        Da sich Produkte im Warenkorb befinden, die <em>nur selbst abgeholt</em> werden können, ist für diese Anfrage nur Selbstabholung möglich.
-                                                    </p>
-                                                </div>
-                                            )}
-                                        </div>
+                            ) : (
+                                <div className="bg-white rounded-[28px] border border-blue-100 p-6 md:p-8 shadow-xl shadow-blue-500/5">
+                                    {currentStep === "cart" && (
+                                        <CartStep
+                                            items={items}
+                                            itemCount={itemCount}
+                                            removeItem={removeItem}
+                                            updateQuantity={updateQuantity}
+                                            clearCart={clearCart}
+                                            pricingByItemId={pricingByItemId}
+                                            availabilityByItemId={availabilityByItemId}
+                                            selectedRangeLabel={selectedRangeLabel}
+                                            getPricingReasonLabel={getPricingReasonLabel}
+                                        />
+                                    )}
+                                    {currentStep === "dates" && (
+                                        <DatesStep
+                                            startDate={formState.startDate}
+                                            endDate={formState.endDate}
+                                            onStartDateChange={(val) => {
+                                                setFormState((prev) => ({ ...prev, startDate: val }));
+                                                setStepValidationError(null);
+                                            }}
+                                            onEndDateChange={(val) => {
+                                                setFormState((prev) => ({ ...prev, endDate: val }));
+                                                setStepValidationError(null);
+                                            }}
+                                            unavailableDates={unavailableDates}
+                                            isLoadingDates={isLoadingDates}
+                                            onMonthChange={handleMonthChange}
+                                            bookingDuration={bookingDuration}
+                                            pricingSummary={pricingSummary}
+                                            availabilityByItemId={availabilityByItemId}
+                                            selectedRangeLabel={selectedRangeLabel}
+                                        />
+                                    )}
+                                    {currentStep === "delivery" && (
+                                        <DeliveryStep
+                                            formState={formState}
+                                            setFormState={setFormState}
+                                            allowedDeliveryTypes={allowedDeliveryTypes}
+                                            showDeliveryDropdown={showDeliveryDropdown}
+                                            hasDeliveryOnlyItem={hasDeliveryOnlyItem}
+                                            hasPickupOnlyItem={hasPickupOnlyItem}
+                                            settings={settings}
+                                            handleBillingAddressToggle={handleBillingAddressToggle}
+                                        />
+                                    )}
+                                    {currentStep === "contact" && (
+                                        <ContactStep
+                                            formState={formState}
+                                            setFormState={setFormState}
+                                        />
                                     )}
                                 </div>
+                            )}
 
-                                <DeliveryNoticeBox deliveryTerms={settings?.deliveryTerms} />
-
-                                <div className="space-y-4 rounded-[24px] border border-blue-50 bg-[#f8fafc] p-5 shadow-sm">
-                                    <div>
-                                        <h3 className="font-['Nunito'] font-semibold text-[16px] text-[#1a202c]">
-                                            {formState.deliveryType === "delivery" ? "Lieferadresse" : "Kundenadresse"}
-                                        </h3>
-                                        <p className="mt-1 font-['Nunito'] text-[13px] leading-[20px] text-[#64748b]">
-                                            {formState.deliveryType === "delivery" 
-                                                ? "Diese Adresse verwenden wir standardmaessig auch als Rechnungsadresse."
-                                                : "Geben Sie Ihre Kontaktdaten für die Abholung an."}
-                                        </p>
-                                    </div>
-
-                                    <Input
-                                        label="Strasse und Hausnummer"
-                                        value={formState.addressLine1}
-                                        onChange={(e) => setFormState((current) => ({ ...current, addressLine1: e.target.value }))}
-                                        required={formState.deliveryType === "delivery"}
-                                    />
-
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                        <Input
-                                            label="PLZ"
-                                            value={formState.zip}
-                                            onChange={(e) => setFormState((current) => ({ ...current, zip: e.target.value.replace(/\D/g, "") }))}
-                                            required={formState.deliveryType === "delivery"}
-                                        />
-                                        <Input
-                                            label="Ort"
-                                            value={formState.city}
-                                            onChange={(e) => setFormState((current) => ({ ...current, city: e.target.value }))}
-                                            required={formState.deliveryType === "delivery"}
-                                        />
-                                    </div>
-
-                                    <label className="flex cursor-pointer items-start gap-3 rounded-[14px] border border-[#cbd5e1] bg-white px-4 py-3">
-                                        <input
-                                            type="checkbox"
-                                            checked={formState.billingAddressDiffers}
-                                            onChange={(e) => handleBillingAddressToggle(e.target.checked)}
-                                            className="mt-0.5 h-5 w-5 rounded border-[#94a3b8] text-[#1a3a52] focus:ring-[#1a3a52]"
-                                        />
-                                        <span className="font-['Nunito'] text-[14px] leading-[21px] text-[#1a202c]">
-                                            Rechnungsadresse abweichend von Lieferadresse
-                                        </span>
-                                    </label>
-                                </div>
-
-                                {formState.billingAddressDiffers && (
-                                    <div className="space-y-4 rounded-[24px] border border-blue-100 bg-white p-5 shadow-sm">
-                                        <div>
-                                            <h3 className="font-['Nunito'] font-semibold text-[16px] text-[#1a202c]">Rechnungsadresse</h3>
-                                            <p className="mt-1 font-['Nunito'] text-[13px] leading-[20px] text-[#64748b]">
-                                                Wird nur verwendet, wenn sie von der Lieferadresse abweicht.
-                                            </p>
-                                        </div>
-
-                                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 pb-2">
-                                            <label className="flex cursor-pointer items-center gap-2">
-                                                <input
-                                                    type="radio"
-                                                    checked={formState.billingCustomerType === "private"}
-                                                    onChange={() => setFormState(s => ({ ...s, billingCustomerType: "private" }))}
-                                                    className="h-4 w-4 border-[#94a3b8] text-[#1a3a52] focus:ring-[#1a3a52]"
-                                                />
-                                                <span className="font-['Nunito'] text-[14px] text-[#1a202c]">Privatperson</span>
-                                            </label>
-                                            <label className="flex cursor-pointer items-center gap-2">
-                                                <input
-                                                    type="radio"
-                                                    checked={formState.billingCustomerType === "business"}
-                                                    onChange={() => setFormState(s => ({ ...s, billingCustomerType: "business" }))}
-                                                    className="h-4 w-4 border-[#94a3b8] text-[#1a3a52] focus:ring-[#1a3a52]"
-                                                />
-                                                <span className="font-['Nunito'] text-[14px] text-[#1a202c]">Geschäftskunde</span>
-                                            </label>
-                                        </div>
-
-                                        {formState.billingCustomerType === "private" ? (
-                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                                <Input
-                                                    label="Vorname"
-                                                    value={formState.billingFirstName}
-                                                    onChange={(e) => setFormState((current) => ({ ...current, billingFirstName: e.target.value }))}
-                                                    required
-                                                />
-                                                <Input
-                                                    label="Nachname"
-                                                    value={formState.billingLastName}
-                                                    onChange={(e) => setFormState((current) => ({ ...current, billingLastName: e.target.value }))}
-                                                    required
-                                                />
-                                            </div>
-                                        ) : (
-                                            <Input
-                                                label="Firmenname"
-                                                value={formState.billingCompanyName}
-                                                onChange={(e) => setFormState((current) => ({ ...current, billingCompanyName: e.target.value }))}
-                                                required
-                                            />
-                                        )}
-
-                                        <Input
-                                            label="Strasse und Hausnummer"
-                                            value={formState.billingAddressLine1}
-                                            onChange={(e) => setFormState((current) => ({ ...current, billingAddressLine1: e.target.value }))}
-                                            required
-                                        />
-
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                            <Input
-                                                label="PLZ"
-                                                value={formState.billingZip}
-                                                onChange={(e) => setFormState((current) => ({ ...current, billingZip: e.target.value.replace(/\D/g, "") }))}
-                                                required
-                                            />
-                                            <Input
-                                                label="Ort"
-                                                value={formState.billingCity}
-                                                onChange={(e) => setFormState((current) => ({ ...current, billingCity: e.target.value }))}
-                                                required
-                                            />
-                                        </div>
-
-                                        <Input
-                                            label="Land (optional)"
-                                            value={formState.billingCountry}
-                                            onChange={(e) => setFormState((current) => ({ ...current, billingCountry: e.target.value }))}
-                                        />
-                                    </div>
-                                )}
-
-                                <Textarea
-                                    label="Zusätzliche Nachricht (optional)"
-                                    placeholder="Weitere Infos zu Ihrer Anfrage oder besondere Wünsche..."
-                                    value={formState.message}
-                                    onChange={(e) => setFormState((current) => ({ ...current, message: e.target.value }))}
-                                    rows={4}
-                                />
-
-                                {/* STORNO INFO */}
-                                <div className="mt-8 bg-[#fffbeb] border border-amber-100 rounded-[24px] p-6 shadow-sm">
-                                    <div className="flex items-center gap-3 mb-4">
-                                        <div className="w-8 h-8 rounded-full bg-[#fef3c7] flex items-center justify-center text-[#d97706] shrink-0">
-                                            <ShieldCheck size={18} />
-                                        </div>
-                                        <h3 className="font-['Nunito'] font-semibold text-[16px] text-[#1a202c]">Faire Stornobedingungen</h3>
-                                    </div>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                        <div className="flex items-start gap-2">
-                                            <Clock size={16} className="text-[#059669] mt-0.5 shrink-0" />
-                                            <div>
-                                                <p className="font-['Nunito'] text-[13px] font-medium text-[#1a202c]">Kostenlos</p>
-                                                <p className="font-['Nunito'] text-[12px] text-[#4a5568]">Bis 2 Tage vor Mietbeginn</p>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-start gap-2">
-                                            <AlertTriangle size={16} className="text-[#dc2626] mt-0.5 shrink-0" />
-                                            <div>
-                                                <p className="font-['Nunito'] text-[13px] font-medium text-[#1a202c]">Spätere Stornierung</p>
-                                                <p className="font-['Nunito'] text-[12px] text-[#4a5568]">Angefallene Kosten bis max. 350 € netto</p>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-start gap-2 sm:col-span-2">
-                                            <CloudRain size={16} className="text-[#0284c7] mt-0.5 shrink-0" />
-                                            <div>
-                                                <p className="font-['Nunito'] text-[13px] font-medium text-[#1a202c]">Schlechtwetter-Option</p>
-                                                <p className="font-['Nunito'] text-[12px] text-[#4a5568]">Bei Nässe/Sturm (kostenlose Stornierung nach Vereinbarung)</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* HAFTUNG INFO */}
-                                <div className="mt-4 bg-[#f0f7ff] border border-blue-100 rounded-[24px] p-6 shadow-sm">
-                                    <div className="flex items-center gap-3 mb-3">
-                                        <div className="w-8 h-8 rounded-full bg-[#eff6ff] flex items-center justify-center text-[#3b82f6] shrink-0">
-                                            <Info size={18} />
-                                        </div>
-                                        <h3 className="font-['Nunito'] font-semibold text-[16px] text-[#1a202c]">Haftung & Versicherung</h3>
-                                    </div>
-                                    <ul className="space-y-2 mt-2">
-                                        <li className="flex items-start gap-2">
-                                            <span className="text-[#3b82f6] mt-0.5">•</span>
-                                            <span className="font-['Nunito'] text-[13px] text-[#4a5568] leading-snug">Der Betreiber ist ausschließlich Vermieter. Eine Betreuung/Aufsicht ist nicht inkludiert.</span>
-                                        </li>
-                                        <li className="flex items-start gap-2">
-                                            <span className="text-[#3b82f6] mt-0.5">•</span>
-                                            <span className="font-['Nunito'] text-[13px] text-[#4a5568] leading-snug">Es besteht <strong>keine</strong> Versicherung über den Anbieter. Die Haftung liegt nicht beim Anbieter.</span>
-                                        </li>
-                                        <li className="flex items-start gap-2">
-                                            <span className="text-[#3b82f6] mt-0.5">•</span>
-                                            <span className="font-['Nunito'] text-[13px] text-[#4a5568] leading-snug">Detaillierte Haftungsinformationen erhalten Sie mit Ihrem Vertragsangebot.</span>
-                                        </li>
-                                    </ul>
-                                </div>
-
-                                {error && (
-                                    <p className="font-['Nunito'] text-[14px] text-[#dc2626] mt-2">
-                                        {error}
+                            {/* Validation warning */}
+                            {stepValidationError && (
+                                <div className="mt-6 flex items-center gap-2.5 rounded-[16px] bg-[#fef2f2] border border-[#fecaca] px-4 py-3">
+                                    <AlertTriangle size={18} className="text-[#dc2626] shrink-0" />
+                                    <p className="font-['Nunito'] text-[14.5px] font-medium text-[#991b1b]">
+                                        {stepValidationError}
                                     </p>
-                                )}
+                                </div>
+                            )}
 
-                                <div className="pt-2">
-                                    <Button type="submit" variant="primary" disabled={!canSubmit || submitting} className="w-full h-[54px] text-[16px]">
-                                        {submitting ? "Anfrage wird gesendet..." : "Gesamtanfrage senden"}
+                            {/* Stepper Navigation Buttons */}
+                            <div className="mt-8 pt-6 border-t border-slate-200 flex items-center justify-between gap-4">
+                                {currentStep !== "cart" ? (
+                                    <Button
+                                        type="button"
+                                        variant="secondary"
+                                        onClick={handlePrevStep}
+                                        className="h-12 px-6"
+                                    >
+                                        Zurück
                                     </Button>
-                                    <p className="text-center font-['Nunito'] text-[12px] text-[#64748b] mt-4">
-                                        Diese Anfrage ist noch unverbindlich. Sie erhalten von uns ein Angebot mit final bestätigtem Preis; Anfahrt und Lieferung können zusätzlich dazukommen.
-                                    </p>
-                                </div>
-                            </form>
-                        </div>
+                                ) : (
+                                    <Link href="/produkte">
+                                        <Button type="button" variant="secondary" className="h-12 px-6">
+                                            Produkte hinzufügen
+                                        </Button>
+                                    </Link>
+                                )}
+
+                                {currentStep !== "summary" && (
+                                    <Button
+                                        type="button"
+                                        variant="primary"
+                                        onClick={handleNextStep}
+                                        className="h-12 px-8 bg-[#066bb7] text-white hover:bg-[#1a3a52] transition-all"
+                                    >
+                                        {currentStep === "cart" && "Weiter zum Zeitraum"}
+                                        {currentStep === "dates" && "Weiter zur Lieferung"}
+                                        {currentStep === "delivery" && "Weiter zu Kontaktdaten"}
+                                        {currentStep === "contact" && "Weiter zur Zusammenfassung"}
+                                    </Button>
+                                )}
+                            </div>
+                        </form>
                     </div>
                 )}
             </div>

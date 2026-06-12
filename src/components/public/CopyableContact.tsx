@@ -31,7 +31,7 @@ export function CopyableContact({ value, type, className = "", textClassName = "
         <span className={`inline-flex items-center gap-1.5 group ${className}`}>
             <a 
                 href={href} 
-                className={`hover:text-[#3b82f6] hover:underline transition-colors ${textClassName}`}
+                className={`hover:text-[#3b82f6] hover:underline transition-colors break-all sm:break-normal ${textClassName}`}
             >
                 {value}
             </a>

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { deleteCategory, getCategoryById, updateCategory } from "@/lib/repositories/categories";
 import { getCatalogTypeById } from "@/lib/repositories/catalog-types";
 import storage from "@/lib/storage";
@@ -87,6 +88,8 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
         }
 
         const updated = await updateCategory(id, { name, slug, description, imageUrl, imageKey, catalogTypeId });
+        revalidatePath("/");
+        revalidatePath("/produkte");
         return NextResponse.json({ category: updated });
     } catch (err) {
         const error = err as { code?: string };
@@ -109,6 +112,8 @@ export async function DELETE(_: Request, ctx: { params: Promise<{ id: string }> 
         }
 
         await deleteCategory(id);
+        revalidatePath("/");
+        revalidatePath("/produkte");
         return NextResponse.json({ ok: true });
     } catch (error) {
         const e = error as { code?: string };

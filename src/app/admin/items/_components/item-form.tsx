@@ -2,13 +2,14 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { ChevronDown } from "lucide-react";
 import { slugify } from "@/lib/slug";
 import { getItemPriceDisplay } from "@/lib/items/price";
 import ImagePanel from "./image-panel";
 import { readErrorMessageFromResponse } from "@/lib/http/error-response";
 import { validateItemUploadFiles } from "@/lib/uploads/item-upload-limits";
 
-type CategoryOption = { id: string; name: string; slug: string; catalogTypeName?: string };
+type CategoryOption = { id: string; name: string; slug: string; catalogTypeName?: string; catalogTypeId: string };
 type PriceType = "FIXED" | "ON_REQUEST" | "FROM_PRICE";
 
 type ImageRow = {
@@ -53,9 +54,11 @@ type ItemFormState = {
     categoryId: string;
 };
 
-const sectionClassName = "space-y-4 rounded-lg border p-4";
-const inputClassName = "w-full rounded-md border px-3 py-2";
-const textareaClassName = "w-full rounded-md border px-3 py-2";
+const sectionClassName = "group space-y-4 rounded-[22px] border border-slate-200 bg-white p-4 shadow-sm sm:p-5";
+const inputClassName = "w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:bg-slate-50 disabled:text-slate-400";
+const textareaClassName = "w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-100";
+const labelClassName = "text-sm font-medium text-slate-700";
+const helperClassName = "text-xs text-slate-500";
 const CLEANING_DEFAULT_TEXT = "Reinigung: 120 € exkl. MwSt. bei grober/mutwilliger Verschmutzung";
 const DRYING_DEFAULT_TEXT = "Trocknung: 165 € netto pro Hüpfburg bei Nässe/Regen";
 
@@ -70,6 +73,7 @@ export default function ItemForm(props: {
     mode: "create" | "edit";
     itemId?: string;
     categories: CategoryOption[];
+    catalogTypes: { id: string; name: string }[];
     initial?: Partial<ItemFormState>;
     initialImages?: ImageRow[];
     initialError?: string;
@@ -109,16 +113,38 @@ export default function ItemForm(props: {
         published: Boolean(props.initial?.published ?? false),
         categoryId: props.initial?.categoryId ?? (categories[0]?.id ?? ""),
     });
-    const [slugTouched, setSlugTouched] = useState(mode === "edit");
     const [saving, setSaving] = useState(false);
     const [deleting, setDeleting] = useState(false);
     const [error, setError] = useState<string | null>(props.initialError ?? null);
     const [localImages, setLocalImages] = useState<ImageRow[]>([]);
 
-    const slug = useMemo(
-        () => (slugTouched ? formState.slug : slugify(formState.title)),
-        [formState.slug, formState.title, slugTouched]
-    );
+    // Determine initial catalog type
+    const initialCategory = categories.find((c) => c.id === (props.initial?.categoryId ?? formState.categoryId));
+    const initialCatalogTypeId = initialCategory?.catalogTypeId ?? (props.catalogTypes?.[0]?.id ?? "");
+    const [selectedCatalogTypeId, setSelectedCatalogTypeId] = useState(initialCatalogTypeId);
+
+    const filteredCategories = useMemo(() => {
+        return categories.filter((c) => c.catalogTypeId === selectedCatalogTypeId);
+    }, [categories, selectedCatalogTypeId]);
+
+    const handleCatalogTypeChange = (newCatalogTypeId: string) => {
+        setSelectedCatalogTypeId(newCatalogTypeId);
+        const filtered = categories.filter((c) => c.catalogTypeId === newCatalogTypeId);
+        if (filtered.length > 0) {
+            updateField("categoryId", filtered[0].id);
+        } else {
+            updateField("categoryId", "");
+        }
+    };
+
+    const slug = useMemo(() => {
+        if (mode === "edit" && props.initial?.slug) {
+            if (formState.title === props.initial?.title) {
+                return props.initial.slug;
+            }
+        }
+        return slugify(formState.title);
+    }, [formState.title, mode, props.initial?.slug, props.initial?.title]);
     const numericPriceRequired = formState.priceType !== "ON_REQUEST";
     const hasNumericPrice = formState.basePriceCents.trim().length > 0;
     const parsedTotalStock = Number(formState.totalStock);
@@ -277,6 +303,62 @@ export default function ItemForm(props: {
                 </div>
             ) : (
                 <form onSubmit={onSave} className="space-y-4">
+                    <div className="sticky top-4 z-20 rounded-[22px] border border-slate-200 bg-white/95 p-3 shadow-lg shadow-slate-900/10 backdrop-blur">
+                        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                            <div className="min-w-0">
+                                <div className="truncate text-sm font-semibold text-slate-950">
+                                    {formState.title.trim() || "Unbenanntes Produkt"}
+                                </div>
+                                <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                                    <span className={`rounded-full px-2.5 py-1 font-semibold ${formState.published ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-600"}`}>
+                                        {formState.published ? "Published" : "Draft"}
+                                    </span>
+                                    <span>{previewPrice}</span>
+                                    {!canSave && <span className="text-amber-700">Pflichtfelder prüfen</span>}
+                                </div>
+                            </div>
+
+                            <div className="flex flex-wrap items-center gap-2">
+                                <label className="inline-flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-medium text-slate-700">
+                                    <input
+                                        type="checkbox"
+                                        checked={formState.published}
+                                        onChange={(e) => updateField("published", e.target.checked)}
+                                    />
+                                    Published
+                                </label>
+
+                                {mode === "edit" && (
+                                    <a
+                                        href={`/produkt/${slug}`}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="inline-flex h-10 items-center justify-center rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
+                                    >
+                                        Öffentliche Seite
+                                    </a>
+                                )}
+
+                                {mode === "edit" && (
+                                    <button
+                                        type="button"
+                                        onClick={onDelete}
+                                        disabled={deleting}
+                                        className="h-10 rounded-xl border border-red-200 bg-white px-4 text-sm font-medium text-red-600 transition-colors hover:bg-red-50 disabled:opacity-60"
+                                    >
+                                        {deleting ? "Löscht..." : "Löschen"}
+                                    </button>
+                                )}
+
+                                <button
+                                    disabled={saving || !canSave || categories.length === 0}
+                                    className="h-10 rounded-xl bg-blue-600 px-5 text-sm font-semibold text-white shadow-sm shadow-blue-600/20 transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+                                >
+                                    {saving ? "Speichert..." : "Speichern"}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                     <section className={sectionClassName}>
                         <div>
                             <h2 className="text-base font-semibold">Stammdaten & Darstellung</h2>
@@ -297,16 +379,18 @@ export default function ItemForm(props: {
                             </div>
 
                             <div className="space-y-1">
-                                <label className="text-sm font-medium">Slug</label>
-                                <input
+                                <label className="text-sm font-medium">Katalogtyp</label>
+                                <select
                                     className={inputClassName}
-                                    value={slug}
-                                    onChange={(e) => {
-                                        setSlugTouched(true);
-                                        updateField("slug", e.target.value);
-                                    }}
-                                />
-                                <p className="text-xs text-neutral-600">Auto-generiert aus dem Titel, aber editierbar.</p>
+                                    value={selectedCatalogTypeId}
+                                    onChange={(e) => handleCatalogTypeChange(e.target.value)}
+                                >
+                                    {props.catalogTypes.map((ct) => (
+                                        <option key={ct.id} value={ct.id}>
+                                            {ct.name}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
 
                             <div className="space-y-1">
@@ -316,9 +400,8 @@ export default function ItemForm(props: {
                                     value={formState.categoryId}
                                     onChange={(e) => updateField("categoryId", e.target.value)}
                                 >
-                                    {categories.map((category) => (
+                                    {filteredCategories.map((category) => (
                                         <option key={category.id} value={category.id}>
-                                            {category.catalogTypeName ? `${category.catalogTypeName} / ` : ""}
                                             {category.name} ({category.slug})
                                         </option>
                                     ))}
@@ -336,41 +419,8 @@ export default function ItemForm(props: {
                                 />
                             </div>
 
-                            <div className="space-y-1 md:col-span-2">
-                                <label className="text-sm font-medium">Ausfuehrliche Beschreibung</label>
-                                <textarea
-                                    className={textareaClassName}
-                                    rows={6}
-                                    value={formState.longDescription}
-                                    onChange={(e) => updateField("longDescription", e.target.value)}
-                                    placeholder="Inhalt fuer die Detailseite"
-                                />
-                            </div>
-
-                            <div className="space-y-1 md:col-span-2">
-                                <label className="text-sm font-medium">Produktvideo-URL</label>
-                                <input
-                                    type="url"
-                                    className={inputClassName}
-                                    value={formState.videoUrl}
-                                    onChange={(e) => updateField("videoUrl", e.target.value)}
-                                    placeholder="https://..."
-                                />
-                            </div>
-                        </div>
-                    </section>
-
-                    <section className={sectionClassName}>
-                        <div>
-                            <h2 className="text-base font-semibold">Preis & Zusatzkosten</h2>
-                            <p className="text-sm text-neutral-600">
-                                Preisdarstellung plus pflegbare Hinweise zu Kaution und Nebenkosten.
-                            </p>
-                        </div>
-
-                        <div className="grid gap-4 md:grid-cols-2">
                             <div className="space-y-1">
-                                <label className="text-sm font-medium">Price Display Type</label>
+                                <label className={labelClassName}>Preisstatus</label>
                                 <select
                                     className={inputClassName}
                                     value={formState.priceType}
@@ -384,26 +434,90 @@ export default function ItemForm(props: {
 
                             {formState.priceType !== "ON_REQUEST" ? (
                                 <div className="space-y-1">
-                                    <label className="text-sm font-medium">
-                                        {formState.priceType === "FROM_PRICE" ? "Starting price (cents)" : "Fixed price (cents)"}
+                                    <label className={labelClassName}>
+                                        {formState.priceType === "FROM_PRICE" ? "Startpreis (Cent)" : "Fixpreis (Cent)"}
                                     </label>
                                     <input
                                         type="number"
                                         className={inputClassName}
                                         value={formState.basePriceCents}
                                         onChange={(e) => updateField("basePriceCents", e.target.value)}
-                                        placeholder="e.g. 4900"
+                                        placeholder="z.B. 4900"
                                         min={0}
                                         max={2147483647}
                                         step={1}
                                     />
                                 </div>
                             ) : (
-                                <div className="rounded-md bg-neutral-50 px-3 py-2 text-sm text-neutral-600">
-                                    Bei &quot;Price on request&quot; ist kein numerischer Preis erforderlich.
+                                <div className="flex items-end">
+                                    <div className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-600">
+                                        Kein numerischer Preis erforderlich.
+                                    </div>
                                 </div>
                             )}
 
+                            <div className="rounded-xl border border-blue-100 bg-blue-50 px-3 py-2 text-sm text-blue-900 md:col-span-2">
+                                Preisvorschau: <span className="font-semibold">{previewPrice}</span>
+                            </div>
+
+                            <details className="group md:col-span-2 rounded-xl border border-slate-200 bg-slate-50/60 p-4">
+                                <summary className="flex cursor-pointer items-center justify-between text-sm font-semibold text-slate-800 select-none">
+                                    <span>Beschreibung & Medien</span>
+                                    <ChevronDown className="h-4 w-4 text-slate-400 transition-transform group-open:rotate-180 duration-200" />
+                                </summary>
+                                <div className="mt-4 grid gap-4">
+                                    <div className="space-y-1">
+                                        <label className="text-sm font-medium">Ausfuehrliche Beschreibung</label>
+                                        <textarea
+                                            className={textareaClassName}
+                                            rows={6}
+                                            value={formState.longDescription}
+                                            onChange={(e) => updateField("longDescription", e.target.value)}
+                                            placeholder="Inhalt fuer die Detailseite"
+                                        />
+                                    </div>
+
+                                    <div className="space-y-1">
+                                        <label className="text-sm font-medium">Produktvideo-URL</label>
+                                        <input
+                                            type="url"
+                                            className={inputClassName}
+                                            value={formState.videoUrl}
+                                            onChange={(e) => updateField("videoUrl", e.target.value)}
+                                            placeholder="https://..."
+                                        />
+                                    </div>
+                                </div>
+                            </details>
+                        </div>
+                    </section>
+
+                    <section className={sectionClassName}>
+                        <div>
+                            <h2 className="text-base font-semibold">Bilder & Cover</h2>
+                            <p className="text-sm text-neutral-600">
+                                Titelbild, Upload und Reihenfolge direkt bei den wichtigsten Produktdaten.
+                            </p>
+                        </div>
+                        {mode === "create" ? (
+                            <ImagePanel initialImages={[]} onChangeLocal={setLocalImages} />
+                        ) : itemId ? (
+                            <ImagePanel itemId={itemId} initialImages={props.initialImages ?? []} />
+                        ) : null}
+                    </section>
+
+                    <details className={sectionClassName}>
+                        <summary className="flex cursor-pointer items-center justify-between list-none select-none">
+                            <div>
+                                <h2 className="text-base font-semibold">Preis & Zusatzkosten</h2>
+                                <p className="text-sm text-neutral-600">
+                                    Preisdarstellung plus pflegbare Hinweise zu Kaution und Nebenkosten.
+                                </p>
+                            </div>
+                            <ChevronDown className="h-5 w-5 text-slate-400 transition-transform group-open:rotate-180 duration-200" />
+                        </summary>
+
+                        <div className="grid gap-4 md:grid-cols-2">
                             <div className="space-y-1 md:col-span-2">
                                 <label className="text-sm font-medium">Custom price label (optional)</label>
                                 <input
@@ -417,9 +531,6 @@ export default function ItemForm(props: {
                                 </p>
                             </div>
 
-                            <div className="rounded-md bg-neutral-50 px-3 py-2 text-sm text-neutral-700 md:col-span-2">
-                                Preview: <span className="font-medium">{previewPrice}</span>
-                            </div>
                         </div>
 
                         <div className="grid gap-4 md:grid-cols-2">
@@ -584,15 +695,18 @@ export default function ItemForm(props: {
                                 />
                             </div>
                         </div>
-                    </section>
+                    </details>
 
-                    <section className={sectionClassName}>
-                        <div>
-                            <h2 className="text-base font-semibold">Lieferung, Abholung & Anforderungen</h2>
-                            <p className="text-sm text-neutral-600">
-                                Verfuegbarkeit und Hinweise fuer Logistik, Nutzung und Aufbau.
-                            </p>
-                        </div>
+                    <details className={sectionClassName}>
+                        <summary className="flex cursor-pointer items-center justify-between list-none select-none">
+                            <div>
+                                <h2 className="text-base font-semibold">Lieferung, Abholung & Anforderungen</h2>
+                                <p className="text-sm text-neutral-600">
+                                    Verfuegbarkeit und Hinweise fuer Logistik, Nutzung und Aufbau.
+                                </p>
+                            </div>
+                            <ChevronDown className="h-5 w-5 text-slate-400 transition-transform group-open:rotate-180 duration-200" />
+                        </summary>
 
                         <div className="grid gap-4 md:grid-cols-2">
                             <div className="space-y-1">
@@ -690,15 +804,18 @@ export default function ItemForm(props: {
                                 />
                             </div>
                         </div>
-                    </section>
+                    </details>
 
-                    <section className={sectionClassName}>
-                        <div>
-                            <h2 className="text-base font-semibold">Bestand</h2>
-                            <p className="text-sm text-neutral-600">
-                                Definiert, wie viele Einheiten dieses Produkts gleichzeitig für denselben Zeitraum angefragt werden dürfen.
-                            </p>
-                        </div>
+                    <details className={sectionClassName}>
+                        <summary className="flex cursor-pointer items-center justify-between list-none select-none">
+                            <div>
+                                <h2 className="text-base font-semibold">Bestand</h2>
+                                <p className="text-sm text-neutral-600">
+                                    Definiert, wie viele Einheiten dieses Produkts gleichzeitig für denselben Zeitraum angefragt werden dürfen.
+                                </p>
+                            </div>
+                            <ChevronDown className="h-5 w-5 text-slate-400 transition-transform group-open:rotate-180 duration-200" />
+                        </summary>
 
                         <div className="grid gap-4 md:grid-cols-2">
                             <label className="flex items-center gap-2 rounded-md border px-3 py-3 text-sm">
@@ -728,31 +845,16 @@ export default function ItemForm(props: {
                                 </p>
                             </div>
                         </div>
-                    </section>
-
-                    <section className={sectionClassName}>
-                        <div>
-                            <h2 className="text-base font-semibold">Status</h2>
-                        </div>
-
-                        <label className="flex items-center gap-2 text-sm">
-                            <input
-                                type="checkbox"
-                                checked={formState.published}
-                                onChange={(e) => updateField("published", e.target.checked)}
-                            />
-                            Published
-                        </label>
-                    </section>
+                    </details>
 
                     {error && <p className="text-sm text-red-600">{error}</p>}
 
                     <div className="flex gap-2">
                         <button
                             disabled={saving || !canSave || categories.length === 0}
-                            className="rounded-md bg-black px-4 py-2 text-sm text-white disabled:opacity-60"
+                            className="h-10 rounded-xl bg-blue-600 px-5 text-sm font-semibold text-white shadow-sm shadow-blue-600/20 transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
                         >
-                            {saving ? "Saving..." : "Save"}
+                            {saving ? "Speichert..." : "Speichern"}
                         </button>
 
                         {mode === "edit" && (
@@ -760,20 +862,14 @@ export default function ItemForm(props: {
                                 type="button"
                                 onClick={onDelete}
                                 disabled={deleting}
-                                className="rounded-md border px-4 py-2 text-sm disabled:opacity-60"
+                                className="h-10 rounded-xl border border-red-200 bg-white px-4 text-sm font-medium text-red-600 transition-colors hover:bg-red-50 disabled:opacity-60"
                             >
-                                {deleting ? "Deleting..." : "Delete"}
+                                {deleting ? "Löscht..." : "Löschen"}
                             </button>
                         )}
                     </div>
                 </form>
             )}
-
-            {mode === "create" ? (
-                <ImagePanel initialImages={[]} onChangeLocal={setLocalImages} />
-            ) : itemId ? (
-                <ImagePanel itemId={itemId} initialImages={props.initialImages ?? []} />
-            ) : null}
         </div>
     );
 }

@@ -168,9 +168,9 @@ export function ProductCard({
                         noteClassName="font-['Nunito'] text-[12px] leading-[18px] text-[#64748b]"
                     />
                 </div>
-                <div className="mt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <div className="mt-2 flex items-center gap-3">
                     <Link href={`/produkt/${slug}`} className="flex-1">
-                        <span style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="flex items-center justify-center w-full bg-gradient-to-r from-[#066bb7] to-[#1a3a52] text-white shadow-md shadow-blue-500/20 py-2.5 rounded-full text-base sm:text-lg transition-all duration-200 active:scale-[0.97] transform-gpu hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5">
+                        <span style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="flex items-center justify-center w-full h-[50px] bg-gradient-to-r from-[#066bb7] to-[#1a3a52] text-white shadow-md shadow-blue-500/20 rounded-full text-base sm:text-lg transition-all duration-200 active:scale-[0.97] transform-gpu hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5">
                             🔍 Details
                         </span>
                     </Link>

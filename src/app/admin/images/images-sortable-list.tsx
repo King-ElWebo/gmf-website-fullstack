@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import SortableRowList from "../_components/sortable-row-list";
 
 type GlobalImageRow = {
@@ -12,6 +13,32 @@ type GlobalImageRow = {
 };
 
 export default function ImagesSortableList({ initialImages }: { initialImages: GlobalImageRow[] }) {
+    const router = useRouter();
+
+    const handleDelete = async (id: string, alt: string | null) => {
+        const identifier = alt ? `"${alt}"` : "dieses Bild";
+        if (!window.confirm(`Möchten Sie ${identifier} wirklich löschen?`)) {
+            return;
+        }
+
+        try {
+            const res = await fetch(`/api/admin/images/${id}`, {
+                method: "DELETE",
+            });
+
+            if (!res.ok) {
+                const data = await res.json().catch(() => ({}));
+                alert(data.error || "Löschen fehlgeschlagen.");
+                return;
+            }
+
+            router.refresh();
+        } catch (err) {
+            console.error("Delete error:", err);
+            alert("Ein unerwarteter Fehler ist aufgetreten.");
+        }
+    };
+
     return (
         <SortableRowList
             items={initialImages}
@@ -51,9 +78,18 @@ export default function ImagesSortableList({ initialImages }: { initialImages: G
                 },
             ]}
             renderActions={(image) => (
-                <Link className="font-medium text-blue-600 hover:text-blue-800" href={`/admin/images/${image.id}/edit`}>
-                    Bearbeiten
-                </Link>
+                <div className="flex items-center gap-3">
+                    <Link className="font-medium text-blue-600 hover:text-blue-800" href={`/admin/images/${image.id}/edit`}>
+                        Bearbeiten
+                    </Link>
+                    <button
+                        type="button"
+                        onClick={() => handleDelete(image.id, image.alt)}
+                        className="font-medium text-red-600 hover:text-red-800 transition-colors"
+                    >
+                        Löschen
+                    </button>
+                </div>
             )}
             onReorder={async (orderedIds) => {
                 const res = await fetch("/api/admin/images/reorder", {

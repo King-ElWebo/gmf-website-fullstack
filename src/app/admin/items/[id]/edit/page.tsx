@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { listCategories } from "@/lib/repositories/categories";
 import { getItemById } from "@/lib/repositories/items";
 import { listByItemId } from "@/lib/repositories/item-images";
+import { listCatalogTypes } from "@/lib/repositories/catalog-types";
 import ItemForm from "../../_components/item-form";
 
 export default async function EditItemPage({
@@ -15,10 +16,11 @@ export default async function EditItemPage({
     const { uploadError } = await searchParams;
     if (!id || typeof id !== "string") return notFound();
 
-    const [categories, item, images] = await Promise.all([
+    const [categories, item, images, catalogTypes] = await Promise.all([
         listCategories(),
         getItemById(id),
         listByItemId(id),
+        listCatalogTypes(),
     ]);
     if (!item) return notFound();
 
@@ -27,11 +29,13 @@ export default async function EditItemPage({
             mode="edit"
             itemId={item.id}
             initialError={typeof uploadError === "string" ? uploadError : undefined}
+            catalogTypes={catalogTypes.map((ct) => ({ id: ct.id, name: ct.name }))}
             categories={categories.map((c) => ({
                 id: c.id,
                 name: c.name,
                 slug: c.slug,
                 catalogTypeName: c.catalogType.name,
+                catalogTypeId: c.catalogTypeId,
             }))}
             initialImages={images}
             initial={{

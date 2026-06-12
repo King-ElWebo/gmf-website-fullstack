@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { listGlobalImages, createGlobalImage } from "@/lib/repositories/global-images";
 import { DisplayArea } from "@/lib/display-area";
 import storage from "@/lib/storage";
@@ -62,6 +63,9 @@ export async function POST(req: NextRequest) {
             const image = await createGlobalImage(url, key, area, alt ?? undefined, published);
             savedImages.push(image);
         }
+
+        revalidatePath("/admin/images");
+        revalidatePath("/");
 
         return NextResponse.json({ images: savedImages }, { status: 201 });
     } catch (err) {

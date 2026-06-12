@@ -298,11 +298,11 @@ export default function ImagePanel({
     const coverId = images[0]?.id ?? null;
 
     return (
-        <div className="mt-6 space-y-3 border-t pt-4">
-            <h2 className="text-base font-semibold">Bilder</h2>
+        <div className="space-y-4">
+            <h2 className="text-base font-semibold text-slate-950">Bilder</h2>
 
-            <div className="flex items-center gap-2">
-                <label className="cursor-pointer rounded-md border px-3 py-1.5 text-sm hover:bg-neutral-50">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <label className="inline-flex h-10 cursor-pointer items-center justify-center rounded-xl bg-blue-600 px-4 text-sm font-semibold text-white shadow-sm shadow-blue-600/20 transition-colors hover:bg-blue-700">
                     {uploading ? "Lädt hoch..." : "Bilder wählen..."}
                     <input
                         type="file"
@@ -313,7 +313,7 @@ export default function ImagePanel({
                         className="sr-only"
                     />
                 </label>
-                                <span className="text-xs text-neutral-500">
+                                <span className="text-xs text-slate-500">
                     Max. {formatBytes(ITEM_UPLOAD_MAX_FILE_BYTES)} pro Datei, max. {formatBytes(ITEM_UPLOAD_MAX_BATCH_BYTES)} pro Upload.
                 </span>
             </div>

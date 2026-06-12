@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { addImages, listByItemId } from "@/lib/repositories/item-images";
 import storage from "@/lib/storage";
 import { ITEM_UPLOAD_MAX_BATCH_BYTES, validateItemUploadFiles } from "@/lib/uploads/item-upload-limits";
@@ -73,6 +74,8 @@ export async function POST(
         );
 
         const images = await addImages(id, saved);
+        revalidatePath("/");
+        revalidatePath("/produkte");
         return NextResponse.json({ images }, { status: 201 });
     } catch (e) {
         console.error("[images POST] save/db error:", e);

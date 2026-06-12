@@ -46,7 +46,7 @@ export default async function HomePage() {
         "Hüpfburgen und Eventmodule für Ihre Feier. Einfach buchen, sicher aufbauen, Spaß haben.";
 
     return (
-        <div className="min-h-screen bg-[#fffdf8]">
+        <div className="min-h-screen bg-[var(--gmf-surface-cream)]">
             <HeroCarousel
                 images={heroCarouselImages}
                 title={heroTitle}
@@ -67,12 +67,9 @@ export default async function HomePage() {
                 }))}
             />
 
-            {/* === Willkommenstext === */}
+            {/* === Willkommenstext === Surface B: Cream Accent */}
             <section className="relative py-20 sm:py-28 overflow-hidden">
-                {/* Subtle warm gradient background */}
-                <div className="absolute inset-0 bg-gradient-to-b from-[#fffdf8] via-[#fef9e7] to-[#fdf2d1]" />
-                {/* Decorative confetti dots */}
-                <div className="absolute inset-0 gmf-dots-pattern pointer-events-none" />
+                <div className="absolute inset-0 bg-[var(--gmf-surface-cream-accent)]" />
 
                 <div className="relative max-w-[850px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#f13c20] to-[#ff7a3d] text-white px-5 py-2 rounded-full text-[13px] font-bold uppercase tracking-widest mb-8 shadow-lg shadow-red-500/20">
@@ -101,10 +98,9 @@ export default async function HomePage() {
                 </div>
             </section>
 
-            {/* === So funktioniert's === */}
+            {/* === So funktioniert's === Surface C: Blue Accent */}
             <section className="relative py-16 sm:py-24 overflow-hidden">
-                {/* Warm gradient background */}
-                <div className="absolute inset-0 bg-gradient-to-br from-[#fff4e6] via-[#fef9e7] to-[#e8f4fd]" />
+                <div className="absolute inset-0 bg-gradient-to-b from-[var(--gmf-surface-blue-light)] to-[var(--gmf-surface-blue-light-end)]" />
 
                 <div className="relative max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-10 sm:mb-14">
@@ -119,7 +115,7 @@ export default async function HomePage() {
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
                         {/* Step 1 */}
-                        <div className="bg-white rounded-[28px] p-7 sm:p-8 text-center shadow-lg shadow-red-500/5 border border-red-50 hover:-translate-y-2 hover:shadow-xl hover:shadow-red-500/10 transition-all duration-300 relative group">
+                        <div className="bg-white rounded-[28px] p-7 sm:p-8 text-center shadow-lg shadow-blue-500/5 border border-white/80 hover:-translate-y-2 hover:shadow-xl hover:shadow-blue-500/10 transition-all duration-300 relative group">
                             <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-12 h-12 bg-gradient-to-br from-[#f13c20] to-[#ff7a3d] rounded-2xl rotate-3 flex items-center justify-center shadow-lg shadow-red-500/30 group-hover:rotate-6 transition-transform">
                                 <span style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[22px] text-white">1</span>
                             </div>
@@ -133,7 +129,7 @@ export default async function HomePage() {
                         </div>
 
                         {/* Step 2 */}
-                        <div className="bg-white rounded-[28px] p-7 sm:p-8 text-center shadow-lg shadow-yellow-500/5 border border-yellow-50 hover:-translate-y-2 hover:shadow-xl hover:shadow-yellow-500/10 transition-all duration-300 relative group mt-6 md:mt-0">
+                        <div className="bg-white rounded-[28px] p-7 sm:p-8 text-center shadow-lg shadow-blue-500/5 border border-white/80 hover:-translate-y-2 hover:shadow-xl hover:shadow-blue-500/10 transition-all duration-300 relative group mt-6 md:mt-0">
                             <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-12 h-12 bg-gradient-to-br from-[#fcd01b] to-[#ff7a3d] rounded-2xl -rotate-3 flex items-center justify-center shadow-lg shadow-yellow-500/30 group-hover:-rotate-6 transition-transform">
                                 <span style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[22px] text-[#332600]">2</span>
                             </div>
@@ -147,7 +143,7 @@ export default async function HomePage() {
                         </div>
 
                         {/* Step 3 */}
-                        <div className="bg-white rounded-[28px] p-7 sm:p-8 text-center shadow-lg shadow-blue-500/5 border border-blue-50 hover:-translate-y-2 hover:shadow-xl hover:shadow-blue-500/10 transition-all duration-300 relative group mt-6 md:mt-0">
+                        <div className="bg-white rounded-[28px] p-7 sm:p-8 text-center shadow-lg shadow-blue-500/5 border border-white/80 hover:-translate-y-2 hover:shadow-xl hover:shadow-blue-500/10 transition-all duration-300 relative group mt-6 md:mt-0">
                             <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-12 h-12 bg-gradient-to-br from-[#066bb7] to-[#1a3a52] rounded-2xl rotate-3 flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:rotate-6 transition-transform">
                                 <span style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[22px] text-white">3</span>
                             </div>
@@ -163,9 +159,9 @@ export default async function HomePage() {
                 </div>
             </section>
 
-            {/* === Standort & Abholung === */}
+            {/* === Standort & Abholung === Surface A: Cream Base */}
             <section className="relative py-16 sm:py-24 overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-b from-[#fffdf8] to-[#f0f7ff]" />
+                <div className="absolute inset-0 bg-[var(--gmf-surface-cream)]" />
                 <div className="relative max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-10 sm:mb-14">
                         <span className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-6 py-2 rounded-full text-[13px] font-bold uppercase tracking-widest text-[#066bb7] border border-blue-100 shadow-sm mb-6">
@@ -184,7 +180,7 @@ export default async function HomePage() {
                                     Selbstabholung ist nach Vereinbarung nur bei dafür geeigneten Produkten (z.B. Kleinmaterial oder Technik) möglich. Hüpfburgen werden in der Regel direkt durch uns angeliefert. Die Liefer- und Anfahrtskosten werden individuell anhand der Entfernung berechnet.
                                 </p>
                             </div>
-                            <div className="space-y-3 bg-[#fef9e7] rounded-2xl p-5 border border-yellow-100">
+                            <div className="space-y-3 bg-[var(--gmf-surface-cream-accent)] rounded-2xl p-5 border border-yellow-100">
                                 <p className="font-['Nunito'] text-[14px] text-[#2d3748]">
                                     <strong>📍 Adresse:</strong> {settings.address?.trim() || COMPANY_CONFIG.address}
                                 </p>
@@ -192,12 +188,12 @@ export default async function HomePage() {
                                     <strong>🕐 Öffnungszeiten:</strong> {settings.openingHours?.trim() || "nach telefonischer Vereinbarung"}
                                 </p>
                                 {settings.phone && (
-                                    <div className="font-['Nunito'] text-[14px] text-[#2d3748] flex items-center gap-1 break-all">
+                                    <div className="font-['Nunito'] text-[14px] text-[#2d3748] flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
                                         <strong>📞 Telefon:</strong> <CopyableContact value={settings.phone} type="phone" textClassName="text-[#2d3748]" />
                                     </div>
                                 )}
                                 {settings.email && (
-                                    <div className="font-['Nunito'] text-[14px] text-[#2d3748] flex items-center gap-1 break-all">
+                                    <div className="font-['Nunito'] text-[14px] text-[#2d3748] flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
                                         <strong>✉️ E-Mail:</strong> <CopyableContact value={settings.email} type="email" textClassName="text-[#2d3748]" />
                                     </div>
                                 )}
@@ -220,22 +216,22 @@ export default async function HomePage() {
                 </div>
             </section>
 
-            {/* === Impressionen === */}
+            {/* === Impressionen === Surface D: Brand Dark (Footer-adjacent) */}
             {(socialPreviewImages.length > 0 || socialLinks.length > 0) && (
                 <section className="relative py-16 sm:py-24 overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-b from-[#f0f7ff] via-[#fef9e7] to-[#fffdf8]" />
-                    <div className="absolute inset-0 gmf-dots-pattern pointer-events-none" />
+                    <div className="absolute inset-0 bg-gradient-to-b from-[var(--gmf-surface-dark)] to-[var(--gmf-surface-dark-deep)]" />
+                    <div className="absolute inset-0 gmf-dots-pattern-light pointer-events-none" />
 
                     <div className="relative max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="text-center mb-10 sm:mb-14">
-                            <span className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-6 py-2 rounded-full text-[13px] font-bold uppercase tracking-widest text-[#d43ca5] border border-pink-100 shadow-sm mb-6">
+                            <span className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-6 py-2 rounded-full text-[13px] font-bold uppercase tracking-widest text-[var(--gmf-surface-dark-highlight)] border border-white/10 shadow-sm mb-6">
                                 <Heart size={16} />
                                 Einblicke
                             </span>
-                            <h2 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[clamp(1.8rem,6vw,2.8rem)] text-[#1a3a52]">
+                            <h2 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[clamp(1.8rem,6vw,2.8rem)] text-[var(--gmf-surface-dark-heading)]">
                                 📸 Impressionen unserer Eventmodule
                             </h2>
-                            <p className="font-['Nunito'] text-[15px] sm:text-[16px] text-[#64748b] mt-3 max-w-[600px] mx-auto">
+                            <p className="font-['Nunito'] text-[15px] sm:text-[16px] text-[var(--gmf-surface-dark-muted)] mt-3 max-w-[600px] mx-auto">
                                 Einblicke in unser Sortiment und Inspirationen für Ihre nächste Feier.
                             </p>
                         </div>
@@ -245,7 +241,7 @@ export default async function HomePage() {
                                 {socialPreviewImages.map((image, idx) => (
                                     <div
                                         key={image.id}
-                                        className="relative bg-white rounded-[20px] aspect-square border border-white shadow-lg shadow-blue-500/5 overflow-hidden group hover:-translate-y-1 hover:shadow-xl transition-all duration-300"
+                                        className="relative rounded-[20px] aspect-square border-2 border-white/10 shadow-lg shadow-black/20 overflow-hidden group hover:-translate-y-1 hover:shadow-xl hover:border-[var(--gmf-surface-dark-highlight)]/30 transition-all duration-300"
                                         style={{ transform: `rotate(${idx % 2 === 0 ? -1 : 1}deg)` }}
                                     >
                                         <Image
@@ -267,10 +263,10 @@ export default async function HomePage() {
                                         href={instagramLink.url}
                                         target="_blank"
                                         rel="noreferrer"
-                                        className="flex min-h-12 items-center gap-2.5 bg-white px-6 py-3 rounded-full shadow-md shadow-pink-500/10 border border-pink-100 hover:-translate-y-1 hover:shadow-lg hover:shadow-pink-500/20 hover:border-pink-200 transition-all duration-200"
+                                        className="flex min-h-12 items-center gap-2.5 bg-white/10 backdrop-blur-sm px-6 py-3 rounded-full shadow-md shadow-black/10 border border-white/10 hover:-translate-y-1 hover:shadow-lg hover:bg-white/15 hover:border-[var(--gmf-surface-dark-highlight)]/30 transition-all duration-200"
                                     >
-                                        <Instagram size={20} className="text-[#d43ca5]" />
-                                        <span className="font-['Nunito'] font-bold text-[15px] text-[#1a3a52]">
+                                        <Instagram size={20} className="text-[#f66fae]" />
+                                        <span className="font-['Nunito'] font-bold text-[15px] text-white">
                                             {instagramLink.label?.trim() || "Instagram"}
                                         </span>
                                     </a>
@@ -280,10 +276,10 @@ export default async function HomePage() {
                                         href={facebookLink.url}
                                         target="_blank"
                                         rel="noreferrer"
-                                        className="flex min-h-12 items-center gap-2.5 bg-white px-6 py-3 rounded-full shadow-md shadow-blue-500/10 border border-blue-100 hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-500/20 hover:border-blue-200 transition-all duration-200"
+                                        className="flex min-h-12 items-center gap-2.5 bg-white/10 backdrop-blur-sm px-6 py-3 rounded-full shadow-md shadow-black/10 border border-white/10 hover:-translate-y-1 hover:shadow-lg hover:bg-white/15 hover:border-[var(--gmf-surface-dark-highlight)]/30 transition-all duration-200"
                                     >
-                                        <Facebook size={20} className="text-[#066bb7]" />
-                                        <span className="font-['Nunito'] font-bold text-[15px] text-[#1a3a52]">
+                                        <Facebook size={20} className="text-[#66b3ff]" />
+                                        <span className="font-['Nunito'] font-bold text-[15px] text-white">
                                             {facebookLink.label?.trim() || "Facebook"}
                                         </span>
                                     </a>
