@@ -8,6 +8,7 @@ import { getItemPriceDisplay } from "@/lib/items/price";
 import ImagePanel from "./image-panel";
 import { readErrorMessageFromResponse } from "@/lib/http/error-response";
 import { validateItemUploadFiles } from "@/lib/uploads/item-upload-limits";
+import { clientOptimizeImage } from "@/lib/images/client-optimize";
 
 type CategoryOption = { id: string; name: string; slug: string; catalogTypeName?: string; catalogTypeId: string };
 type PriceType = "FIXED" | "ON_REQUEST" | "FROM_PRICE";
@@ -246,7 +247,10 @@ export default function ItemForm(props: {
             try {
                 const fd = new FormData();
                 for (const image of localImages) {
-                    if (image.file) fd.append("files", image.file);
+                    if (image.file) {
+                        const optimized = await clientOptimizeImage(image.file);
+                        fd.append("files", optimized);
+                    }
                 }
                 const imgRes = await fetch(`/api/admin/items/${targetId}/images`, {
                     method: "POST",

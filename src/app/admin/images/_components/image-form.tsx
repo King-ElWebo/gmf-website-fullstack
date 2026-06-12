@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { DisplayArea } from "@/lib/display-area";
+import { clientOptimizeImage } from "@/lib/images/client-optimize";
 
 type ImageFormProps = {
     mode: "create" | "edit";
@@ -61,7 +62,8 @@ export default function ImageForm({ mode, initialData }: ImageFormProps) {
 
                 const fd = new FormData();
                 for (let i = 0; i < files.length; i += 1) {
-                    fd.append("files", files[i]);
+                    const optimized = await clientOptimizeImage(files[i]);
+                    fd.append("files", optimized);
                 }
                 fd.append("alt", alt);
                 fd.append("area", area);
@@ -83,7 +85,8 @@ export default function ImageForm({ mode, initialData }: ImageFormProps) {
 
                 if (files && files.length > 0) {
                     const fd = new FormData();
-                    fd.append("file", files[0]);
+                    const optimized = await clientOptimizeImage(files[0]);
+                    fd.append("file", optimized);
                     fd.append("alt", alt);
                     fd.append("area", area);
                     fd.append("published", published.toString());

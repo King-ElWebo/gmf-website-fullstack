@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useMemo, useRef, useState } from "react";
 import { slugify } from "@/lib/slug";
+import { clientOptimizeImage } from "@/lib/images/client-optimize";
 
 type CatalogTypeOption = {
     id: string;
@@ -78,7 +79,10 @@ export default function CategoryForm({ mode, category, catalogTypes }: CategoryF
         if (mode === "edit") {
             formData.append("removeImage", removeImage ? "true" : "false");
         }
-        if (imageFile) formData.append("image", imageFile);
+        if (imageFile) {
+            const optimized = await clientOptimizeImage(imageFile);
+            formData.append("image", optimized);
+        }
 
         const res = await fetch(mode === "create" ? "/api/admin/categories" : `/api/admin/categories/${category?.id}`, {
             method: mode === "create" ? "POST" : "PATCH",

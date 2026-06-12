@@ -23,6 +23,7 @@ import {
     formatBytes,
     validateItemUploadFiles,
 } from "@/lib/uploads/item-upload-limits";
+import { clientOptimizeImage } from "@/lib/images/client-optimize";
 
 export type ImageRow = {
     id: string;
@@ -186,7 +187,8 @@ export default function ImagePanel({
 
             const fd = new FormData();
             for (const file of files) {
-                fd.append("files", file);
+                const optimized = await clientOptimizeImage(file);
+                fd.append("files", optimized);
             }
 
             const res = await fetch(`/api/admin/items/${itemId}/images`, {
