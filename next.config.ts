@@ -4,6 +4,9 @@ const nextConfig: NextConfig = {
   experimental: {
     proxyClientMaxBodySize: "50mb",
   },
+  outputFileTracingExcludes: {
+    "*": ["public/uploads/**/*"],
+  },
   images: {
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 2678400,

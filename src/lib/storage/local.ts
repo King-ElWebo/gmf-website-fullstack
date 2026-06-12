@@ -8,7 +8,9 @@ class LocalStorage implements StorageProvider {
 
     constructor() {
         // public/uploads – Next.js serves this as /uploads/<file>
-        this.uploadDir = path.join(process.cwd(), "public", "uploads");
+        // Use a dynamic variable to bypass Next.js static trace analysis
+        const folder = "uploads";
+        this.uploadDir = path.join(process.cwd(), "public", folder);
     }
 
     async save(file: File): Promise<{ url: string; key: string }> {
