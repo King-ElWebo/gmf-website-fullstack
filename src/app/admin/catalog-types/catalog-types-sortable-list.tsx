@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import SortableRowList from "../_components/sortable-row-list";
+import { AdminBadge } from "../_components/ui/AdminBadge";
+import { AdminButton } from "../_components/ui/AdminButton";
 
 type CatalogTypeRow = {
     id: string;
@@ -65,9 +67,9 @@ export default function CatalogTypesSortableList({ initialCatalogTypes }: { init
                     key: "status",
                     header: "Status",
                     render: (type) => (
-                        <span className={`admin-badge ${type.isActive ? "admin-badge-green" : "admin-badge-neutral"}`}>
+                        <AdminBadge variant={type.isActive ? "green" : "gray"}>
                             {type.isActive ? "Active" : "Inactive"}
-                        </span>
+                        </AdminBadge>
                     ),
                 },
                 {
@@ -78,16 +80,18 @@ export default function CatalogTypesSortableList({ initialCatalogTypes }: { init
             ]}
             renderActions={(type) => (
                 <div className="flex items-center gap-3">
-                    <Link className="font-medium text-blue-600 hover:text-blue-800" href={`/admin/catalog-types/${type.id}/edit`}>
-                        Bearbeiten
+                    <Link href={`/admin/catalog-types/${type.id}/edit`}>
+                        <AdminButton variant="secondary" size="sm">
+                            Bearbeiten
+                        </AdminButton>
                     </Link>
-                    <button
-                        type="button"
+                    <AdminButton
+                        variant="danger"
+                        size="sm"
                         onClick={() => handleDelete(type.id, type.name)}
-                        className="font-medium text-red-600 hover:text-red-800 transition-colors"
                     >
                         Löschen
-                    </button>
+                    </AdminButton>
                 </div>
             )}
             onReorder={async (orderedIds) => {

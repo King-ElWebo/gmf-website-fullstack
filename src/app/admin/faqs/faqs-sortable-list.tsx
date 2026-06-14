@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import SortableRowList from "../_components/sortable-row-list";
+import { AdminBadge } from "../_components/ui/AdminBadge";
+import { AdminButton } from "../_components/ui/AdminButton";
 
 type FaqRow = {
     id: string;
@@ -58,24 +60,26 @@ export default function FaqsSortableList({ initialFaqs }: { initialFaqs: FaqRow[
                     header: "Status",
                     render: (faq) =>
                         faq.published ? (
-                            <span className="admin-badge admin-badge-green">Published</span>
+                            <AdminBadge variant="green">Published</AdminBadge>
                         ) : (
-                            <span className="admin-badge admin-badge-neutral">Draft</span>
+                            <AdminBadge variant="gray">Draft</AdminBadge>
                         ),
                 },
             ]}
             renderActions={(faq) => (
                 <div className="flex items-center gap-3">
-                    <Link className="font-medium text-blue-600 hover:text-blue-800" href={`/admin/faqs/${faq.id}/edit`}>
-                        Bearbeiten
+                    <Link href={`/admin/faqs/${faq.id}/edit`}>
+                        <AdminButton variant="secondary" size="sm">
+                            Bearbeiten
+                        </AdminButton>
                     </Link>
-                    <button
-                        type="button"
+                    <AdminButton
+                        variant="danger"
+                        size="sm"
                         onClick={() => handleDelete(faq.id, faq.question)}
-                        className="font-medium text-red-600 hover:text-red-800 transition-colors"
                     >
                         Löschen
-                    </button>
+                    </AdminButton>
                 </div>
             )}
             onReorder={async (orderedIds) => {

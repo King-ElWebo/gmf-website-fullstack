@@ -65,9 +65,23 @@ export default async function DatenschutzPage() {
                     </section>
 
                     <section>
-                        <h2 className="mb-2 font-['Nunito'] text-[20px] font-semibold text-[#1a202c]">7. Cookies und Drittanbieter</h2>
+                        <h2 className="mb-2 font-['Nunito'] text-[20px] font-semibold text-[#1a202c]">7. Cookies und Einwilligungsmanagement</h2>
+                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568] mb-3">
+                            Wir setzen auf dieser Website Cookies und ähnliche Technologien ein. Diese lassen sich in folgende Kategorien unterteilen:
+                        </p>
+                        <ul className="list-disc pl-5 font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568] mb-3 space-y-2">
+                            <li>
+                                <strong>Essenziell:</strong> Diese Cookies sind technisch notwendig für den Betrieb der Website (z. B. Speicherung Ihres Anfragekorbs, Admin-Login, Speicherung Ihrer Cookie-Einwilligung). Sie können nicht deaktiviert werden.
+                            </li>
+                            <li>
+                                <strong>Analytics & Statistiken:</strong> Optionale Cookies (z. B. Google Analytics), die uns helfen zu verstehen, wie Besucher mit unserer Website interagieren. Diese werden <strong>nur</strong> gesetzt, wenn Sie explizit über unser Cookie-Banner zustimmen.
+                            </li>
+                            <li>
+                                <strong>Marketing:</strong> Optionale Cookies von Drittanbietern (z. B. für Werbeanzeigen). Auch diese werden <strong>nur nach Ihrer ausdrücklichen Zustimmung</strong> geladen.
+                            </li>
+                        </ul>
                         <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">
-                            Wir setzen auf dieser Website nur technisch notwendige Cookies ein (z. B. zur Speicherung Ihres Warenkorbs). Es werden keine Tracking- oder Marketing-Cookies von Drittanbietern verwendet. Sofern externe Ressourcen geladen werden, geschieht dies datenschutzkonform, um Ihre Privatsphaehre zu schuetzen.
+                            Sie können Ihre Einwilligung jederzeit für die Zukunft widerrufen oder anpassen, indem Sie auf den Link „Cookie-Einstellungen“ am unteren Rand der Website klicken. Wir verwenden außerdem den Google Consent Mode v2, der sicherstellt, dass vor Ihrer Zustimmung keine nutzerbezogenen Daten an Google-Dienste gesendet werden.
                         </p>
                     </section>
 

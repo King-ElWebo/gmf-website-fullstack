@@ -140,7 +140,7 @@ export default async function AdminBookingsPage({
   ];
 
   return (
-    <div className="space-y-6 pb-10">
+    <div className="space-y-6">
       <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-neutral-950">Anfragen</h1>
@@ -149,40 +149,40 @@ export default async function AdminBookingsPage({
           </p>
         </div>
 
-        <form action="/admin/bookings" className="flex w-full flex-col gap-2 sm:flex-row xl:w-auto">
+        <form action="/admin/bookings" className="flex w-full flex-col gap-3 sm:flex-row xl:w-auto admin-surface p-2 rounded-2xl items-center">
           {tab && tab !== "active" ? (
             <input type="hidden" name="tab" value={tab} />
           ) : null}
           {status ? (
             <input type="hidden" name="status" value={status} />
           ) : null}
-          <div className="relative min-w-0 sm:min-w-[320px]">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+          <div className="relative min-w-0 flex-1 sm:min-w-[320px]">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <input
               name="q"
               defaultValue={resolvedSearchParams.q ?? ""}
               placeholder="Suche nach Name, E-Mail, Referenz..."
-              className="h-10 w-full rounded-lg border border-neutral-200 bg-white pl-9 pr-3 text-sm shadow-sm outline-none transition focus:border-neutral-400 focus:ring-2 focus:ring-neutral-100"
+              className="h-10 w-full rounded-xl border border-slate-200 bg-white pl-9 pr-3 text-sm outline-none transition focus:border-slate-400"
             />
           </div>
-          <button className="h-10 rounded-lg bg-neutral-950 px-4 text-sm font-medium text-white shadow-sm transition hover:bg-neutral-800">
+          <button className="admin-action-primary px-4 py-2 text-sm h-10 w-full sm:w-auto">
             Suchen
           </button>
         </form>
       </div>
 
       {/* View Tabs switcher */}
-      <div className="flex flex-wrap gap-2 rounded-xl border border-neutral-200 bg-white p-2 shadow-sm">
+      <div className="flex flex-wrap gap-2 admin-surface rounded-[20px] p-2">
         {viewTabs.map((vt) => {
           const isActive = tab === vt.value;
           return (
             <Link
               key={vt.value}
               href={buildFilterUrl(vt.value, status, q)}
-              className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
+              className={`rounded-xl px-4 py-2 text-sm font-medium transition-colors ${
                 isActive
-                  ? "bg-neutral-950 text-white shadow-sm"
-                  : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-950"
+                  ? "bg-blue-50 text-blue-700 shadow-sm border border-blue-100"
+                  : "text-slate-600 hover:bg-slate-50 hover:text-slate-900 border border-transparent"
               }`}
             >
               {vt.label}
@@ -192,8 +192,8 @@ export default async function AdminBookingsPage({
       </div>
 
       {/* Status Filters switcher */}
-      <div className="flex flex-wrap gap-1 items-center rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-xs">
-        <span className="font-semibold uppercase tracking-wider text-neutral-400 mr-2">Status:</span>
+      <div className="flex flex-wrap gap-1 items-center rounded-[20px] border border-slate-200 bg-slate-50 px-3 py-2 text-xs">
+        <span className="font-semibold uppercase tracking-wider text-slate-400 mr-2">Status:</span>
         <div className="flex flex-wrap gap-1.5">
           {statusOptions.map((so) => {
             const isActive = status === so.value;
@@ -201,10 +201,10 @@ export default async function AdminBookingsPage({
               <Link
                 key={so.value || "all-status"}
                 href={buildFilterUrl(tab, so.value, q)}
-                className={`rounded-md px-3 py-1.5 font-medium transition ${
+                className={`rounded-[10px] px-3 py-1.5 font-medium transition-colors ${
                   isActive
-                    ? "bg-white text-neutral-950 font-semibold shadow-xs border border-neutral-200"
-                    : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-950"
+                    ? "bg-white text-slate-900 font-semibold shadow-sm border border-slate-200"
+                    : "text-slate-500 hover:bg-slate-100 hover:text-slate-900 border border-transparent"
                 }`}
               >
                 {so.label}
@@ -214,68 +214,70 @@ export default async function AdminBookingsPage({
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-sm">
-        <div className="grid grid-cols-[1.25fr_1fr_1fr_0.8fr_1fr_1fr_0.7fr] gap-4 border-b border-neutral-200 bg-neutral-50 px-5 py-3 text-xs font-semibold uppercase tracking-wide text-neutral-500 max-lg:hidden">
-          <span>Kunde</span>
-          <span>Zeitraum</span>
-          <span>Status</span>
-          <span>Produkte</span>
-          <span>Preis</span>
-          <span>Erstellt</span>
-          <span className="text-right">Aktion</span>
-        </div>
+      <div className="admin-surface rounded-[28px] p-4 sm:p-5">
+        <div className="admin-table rounded-[26px]">
+          <div className="hidden px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 lg:grid lg:grid-cols-[1.25fr_1fr_1fr_0.8fr_1fr_1fr_0.7fr] lg:gap-4">
+            <span>Kunde</span>
+            <span>Zeitraum</span>
+            <span>Status</span>
+            <span>Produkte</span>
+            <span>Preis</span>
+            <span>Erstellt</span>
+            <span className="text-right">Aktion</span>
+          </div>
 
-        <div className="divide-y divide-neutral-100">
-          {bookings.map((booking) => (
-            <Link
-              key={booking.id}
-              href={`/admin/bookings/${booking.id}`}
-              className={`grid gap-4 px-5 py-4 transition hover:bg-neutral-50 lg:grid-cols-[1.25fr_1fr_1fr_0.8fr_1fr_1fr_0.7fr] lg:items-center ${
-                booking.archivedAt ? "opacity-60 bg-neutral-50/50" : ""
-              }`}
-            >
-              <div>
-                <p className="font-semibold text-neutral-950">{getCustomerName(booking)}</p>
-                <p className="mt-1 text-xs text-neutral-500">{booking.customer?.email || "Keine E-Mail"}</p>
-                <p className="mt-1 text-xs font-medium text-blue-700">{booking.referenceCode}</p>
+          <div>
+            {bookings.map((booking) => (
+              <Link
+                key={booking.id}
+                href={`/admin/bookings/${booking.id}`}
+                className={`grid gap-4 px-5 py-4 transition-colors hover:bg-blue-50/40 border-t border-slate-200/70 bg-white/90 lg:grid-cols-[1.25fr_1fr_1fr_0.8fr_1fr_1fr_0.7fr] lg:items-center ${
+                  booking.archivedAt ? "opacity-60 bg-slate-50/50" : ""
+                }`}
+              >
+                <div>
+                  <p className="font-semibold text-slate-900">{getCustomerName(booking)}</p>
+                  <p className="mt-1 text-xs text-slate-500">{booking.customer?.email || "Keine E-Mail"}</p>
+                  <p className="mt-1 text-xs font-medium text-blue-600">{booking.referenceCode}</p>
+                </div>
+
+                <div className="text-sm text-slate-700">
+                  <span className="font-medium">{formatDate(booking.startDate)}</span>
+                  <span className="text-slate-400"> bis </span>
+                  <span className="font-medium">{formatDate(booking.endDate)}</span>
+                </div>
+
+                <div className="flex flex-col gap-1 items-start">
+                  <BookingStatusBadge status={booking.status} />
+                  {booking.archivedAt && (
+                    <span className="inline-flex items-center gap-1 rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500 border border-slate-200/50">
+                      Archiviert
+                    </span>
+                  )}
+                </div>
+
+                <div className="text-sm text-slate-700">{getProductSummary(booking)}</div>
+
+                <div>
+                  <p className="text-sm font-semibold text-slate-900">{getPriceSummary(booking)}</p>
+                  {booking.hasIndividualPricing ? (
+                    <p className="mt-1 text-xs text-amber-700">Manuelle Kalkulation notig</p>
+                  ) : null}
+                </div>
+
+                <div className="text-sm text-slate-600">{formatDateTime(booking.createdAt)}</div>
+
+                <div className="text-right text-sm font-medium text-blue-600 max-lg:text-left">Details</div>
+              </Link>
+            ))}
+
+            {bookings.length === 0 ? (
+              <div className="px-5 py-14 text-center border-t border-slate-200/70 bg-white/90">
+                <p className="font-medium text-slate-800">Keine Anfragen gefunden.</p>
+                <p className="mt-1 text-sm text-slate-500">Passe Filter oder Suche an.</p>
               </div>
-
-              <div className="text-sm text-neutral-700">
-                <span className="font-medium">{formatDate(booking.startDate)}</span>
-                <span className="text-neutral-400"> bis </span>
-                <span className="font-medium">{formatDate(booking.endDate)}</span>
-              </div>
-
-              <div className="flex flex-col gap-1 items-start">
-                <BookingStatusBadge status={booking.status} />
-                {booking.archivedAt && (
-                  <span className="inline-flex items-center gap-1 rounded bg-neutral-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-neutral-500 border border-neutral-200/50">
-                    Archiviert
-                  </span>
-                )}
-              </div>
-
-              <div className="text-sm text-neutral-700">{getProductSummary(booking)}</div>
-
-              <div>
-                <p className="text-sm font-semibold text-neutral-900">{getPriceSummary(booking)}</p>
-                {booking.hasIndividualPricing ? (
-                  <p className="mt-1 text-xs text-amber-700">Manuelle Kalkulation notig</p>
-                ) : null}
-              </div>
-
-              <div className="text-sm text-neutral-600">{formatDateTime(booking.createdAt)}</div>
-
-              <div className="text-right text-sm font-medium text-blue-700 max-lg:text-left">Details</div>
-            </Link>
-          ))}
-
-          {bookings.length === 0 ? (
-            <div className="px-5 py-14 text-center">
-              <p className="font-medium text-neutral-800">Keine Anfragen gefunden.</p>
-              <p className="mt-1 text-sm text-neutral-500">Passe Filter oder Suche an.</p>
-            </div>
-          ) : null}
+            ) : null}
+          </div>
         </div>
       </div>
     </div>

@@ -9,6 +9,9 @@ import ImagePanel from "./image-panel";
 import { readErrorMessageFromResponse } from "@/lib/http/error-response";
 import { validateItemUploadFiles } from "@/lib/uploads/item-upload-limits";
 import { clientOptimizeImage } from "@/lib/images/client-optimize";
+import { AdminCard } from "../../_components/ui/AdminCard";
+import { AdminField, AdminInput, AdminTextarea, AdminCheckbox, AdminSelect } from "../../_components/ui/AdminInputs";
+import { AdminButton } from "../../_components/ui/AdminButton";
 
 type CategoryOption = { id: string; name: string; slug: string; catalogTypeName?: string; catalogTypeId: string };
 type PriceType = "FIXED" | "ON_REQUEST" | "FROM_PRICE";
@@ -55,11 +58,6 @@ type ItemFormState = {
     categoryId: string;
 };
 
-const sectionClassName = "group space-y-4 rounded-[22px] border border-slate-200 bg-white p-4 shadow-sm sm:p-5";
-const inputClassName = "w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:bg-slate-50 disabled:text-slate-400";
-const textareaClassName = "w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-100";
-const labelClassName = "text-sm font-medium text-slate-700";
-const helperClassName = "text-xs text-slate-500";
 const CLEANING_DEFAULT_TEXT = "Reinigung: 120 € exkl. MwSt. bei grober/mutwilliger Verschmutzung";
 const DRYING_DEFAULT_TEXT = "Trocknung: 165 € netto pro Hüpfburg bei Nässe/Regen";
 
@@ -299,8 +297,13 @@ export default function ItemForm(props: {
     }
 
     return (
-        <div className="max-w-4xl space-y-4">
-            <h1 className="text-2xl font-semibold">{mode === "create" ? "New Item" : "Edit Item"}</h1>
+        <div className="max-w-5xl space-y-6">
+            <div>
+                <h1 className="text-2xl font-semibold text-slate-900">{mode === "create" ? "New Item" : "Edit Item"}</h1>
+                <p className="mt-1 text-sm text-slate-500">
+                    Produktdaten, Preise, Bilder und Bestand für dieses Eventmodul verwalten.
+                </p>
+            </div>
 
             {categories.length === 0 ? (
                 <div className="rounded-md border p-4 text-sm text-neutral-700">
@@ -308,271 +311,162 @@ export default function ItemForm(props: {
                 </div>
             ) : (
                 <form onSubmit={onSave} className="space-y-4">
-                    <div className="sticky top-4 z-20 rounded-[22px] border border-slate-200 bg-white/95 p-3 shadow-lg shadow-slate-900/10 backdrop-blur">
-                        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-                            <div className="min-w-0">
-                                <div className="truncate text-sm font-semibold text-slate-950">
-                                    {formState.title.trim() || "Unbenanntes Produkt"}
-                                </div>
-                                <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-slate-500">
-                                    <span className={`rounded-full px-2.5 py-1 font-semibold ${formState.published ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-600"}`}>
-                                        {formState.published ? "Published" : "Draft"}
-                                    </span>
-                                    <span>{previewPrice}</span>
-                                    {!canSave && <span className="text-amber-700">Pflichtfelder prüfen</span>}
-                                </div>
-                            </div>
-
-                            <div className="flex flex-wrap items-center gap-2">
-                                <label className="inline-flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-medium text-slate-700">
-                                    <input
-                                        type="checkbox"
-                                        checked={formState.published}
-                                        onChange={(e) => updateField("published", e.target.checked)}
-                                    />
-                                    Published
-                                </label>
-
-                                {mode === "edit" && (
-                                    <a
-                                        href={`/produkt/${slug}`}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                        className="inline-flex h-10 items-center justify-center rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
-                                    >
-                                        Öffentliche Seite
-                                    </a>
-                                )}
-
-                                {mode === "edit" && (
-                                    <button
-                                        type="button"
-                                        onClick={onDelete}
-                                        disabled={deleting}
-                                        className="h-10 rounded-xl border border-red-200 bg-white px-4 text-sm font-medium text-red-600 transition-colors hover:bg-red-50 disabled:opacity-60"
-                                    >
-                                        {deleting ? "Löscht..." : "Löschen"}
-                                    </button>
-                                )}
-
-                                <button
-                                    disabled={saving || !canSave || categories.length === 0}
-                                    className="h-10 rounded-xl bg-blue-600 px-5 text-sm font-semibold text-white shadow-sm shadow-blue-600/20 transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
-                                >
-                                    {saving ? "Speichert..." : "Speichern"}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <section className={sectionClassName}>
-                        <div>
-                            <h2 className="text-base font-semibold">Stammdaten & Darstellung</h2>
-                            <p className="text-sm text-neutral-600">
-                                Inhalte fuer Karten, Listen und Produktdetailseiten.
-                            </p>
-                        </div>
-
-                        <div className="grid gap-4 md:grid-cols-2">
-                            <div className="space-y-1 md:col-span-2">
-                                <label className="text-sm font-medium">Titel</label>
-                                <input
-                                    className={inputClassName}
+                    <div className="grid gap-6 lg:grid-cols-2 lg:items-start">
+                        <div className="space-y-6">
+                    <AdminCard title="Stammdaten & Darstellung" description="Inhalte fuer Karten, Listen und Produktdetailseiten.">
+                        <div className="space-y-5">
+                            <AdminField label="Titel" htmlFor="title">
+                                <AdminInput
+                                    id="title"
                                     value={formState.title}
                                     onChange={(e) => updateField("title", e.target.value)}
                                     autoFocus={mode === "create"}
                                 />
+                            </AdminField>
+
+                            <div className="grid gap-4 md:grid-cols-2">
+                                <AdminField label="Katalogtyp" htmlFor="catalogType">
+                                    <AdminSelect
+                                        id="catalogType"
+                                        value={selectedCatalogTypeId}
+                                        onChange={(e) => handleCatalogTypeChange(e.target.value)}
+                                    >
+                                        {props.catalogTypes.map((ct) => (
+                                            <option key={ct.id} value={ct.id}>
+                                                {ct.name}
+                                            </option>
+                                        ))}
+                                    </AdminSelect>
+                                </AdminField>
+
+                                <AdminField label="Kategorie" htmlFor="category">
+                                    <AdminSelect
+                                        id="category"
+                                        value={formState.categoryId}
+                                        onChange={(e) => updateField("categoryId", e.target.value)}
+                                    >
+                                        {filteredCategories.map((category) => (
+                                            <option key={category.id} value={category.id}>
+                                                {category.name} ({category.slug})
+                                            </option>
+                                        ))}
+                                    </AdminSelect>
+                                </AdminField>
                             </div>
 
-                            <div className="space-y-1">
-                                <label className="text-sm font-medium">Katalogtyp</label>
-                                <select
-                                    className={inputClassName}
-                                    value={selectedCatalogTypeId}
-                                    onChange={(e) => handleCatalogTypeChange(e.target.value)}
-                                >
-                                    {props.catalogTypes.map((ct) => (
-                                        <option key={ct.id} value={ct.id}>
-                                            {ct.name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            <div className="space-y-1">
-                                <label className="text-sm font-medium">Kategorie</label>
-                                <select
-                                    className={inputClassName}
-                                    value={formState.categoryId}
-                                    onChange={(e) => updateField("categoryId", e.target.value)}
-                                >
-                                    {filteredCategories.map((category) => (
-                                        <option key={category.id} value={category.id}>
-                                            {category.name} ({category.slug})
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            <div className="space-y-1 md:col-span-2">
-                                <label className="text-sm font-medium">Kurzbeschreibung</label>
-                                <textarea
-                                    className={textareaClassName}
+                            <AdminField label="Kurzbeschreibung" htmlFor="shortDescription">
+                                <AdminTextarea
+                                    id="shortDescription"
                                     rows={3}
                                     value={formState.shortDescription}
                                     onChange={(e) => updateField("shortDescription", e.target.value)}
                                     placeholder="Kurzer Teaser fuer Karten, Listen oder Vorschauen"
                                 />
-                            </div>
+                            </AdminField>
+                            
+                            <AdminField label="Ausführliche Beschreibung" htmlFor="longDescription">
+                                <AdminTextarea
+                                    id="longDescription"
+                                    rows={6}
+                                    value={formState.longDescription}
+                                    onChange={(e) => updateField("longDescription", e.target.value)}
+                                    placeholder="Inhalt fuer die Detailseite"
+                                />
+                            </AdminField>
 
-                            <div className="space-y-1">
-                                <label className={labelClassName}>Preisstatus</label>
-                                <select
-                                    className={inputClassName}
-                                    value={formState.priceType}
-                                    onChange={(e) => updateField("priceType", e.target.value as PriceType)}
-                                >
-                                    <option value="FIXED">Fixed price</option>
-                                    <option value="FROM_PRICE">From price</option>
-                                    <option value="ON_REQUEST">Price on request</option>
-                                </select>
-                            </div>
+                            <AdminField label="Produktvideo-URL" htmlFor="videoUrl">
+                                <AdminInput
+                                    id="videoUrl"
+                                    type="url"
+                                    value={formState.videoUrl}
+                                    onChange={(e) => updateField("videoUrl", e.target.value)}
+                                    placeholder="https://..."
+                                />
+                            </AdminField>
+                        </div>
+                    </AdminCard>
 
-                            {formState.priceType !== "ON_REQUEST" ? (
-                                <div className="space-y-1">
-                                    <label className={labelClassName}>
-                                        {formState.priceType === "FROM_PRICE" ? "Startpreis (Cent)" : "Fixpreis (Cent)"}
-                                    </label>
-                                    <input
-                                        type="number"
-                                        className={inputClassName}
-                                        value={formState.basePriceCents}
-                                        onChange={(e) => updateField("basePriceCents", e.target.value)}
-                                        placeholder="z.B. 4900"
-                                        min={0}
-                                        max={2147483647}
-                                        step={1}
-                                    />
-                                </div>
-                            ) : (
-                                <div className="flex items-end">
-                                    <div className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-600">
-                                        Kein numerischer Preis erforderlich.
+                    <AdminCard title="Preis & Zusatzkosten" description="Preisdarstellung plus pflegbare Hinweise zu Kaution und Nebenkosten.">
+                        <div className="space-y-5">
+                            <div className="grid gap-4 md:grid-cols-2">
+                                <AdminField label="Preisstatus" htmlFor="priceType">
+                                    <AdminSelect
+                                        id="priceType"
+                                        value={formState.priceType}
+                                        onChange={(e) => updateField("priceType", e.target.value as PriceType)}
+                                    >
+                                        <option value="FIXED">Fixed price</option>
+                                        <option value="FROM_PRICE">From price</option>
+                                        <option value="ON_REQUEST">Price on request</option>
+                                    </AdminSelect>
+                                </AdminField>
+
+                                {formState.priceType !== "ON_REQUEST" ? (
+                                    <AdminField 
+                                        label={formState.priceType === "FROM_PRICE" ? "Startpreis (Cent)" : "Fixpreis (Cent)"} 
+                                        htmlFor="basePriceCents"
+                                    >
+                                        <AdminInput
+                                            id="basePriceCents"
+                                            type="number"
+                                            value={formState.basePriceCents}
+                                            onChange={(e) => updateField("basePriceCents", e.target.value)}
+                                            placeholder="z.B. 4900"
+                                            min={0}
+                                            max={2147483647}
+                                            step={1}
+                                        />
+                                    </AdminField>
+                                ) : (
+                                    <div className="flex items-end">
+                                        <div className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-600">
+                                            Kein numerischer Preis erforderlich.
+                                        </div>
                                     </div>
-                                </div>
-                            )}
+                                )}
+                            </div>
 
-                            <div className="rounded-xl border border-blue-100 bg-blue-50 px-3 py-2 text-sm text-blue-900 md:col-span-2">
+                            <div className="rounded-xl border border-blue-100 bg-blue-50 px-3 py-2 text-sm text-blue-900">
                                 Preisvorschau: <span className="font-semibold">{previewPrice}</span>
                             </div>
 
-                            <details className="group md:col-span-2 rounded-xl border border-slate-200 bg-slate-50/60 p-4">
-                                <summary className="flex cursor-pointer items-center justify-between text-sm font-semibold text-slate-800 select-none">
-                                    <span>Beschreibung & Medien</span>
-                                    <ChevronDown className="h-4 w-4 text-slate-400 transition-transform group-open:rotate-180 duration-200" />
-                                </summary>
-                                <div className="mt-4 grid gap-4">
-                                    <div className="space-y-1">
-                                        <label className="text-sm font-medium">Ausfuehrliche Beschreibung</label>
-                                        <textarea
-                                            className={textareaClassName}
-                                            rows={6}
-                                            value={formState.longDescription}
-                                            onChange={(e) => updateField("longDescription", e.target.value)}
-                                            placeholder="Inhalt fuer die Detailseite"
-                                        />
-                                    </div>
-
-                                    <div className="space-y-1">
-                                        <label className="text-sm font-medium">Produktvideo-URL</label>
-                                        <input
-                                            type="url"
-                                            className={inputClassName}
-                                            value={formState.videoUrl}
-                                            onChange={(e) => updateField("videoUrl", e.target.value)}
-                                            placeholder="https://..."
-                                        />
-                                    </div>
-                                </div>
-                            </details>
-                        </div>
-                    </section>
-
-                    <section className={sectionClassName}>
-                        <div>
-                            <h2 className="text-base font-semibold">Bilder & Cover</h2>
-                            <p className="text-sm text-neutral-600">
-                                Titelbild, Upload und Reihenfolge direkt bei den wichtigsten Produktdaten.
-                            </p>
-                        </div>
-                        {mode === "create" ? (
-                            <ImagePanel initialImages={[]} onChangeLocal={setLocalImages} />
-                        ) : itemId ? (
-                            <ImagePanel itemId={itemId} initialImages={props.initialImages ?? []} />
-                        ) : null}
-                    </section>
-
-                    <details className={sectionClassName}>
-                        <summary className="flex cursor-pointer items-center justify-between list-none select-none">
-                            <div>
-                                <h2 className="text-base font-semibold">Preis & Zusatzkosten</h2>
-                                <p className="text-sm text-neutral-600">
-                                    Preisdarstellung plus pflegbare Hinweise zu Kaution und Nebenkosten.
-                                </p>
-                            </div>
-                            <ChevronDown className="h-5 w-5 text-slate-400 transition-transform group-open:rotate-180 duration-200" />
-                        </summary>
-
-                        <div className="grid gap-4 md:grid-cols-2">
-                            <div className="space-y-1 md:col-span-2">
-                                <label className="text-sm font-medium">Custom price label (optional)</label>
-                                <input
-                                    className={inputClassName}
+                            <AdminField label="Custom price label (optional)" htmlFor="priceLabel" helperText="If set, this label overrides the automatic frontend display.">
+                                <AdminInput
+                                    id="priceLabel"
                                     value={formState.priceLabel}
                                     onChange={(e) => updateField("priceLabel", e.target.value)}
                                     placeholder='z.B. "ab 49 EUR" oder "Preis auf Anfrage"'
                                 />
-                                <p className="text-xs text-neutral-600">
-                                    If set, this label overrides the automatic frontend display.
-                                </p>
-                            </div>
+                            </AdminField>
 
-                        </div>
-
-                        <div className="grid gap-4 md:grid-cols-2">
-                            <div className="space-y-3 rounded-md border p-4">
-                                <label className="flex items-center gap-2 text-sm font-medium">
-                                    <input
-                                        type="checkbox"
+                            <div className="grid gap-4 md:grid-cols-2">
+                                <div className="space-y-4 rounded-xl border border-slate-200 bg-slate-50/50 p-4">
+                                    <AdminCheckbox
                                         checked={formState.depositRequired}
                                         onChange={(e) => updateField("depositRequired", e.target.checked)}
+                                        label="Kaution erforderlich"
                                     />
-                                    Kaution erforderlich
-                                </label>
-                                <div className="space-y-1">
-                                    <label className="text-sm font-medium">Kautions-Label</label>
-                                    <input
-                                        className={inputClassName}
-                                        value={formState.depositLabel}
-                                        onChange={(e) => updateField("depositLabel", e.target.value)}
-                                        placeholder="z.B. Kaution zzgl."
-                                    />
+                                    <AdminField label="Kautions-Label" htmlFor="depositLabel">
+                                        <AdminInput
+                                            id="depositLabel"
+                                            value={formState.depositLabel}
+                                            onChange={(e) => updateField("depositLabel", e.target.value)}
+                                            placeholder="z.B. Kaution zzgl."
+                                        />
+                                    </AdminField>
+                                    <AdminField label="Kautions-Hinweis" htmlFor="depositInfo">
+                                        <AdminTextarea
+                                            id="depositInfo"
+                                            rows={3}
+                                            value={formState.depositInfo}
+                                            onChange={(e) => updateField("depositInfo", e.target.value)}
+                                            placeholder="Freitext fuer Kaution und Rueckgabehinweise"
+                                        />
+                                    </AdminField>
                                 </div>
-                                <div className="space-y-1">
-                                    <label className="text-sm font-medium">Kautions-Hinweis</label>
-                                    <textarea
-                                        className={textareaClassName}
-                                        rows={3}
-                                        value={formState.depositInfo}
-                                        onChange={(e) => updateField("depositInfo", e.target.value)}
-                                        placeholder="Freitext fuer Kaution und Rueckgabehinweise"
-                                    />
-                                </div>
-                            </div>
 
-                            <div className="space-y-3 rounded-md border p-4">
-                                <label className="flex items-center gap-2 text-sm font-medium">
-                                    <input
-                                        type="checkbox"
+                                <div className="space-y-4 rounded-xl border border-slate-200 bg-slate-50/50 p-4">
+                                    <AdminCheckbox
                                         checked={formState.cleaningFeeApplies}
                                         onChange={(e) =>
                                             setFormState((current) => {
@@ -605,34 +499,29 @@ export default function ItemForm(props: {
                                                 return next;
                                             })
                                         }
+                                        label="Reinigungskosten relevant"
                                     />
-                                    Reinigungskosten relevant
-                                </label>
-                                <div className="space-y-1">
-                                    <label className="text-sm font-medium">Reinigungs-Label</label>
-                                    <input
-                                        className={inputClassName}
-                                        value={formState.cleaningFeeLabel}
-                                        onChange={(e) => updateField("cleaningFeeLabel", e.target.value)}
-                                        placeholder="z.B. Reinigung optional"
-                                    />
+                                    <AdminField label="Reinigungs-Label" htmlFor="cleaningFeeLabel">
+                                        <AdminInput
+                                            id="cleaningFeeLabel"
+                                            value={formState.cleaningFeeLabel}
+                                            onChange={(e) => updateField("cleaningFeeLabel", e.target.value)}
+                                            placeholder="z.B. Reinigung optional"
+                                        />
+                                    </AdminField>
+                                    <AdminField label="Reinigungs-Hinweis" htmlFor="cleaningFeeInfo">
+                                        <AdminTextarea
+                                            id="cleaningFeeInfo"
+                                            rows={3}
+                                            value={formState.cleaningFeeInfo}
+                                            onChange={(e) => updateField("cleaningFeeInfo", e.target.value)}
+                                            placeholder="Freitext fuer Reinigungskosten"
+                                        />
+                                    </AdminField>
                                 </div>
-                                <div className="space-y-1">
-                                    <label className="text-sm font-medium">Reinigungs-Hinweis</label>
-                                    <textarea
-                                        className={textareaClassName}
-                                        rows={3}
-                                        value={formState.cleaningFeeInfo}
-                                        onChange={(e) => updateField("cleaningFeeInfo", e.target.value)}
-                                        placeholder="Freitext fuer Reinigungskosten"
-                                    />
-                                </div>
-                            </div>
 
-                            <div className="space-y-3 rounded-md border p-4">
-                                <label className="flex items-center gap-2 text-sm font-medium">
-                                    <input
-                                        type="checkbox"
+                                <div className="space-y-4 rounded-xl border border-slate-200 bg-slate-50/50 p-4">
+                                    <AdminCheckbox
                                         checked={formState.dryingFeeApplies}
                                         onChange={(e) =>
                                             setFormState((current) => {
@@ -665,215 +554,199 @@ export default function ItemForm(props: {
                                                 return next;
                                             })
                                         }
+                                        label="Trocknungskosten relevant"
                                     />
-                                    Trocknungskosten relevant
-                                </label>
-                                <div className="space-y-1">
-                                    <label className="text-sm font-medium">Trocknungs-Label</label>
-                                    <input
-                                        className={inputClassName}
-                                        value={formState.dryingFeeLabel}
-                                        onChange={(e) => updateField("dryingFeeLabel", e.target.value)}
-                                        placeholder="z.B. Trocknung nach Aufwand"
-                                    />
-                                </div>
-                                <div className="space-y-1">
-                                    <label className="text-sm font-medium">Trocknungs-Hinweis</label>
-                                    <textarea
-                                        className={textareaClassName}
-                                        rows={3}
-                                        value={formState.dryingFeeInfo}
-                                        onChange={(e) => updateField("dryingFeeInfo", e.target.value)}
-                                        placeholder="Freitext fuer Trocknungskosten"
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="space-y-1 rounded-md border p-4 md:col-span-2">
-                                <label className="text-sm font-medium">Allgemeine Zusatzkosten-Hinweise</label>
-                                <textarea
-                                    className={textareaClassName}
-                                    rows={3}
-                                    value={formState.additionalCostsInfo}
-                                    onChange={(e) => updateField("additionalCostsInfo", e.target.value)}
-                                    placeholder="Allgemeine Hinweise zu weiteren moeglichen Kosten"
-                                />
-                            </div>
-                        </div>
-                    </details>
-
-                    <details className={sectionClassName}>
-                        <summary className="flex cursor-pointer items-center justify-between list-none select-none">
-                            <div>
-                                <h2 className="text-base font-semibold">Lieferung, Abholung & Anforderungen</h2>
-                                <p className="text-sm text-neutral-600">
-                                    Verfuegbarkeit und Hinweise fuer Logistik, Nutzung und Aufbau.
-                                </p>
-                            </div>
-                            <ChevronDown className="h-5 w-5 text-slate-400 transition-transform group-open:rotate-180 duration-200" />
-                        </summary>
-
-                        <div className="grid gap-4 md:grid-cols-2">
-                            <div className="space-y-1">
-                                <label className="text-sm font-medium">Liefer- & Abholungsoptionen</label>
-                                <select
-                                    value={formState.pickupAvailable && formState.deliveryAvailable ? "both" : formState.pickupAvailable ? "pickup" : formState.deliveryAvailable ? "delivery" : "both"}
-                                    onChange={(e) => {
-                                        const val = e.target.value;
-                                        if (val === "pickup") {
-                                            updateField("pickupAvailable", true);
-                                            updateField("deliveryAvailable", false);
-                                        } else if (val === "delivery") {
-                                            updateField("pickupAvailable", false);
-                                            updateField("deliveryAvailable", true);
-                                        } else {
-                                            updateField("pickupAvailable", true);
-                                            updateField("deliveryAvailable", true);
-                                        }
-                                    }}
-                                    className="w-full rounded-md border px-3 py-2 bg-white"
-                                >
-                                    <option value="both">Beides (Abholung & Lieferung)</option>
-                                    <option value="pickup">Nur Selbstabholung</option>
-                                    <option value="delivery">Nur Lieferung</option>
-                                </select>
-                            </div>
-
-                            {formState.deliveryAvailable && (
-                                <div className="space-y-1 flex flex-col justify-end">
-                                    <label className="flex items-center gap-2 rounded-md border px-3 py-3 text-sm h-[42px] bg-white cursor-pointer select-none">
-                                        <input
-                                            type="checkbox"
-                                            checked={formState.requiresDeliveryAddress}
-                                            onChange={(e) => updateField("requiresDeliveryAddress", e.target.checked)}
+                                    <AdminField label="Trocknungs-Label" htmlFor="dryingFeeLabel">
+                                        <AdminInput
+                                            id="dryingFeeLabel"
+                                            value={formState.dryingFeeLabel}
+                                            onChange={(e) => updateField("dryingFeeLabel", e.target.value)}
+                                            placeholder="z.B. Trocknung nach Aufwand"
                                         />
-                                        Lieferadresse erforderlich
-                                    </label>
+                                    </AdminField>
+                                    <AdminField label="Trocknungs-Hinweis" htmlFor="dryingFeeInfo">
+                                        <AdminTextarea
+                                            id="dryingFeeInfo"
+                                            rows={3}
+                                            value={formState.dryingFeeInfo}
+                                            onChange={(e) => updateField("dryingFeeInfo", e.target.value)}
+                                            placeholder="Freitext fuer Trocknungskosten"
+                                        />
+                                    </AdminField>
                                 </div>
-                            )}
+                                
+                                <div className="space-y-4 rounded-xl border border-slate-200 bg-slate-50/50 p-4">
+                                    <AdminField label="Allgemeine Zusatzkosten-Hinweise" htmlFor="additionalCostsInfo">
+                                        <AdminTextarea
+                                            id="additionalCostsInfo"
+                                            rows={9}
+                                            value={formState.additionalCostsInfo}
+                                            onChange={(e) => updateField("additionalCostsInfo", e.target.value)}
+                                            placeholder="Allgemeine Hinweise zu weiteren moeglichen Kosten"
+                                        />
+                                    </AdminField>
+                                </div>
+                            </div>
                         </div>
+                    </AdminCard>
+                </div>
 
-                        <div className="grid gap-4 md:grid-cols-2">
-                            <div className="space-y-1 md:col-span-2">
-                                <label className="text-sm font-medium">Lieferhinweise</label>
-                                <textarea
-                                    className={textareaClassName}
+                <div className="space-y-6">
+                    <AdminCard title="Bilder & Cover" description="Titelbild, Upload und Reihenfolge direkt bei den wichtigsten Produktdaten.">
+                        {mode === "create" ? (
+                            <ImagePanel initialImages={[]} onChangeLocal={setLocalImages} />
+                        ) : itemId ? (
+                            <ImagePanel itemId={itemId} initialImages={props.initialImages ?? []} />
+                        ) : null}
+                    </AdminCard>
+                    <AdminCard title="Lieferung, Abholung & Anforderungen" description="Verfuegbarkeit und Hinweise fuer Logistik, Nutzung und Aufbau.">
+                        <div className="space-y-5">
+                            <div className="grid gap-4 md:grid-cols-2">
+                                <AdminField label="Liefer- & Abholungsoptionen" htmlFor="deliveryOption">
+                                    <AdminSelect
+                                        id="deliveryOption"
+                                        value={formState.pickupAvailable && formState.deliveryAvailable ? "both" : formState.pickupAvailable ? "pickup" : formState.deliveryAvailable ? "delivery" : "both"}
+                                        onChange={(e) => {
+                                            const val = e.target.value;
+                                            if (val === "pickup") {
+                                                updateField("pickupAvailable", true);
+                                                updateField("deliveryAvailable", false);
+                                            } else if (val === "delivery") {
+                                                updateField("pickupAvailable", false);
+                                                updateField("deliveryAvailable", true);
+                                            } else {
+                                                updateField("pickupAvailable", true);
+                                                updateField("deliveryAvailable", true);
+                                            }
+                                        }}
+                                    >
+                                        <option value="both">Beides (Abholung & Lieferung)</option>
+                                        <option value="pickup">Nur Selbstabholung</option>
+                                        <option value="delivery">Nur Lieferung</option>
+                                    </AdminSelect>
+                                </AdminField>
+
+                                {formState.deliveryAvailable && (
+                                    <div className="flex items-end">
+                                        <div className="h-10 border border-slate-200 bg-slate-50 flex items-center px-4 rounded-xl w-full">
+                                            <AdminCheckbox
+                                                checked={formState.requiresDeliveryAddress}
+                                                onChange={(e) => updateField("requiresDeliveryAddress", e.target.checked)}
+                                                label="Lieferadresse erforderlich"
+                                            />
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            <AdminField label="Lieferhinweise" htmlFor="deliveryInfo">
+                                <AdminTextarea
+                                    id="deliveryInfo"
                                     rows={3}
                                     value={formState.deliveryInfo}
                                     onChange={(e) => updateField("deliveryInfo", e.target.value)}
                                     placeholder="Infos zu Lieferung, Abholung oder Zeitfenstern"
                                 />
-                            </div>
+                            </AdminField>
 
-                            <div className="space-y-1">
-                                <label className="text-sm font-medium">Nutzungshinweise</label>
-                                <textarea
-                                    className={textareaClassName}
+                            <AdminField label="Nutzungshinweise" htmlFor="usageInfo">
+                                <AdminTextarea
+                                    id="usageInfo"
                                     rows={4}
                                     value={formState.usageInfo}
                                     onChange={(e) => updateField("usageInfo", e.target.value)}
                                     placeholder="Wichtige Informationen fuer Nutzung oder Einsatz"
                                 />
-                            </div>
+                            </AdminField>
 
-                            <div className="space-y-1">
-                                <label className="text-sm font-medium">Mietnotizen</label>
-                                <textarea
-                                    className={textareaClassName}
+                            <AdminField label="Mietnotizen" htmlFor="rentalNotes">
+                                <AdminTextarea
+                                    id="rentalNotes"
                                     rows={4}
                                     value={formState.rentalNotes}
                                     onChange={(e) => updateField("rentalNotes", e.target.value)}
                                     placeholder="Zusatznotizen fuer Anfrage- oder Checkout-Prozesse"
                                 />
-                            </div>
+                            </AdminField>
 
-                            <div className="space-y-1">
-                                <label className="text-sm font-medium">Aufstellanforderungen</label>
-                                <textarea
-                                    className={textareaClassName}
+                            <AdminField label="Aufstellanforderungen" htmlFor="setupRequirements">
+                                <AdminTextarea
+                                    id="setupRequirements"
                                     rows={4}
                                     value={formState.setupRequirements}
                                     onChange={(e) => updateField("setupRequirements", e.target.value)}
                                     placeholder="Platzbedarf, Aufbau oder technische Voraussetzungen"
                                 />
-                            </div>
+                            </AdminField>
 
-                            <div className="space-y-1">
-                                <label className="text-sm font-medium">Zugangsanforderungen</label>
-                                <textarea
-                                    className={textareaClassName}
+                            <AdminField label="Zugangsanforderungen" htmlFor="accessRequirements">
+                                <AdminTextarea
+                                    id="accessRequirements"
                                     rows={4}
                                     value={formState.accessRequirements}
                                     onChange={(e) => updateField("accessRequirements", e.target.value)}
                                     placeholder="Lift, Einfahrt, Traglast, Anlieferung etc."
                                 />
+                            </AdminField>
+                        </div>
+                    </AdminCard>
+
+                    <AdminCard title="Bestand" description="Definiert, wie viele Einheiten dieses Produkts gleichzeitig für denselben Zeitraum angefragt werden dürfen.">
+                        <div className="space-y-5">
+                            <div className="grid gap-4 md:grid-cols-2">
+                                <div className="flex items-center">
+                                    <AdminCheckbox
+                                        checked={formState.trackInventory}
+                                        onChange={(e) => updateField("trackInventory", e.target.checked)}
+                                        label="Bestand aktiv verwalten"
+                                    />
+                                </div>
+
+                                <AdminField 
+                                    label="Maximaler Bestand" 
+                                    htmlFor="totalStock"
+                                    helperText={formState.trackInventory ? "0 bedeutet: aktuell keine verfügbare Einheit." : "Wenn deaktiviert, wird die Menge nicht bestandsbegrenzt."}
+                                >
+                                    <AdminInput
+                                        id="totalStock"
+                                        type="number"
+                                        min={0}
+                                        step={1}
+                                        value={formState.totalStock}
+                                        onChange={(e) => updateField("totalStock", e.target.value)}
+                                        disabled={!formState.trackInventory}
+                                    />
+                                </AdminField>
                             </div>
                         </div>
-                    </details>
+                    </AdminCard>
+                </div>
+            </div>
 
-                    <details className={sectionClassName}>
-                        <summary className="flex cursor-pointer items-center justify-between list-none select-none">
-                            <div>
-                                <h2 className="text-base font-semibold">Bestand</h2>
-                                <p className="text-sm text-neutral-600">
-                                    Definiert, wie viele Einheiten dieses Produkts gleichzeitig für denselben Zeitraum angefragt werden dürfen.
-                                </p>
-                            </div>
-                            <ChevronDown className="h-5 w-5 text-slate-400 transition-transform group-open:rotate-180 duration-200" />
-                        </summary>
+            {error && <p className="text-sm text-red-600">{error}</p>}
 
-                        <div className="grid gap-4 md:grid-cols-2">
-                            <label className="flex items-center gap-2 rounded-md border px-3 py-3 text-sm">
-                                <input
-                                    type="checkbox"
-                                    checked={formState.trackInventory}
-                                    onChange={(e) => updateField("trackInventory", e.target.checked)}
-                                />
-                                Bestand aktiv verwalten
-                            </label>
-
-                            <div className="space-y-1">
-                                <label className="text-sm font-medium">Maximaler Bestand</label>
-                                <input
-                                    type="number"
-                                    min={0}
-                                    step={1}
-                                    className={inputClassName}
-                                    value={formState.totalStock}
-                                    onChange={(e) => updateField("totalStock", e.target.value)}
-                                    disabled={!formState.trackInventory}
-                                />
-                                <p className="text-xs text-neutral-500">
-                                    {formState.trackInventory
-                                        ? "0 bedeutet: aktuell keine verfügbare Einheit."
-                                        : "Wenn deaktiviert, wird die Menge nicht bestandsbegrenzt."}
-                                </p>
-                            </div>
-                        </div>
-                    </details>
-
-                    {error && <p className="text-sm text-red-600">{error}</p>}
-
-                    <div className="flex gap-2">
-                        <button
-                            disabled={saving || !canSave || categories.length === 0}
-                            className="h-10 rounded-xl bg-blue-600 px-5 text-sm font-semibold text-white shadow-sm shadow-blue-600/20 transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+            <div className="sticky bottom-6 z-10 flex items-center justify-between rounded-2xl border border-slate-200 bg-white/80 p-4 shadow-lg backdrop-blur-md">
+                <p className="text-sm text-slate-500">Ihre Änderungen sind noch nicht gespeichert.</p>
+                <div className="flex items-center gap-3">
+                    {mode === "edit" && (
+                        <AdminButton
+                            type="button"
+                            variant="danger"
+                            onClick={onDelete}
+                            disabled={deleting}
                         >
-                            {saving ? "Speichert..." : "Speichern"}
-                        </button>
-
-                        {mode === "edit" && (
-                            <button
-                                type="button"
-                                onClick={onDelete}
-                                disabled={deleting}
-                                className="h-10 rounded-xl border border-red-200 bg-white px-4 text-sm font-medium text-red-600 transition-colors hover:bg-red-50 disabled:opacity-60"
-                            >
-                                {deleting ? "Löscht..." : "Löschen"}
-                            </button>
-                        )}
-                    </div>
-                </form>
+                            {deleting ? "Löscht..." : "Löschen"}
+                        </AdminButton>
+                    )}
+                    <AdminButton 
+                        type="submit" 
+                        disabled={saving || !canSave || categories.length === 0}
+                    >
+                        {saving ? "Speichert..." : "Speichern"}
+                    </AdminButton>
+                </div>
+            </div>
+        </form>
             )}
         </div>
     );

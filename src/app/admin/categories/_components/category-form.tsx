@@ -5,6 +5,9 @@ import { useRouter } from "next/navigation";
 import { useMemo, useRef, useState } from "react";
 import { slugify } from "@/lib/slug";
 import { clientOptimizeImage } from "@/lib/images/client-optimize";
+import { AdminCard } from "../../_components/ui/AdminCard";
+import { AdminField, AdminInput, AdminTextarea, AdminSelect } from "../../_components/ui/AdminInputs";
+import { AdminButton } from "../../_components/ui/AdminButton";
 
 type CatalogTypeOption = {
     id: string;
@@ -125,138 +128,124 @@ export default function CategoryForm({ mode, category, catalogTypes }: CategoryF
     }
 
     return (
-        <div className="max-w-xl space-y-4">
-            <h1 className="text-2xl font-semibold">{mode === "create" ? "New Category" : "Edit Category"}</h1>
+        <div className="max-w-5xl space-y-6">
+            <h1 className="text-2xl font-semibold text-slate-900">{mode === "create" ? "New Category" : "Edit Category"}</h1>
 
             {catalogTypes.length === 0 ? (
-                <div className="rounded-md border p-4 text-sm text-neutral-700">
+                <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
                     You need at least one active catalog type before creating categories.
                 </div>
             ) : (
-                <form onSubmit={onSubmit} className="space-y-4">
-                    <div className="space-y-1">
-                        <label className="text-sm font-medium">
-                            Name <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                            className="w-full rounded-md border px-3 py-2"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            required
-                        />
-                    </div>
+                <form onSubmit={onSubmit} className="space-y-6">
+                    <div className="grid gap-6 lg:grid-cols-2 lg:items-start">
+                        {/* Left Column */}
+                        <AdminCard title="General Information" description="Basic details about this category.">
+                            <div className="space-y-5">
+                                <AdminField label="Name *" htmlFor="name">
+                                    <AdminInput
+                                        id="name"
+                                        value={name}
+                                        onChange={(e) => setName(e.target.value)}
+                                        required
+                                    />
+                                </AdminField>
 
-                    <div className="space-y-1">
-                        <label className="text-sm font-medium">Slug</label>
-                        <input
-                            className="w-full rounded-md border px-3 py-2"
-                            value={slug}
-                            onChange={(e) => {
-                                setSlugTouched(true);
-                                setSlugManual(e.target.value);
-                            }}
-                        />
-                        <p className="text-xs text-neutral-600">Auto-generated from the name, but editable.</p>
-                    </div>
+                                <AdminField label="Slug" htmlFor="slug" helperText="Auto-generated from the name, but editable.">
+                                    <AdminInput
+                                        id="slug"
+                                        value={slug}
+                                        onChange={(e) => {
+                                            setSlugTouched(true);
+                                            setSlugManual(e.target.value);
+                                        }}
+                                    />
+                                </AdminField>
 
-                    <div className="space-y-1">
-                        <label className="text-sm font-medium">
-                            Catalog Type <span className="text-red-500">*</span>
-                        </label>
-                        <select
-                            className="w-full rounded-md border px-3 py-2"
-                            value={catalogTypeId}
-                            onChange={(e) => setCatalogTypeId(e.target.value)}
-                        >
-                            {catalogTypes.map((type) => (
-                                <option
-                                    key={type.id}
-                                    value={type.id}
-                                    disabled={!type.isActive && type.id !== currentCatalogTypeId}
-                                >
-                                    {type.name} ({type.slug})
-                                    {!type.isActive ? " - inactive" : ""}
-                                </option>
-                            ))}
-                        </select>
-                        <p className="text-xs text-neutral-600">
-                            Catalog types are managed separately and keep the category system generic.
-                        </p>
-                    </div>
+                                <AdminField label="Catalog Type *" htmlFor="catalogType" helperText="Catalog types are managed separately and keep the category system generic.">
+                                    <AdminSelect
+                                        id="catalogType"
+                                        value={catalogTypeId}
+                                        onChange={(e) => setCatalogTypeId(e.target.value)}
+                                    >
+                                        {catalogTypes.map((type) => (
+                                            <option
+                                                key={type.id}
+                                                value={type.id}
+                                                disabled={!type.isActive && type.id !== currentCatalogTypeId}
+                                            >
+                                                {type.name} ({type.slug})
+                                                {!type.isActive ? " - inactive" : ""}
+                                            </option>
+                                        ))}
+                                    </AdminSelect>
+                                </AdminField>
 
-                    <div className="space-y-1">
-                        <label className="text-sm font-medium">Beschreibung</label>
-                        <textarea
-                            className="min-h-[100px] w-full resize-y rounded-md border px-3 py-2"
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            placeholder="Optionale Beschreibung der Kategorie..."
-                        />
-                    </div>
-
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium">Titelbild (optional)</label>
-                        {imagePreview ? (
-                            <div className="relative w-full max-w-xs">
-                                <Image
-                                    src={imagePreview}
-                                    alt="Vorschau"
-                                    width={320}
-                                    height={180}
-                                    className="h-44 w-full rounded-md border object-cover"
-                                    unoptimized={imagePreview.startsWith("blob:")}
-                                />
-                                <button
-                                    type="button"
-                                    onClick={handleRemoveImage}
-                                    className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-xs text-white hover:bg-black"
-                                >
-                                    x
-                                </button>
+                                <AdminField label="Beschreibung" htmlFor="description">
+                                    <AdminTextarea
+                                        id="description"
+                                        rows={6}
+                                        value={description}
+                                        onChange={(e) => setDescription(e.target.value)}
+                                        placeholder="Optionale Beschreibung der Kategorie..."
+                                    />
+                                </AdminField>
                             </div>
-                        ) : (
-                            <div
-                                className="flex h-36 w-full max-w-xs cursor-pointer items-center justify-center rounded-md border-2 border-dashed transition-colors hover:bg-neutral-50"
-                                onClick={() => fileInputRef.current?.click()}
-                            >
-                                <span className="text-sm text-neutral-500">Bild auswählen</span>
-                            </div>
-                        )}
-                        <input
-                            ref={fileInputRef}
-                            type="file"
-                            accept="image/*"
-                            className="hidden"
-                            onChange={handleImageChange}
-                        />
-                        <button
-                            type="button"
-                            onClick={() => fileInputRef.current?.click()}
-                            className="text-sm text-neutral-700 underline"
-                        >
-                            {imagePreview ? "Bild ersetzen" : "Bild hochladen"}
-                        </button>
+                        </AdminCard>
+
+                        {/* Right Column */}
+                        <div className="space-y-6">
+                            <AdminCard title="Media" description="A picture speaks a thousand words.">
+                                <div className="space-y-5">
+                                    {imagePreview && !removeImage && (
+                                        <div className="space-y-3 mb-6">
+                                            <label className="text-xs font-semibold uppercase tracking-[0.1em] text-slate-500">Aktuelles Bild</label>
+                                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                                            <img
+                                                src={imagePreview}
+                                                alt="Preview"
+                                                className="h-48 w-48 rounded-xl border border-slate-200 object-cover bg-slate-50"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={handleRemoveImage}
+                                                className="block text-sm text-red-600 hover:text-red-800 transition-colors font-medium"
+                                            >
+                                                Bild entfernen
+                                            </button>
+                                        </div>
+                                    )}
+
+                                    <AdminField label={imagePreview && !removeImage ? "Bild austauschen (optional)" : "Titelbild (optional)"} htmlFor="image">
+                                        <input
+                                            id="image"
+                                            ref={fileInputRef}
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={handleImageChange}
+                                            className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm transition outline-none focus:border-slate-400 focus:ring-4 focus:ring-slate-100"
+                                        />
+                                    </AdminField>
+                                </div>
+                            </AdminCard>
+                        </div>
                     </div>
 
                     {error && <p className="text-sm text-red-600">{error}</p>}
 
-                    <div className="flex gap-2">
-                        <button
-                            disabled={saving || !canSave}
-                            className="rounded-md bg-black px-4 py-2 text-sm text-white disabled:opacity-60"
-                        >
-                            {saving ? "Saving..." : mode === "create" ? "Create" : "Save"}
-                        </button>
+                    <div className="flex items-center gap-3">
+                        <AdminButton type="submit" disabled={saving || !canSave}>
+                            {saving ? "Speichert..." : mode === "create" ? "Erstellen" : "Speichern"}
+                        </AdminButton>
 
                         {mode === "edit" && (
-                            <button
+                            <AdminButton
                                 type="button"
+                                variant="danger"
                                 onClick={onDelete}
                                 disabled={deleting}
-                                className="rounded-md border px-4 py-2 text-sm disabled:opacity-60"
                             >
-                                {deleting ? "Deleting..." : "Delete"}
-                            </button>
+                                {deleting ? "Löscht..." : "Löschen"}
+                            </AdminButton>
                         )}
                     </div>
                 </form>

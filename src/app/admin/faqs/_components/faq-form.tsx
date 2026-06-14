@@ -2,6 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { AdminCard } from "../../_components/ui/AdminCard";
+import { AdminField, AdminInput, AdminTextarea, AdminCheckbox } from "../../_components/ui/AdminInputs";
+import { AdminButton } from "../../_components/ui/AdminButton";
 
 type FaqFormState = {
     question: string;
@@ -81,58 +84,61 @@ export default function FaqForm(props: {
     }
 
     return (
-        <div className="max-w-xl space-y-4">
-            <h1 className="text-2xl font-semibold">{mode === "create" ? "Neue FAQ" : "FAQ bearbeiten"}</h1>
+        <div className="max-w-2xl space-y-6">
+            <h1 className="text-2xl font-semibold text-slate-900">{mode === "create" ? "Neue FAQ" : "FAQ bearbeiten"}</h1>
 
-            <form onSubmit={onSave} className="space-y-4">
-                <div className="space-y-1">
-                    <label className="text-sm font-medium">Frage</label>
-                    <input
-                        className="w-full rounded-md border px-3 py-2"
-                        value={question}
-                        onChange={(e) => setQuestion(e.target.value)}
-                        autoFocus={mode === "create"}
-                    />
-                </div>
+            <form onSubmit={onSave} className="space-y-6">
+                <AdminCard title="FAQ Details" description="Die Frage und die zugehörige Antwort.">
+                    <div className="space-y-5">
+                        <AdminField label="Frage" htmlFor="question">
+                            <AdminInput
+                                id="question"
+                                value={question}
+                                onChange={(e) => setQuestion(e.target.value)}
+                                autoFocus={mode === "create"}
+                            />
+                        </AdminField>
 
-                <div className="space-y-1">
-                    <label className="text-sm font-medium">Antwort</label>
-                    <textarea
-                        className="w-full rounded-md border px-3 py-2"
-                        rows={6}
-                        value={answer}
-                        onChange={(e) => setAnswer(e.target.value)}
-                    />
-                </div>
+                        <AdminField label="Antwort" htmlFor="answer">
+                            <AdminTextarea
+                                id="answer"
+                                rows={6}
+                                value={answer}
+                                onChange={(e) => setAnswer(e.target.value)}
+                            />
+                        </AdminField>
+                    </div>
+                </AdminCard>
 
-                <label className="flex items-center gap-2 text-sm">
-                    <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} />
-                    Veröffentlicht
-                </label>
-
-                <p className="text-xs text-neutral-500">
-                    Die Reihenfolge wird in der FAQ-Übersicht per Drag-and-drop gepflegt.
-                </p>
+                <AdminCard title="Sichtbarkeit" description="Veröffentlichte FAQs werden auf der Webseite angezeigt.">
+                    <div className="space-y-4">
+                        <AdminCheckbox
+                            label="Veröffentlicht"
+                            checked={published}
+                            onChange={(e) => setPublished(e.target.checked)}
+                        />
+                        <p className="text-xs text-slate-500">
+                            Die Reihenfolge wird in der FAQ-Übersicht per Drag-and-drop gepflegt.
+                        </p>
+                    </div>
+                </AdminCard>
 
                 {error && <p className="text-sm text-red-600">{error}</p>}
 
-                <div className="flex gap-2 pt-2">
-                    <button
-                        disabled={saving || !canSave}
-                        className="rounded-md bg-black px-4 py-2 text-sm text-white disabled:opacity-60"
-                    >
+                <div className="flex items-center gap-3">
+                    <AdminButton type="submit" disabled={saving || !canSave}>
                         {saving ? "Speichert..." : "Speichern"}
-                    </button>
+                    </AdminButton>
 
                     {mode === "edit" && (
-                        <button
+                        <AdminButton
                             type="button"
+                            variant="danger"
                             onClick={onDelete}
                             disabled={deleting}
-                            className="rounded-md border border-neutral-200 px-4 py-2 text-sm text-red-600 hover:bg-red-50 disabled:opacity-60"
                         >
                             {deleting ? "Löscht..." : "Löschen"}
-                        </button>
+                        </AdminButton>
                     )}
                 </div>
             </form>

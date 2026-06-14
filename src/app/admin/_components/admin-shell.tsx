@@ -93,8 +93,12 @@ export default function AdminShell({ children }: { children: ReactNode }) {
         setMobileNavOpen(false);
     }, [pathname]);
 
+    if (pathname === "/admin/login") {
+        return <>{children}</>;
+    }
+
     return (
-        <div data-admin-shell className="admin-app-shell relative lg:grid lg:grid-cols-[280px_minmax(0,1fr)]">
+        <div data-admin-shell className="admin-app-shell relative lg:grid lg:grid-cols-[280px_minmax(0,1fr)] lg:h-screen lg:overflow-hidden">
             {mobileNavOpen && (
                 <button
                     type="button"
@@ -105,45 +109,42 @@ export default function AdminShell({ children }: { children: ReactNode }) {
             )}
 
             <aside
-                className={`admin-sidebar fixed inset-y-0 left-0 z-50 w-[86vw] max-w-[320px] border-r px-4 py-4 transition-transform duration-300 lg:sticky lg:top-0 lg:h-screen lg:w-auto lg:max-w-none lg:translate-x-0 lg:border-r lg:px-5 lg:py-6 ${
+                className={`admin-sidebar fixed inset-y-0 left-0 z-50 w-[86vw] max-w-[320px] px-4 py-4 transition-transform duration-300 lg:static lg:flex lg:h-full lg:w-auto lg:max-w-none lg:flex-col lg:translate-x-0 lg:px-5 lg:py-6 ${
                     mobileNavOpen ? "translate-x-0" : "-translate-x-full"
                 }`}
             >
-                <div className="admin-surface rounded-[28px] p-4 lg:p-5">
-                    <div className="mb-3 flex justify-end lg:hidden">
-                        <button
-                            type="button"
-                            onClick={() => setMobileNavOpen(false)}
-                            className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700"
-                            aria-label="Navigation schliessen"
-                        >
-                            <CloseIcon />
-                        </button>
-                    </div>
-                    <div className="mb-6 flex items-center gap-3 border-b border-slate-200/70 pb-5">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-500/20">
-                            <SparkIcon />
+                <div className="admin-surface flex h-full flex-col rounded-[28px] overflow-hidden">
+                    <div className="flex-1 overflow-y-auto p-4 lg:p-5">
+                        <div className="mb-3 flex justify-end lg:hidden">
+                            <button
+                                type="button"
+                                onClick={() => setMobileNavOpen(false)}
+                                className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700"
+                                aria-label="Navigation schliessen"
+                            >
+                                <CloseIcon />
+                            </button>
                         </div>
-                        <div>
-                            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">Admin Suite</p>
-                            <p className="text-lg font-semibold text-slate-900">Control Center</p>
+                        <div className="mb-6 flex items-center gap-3 border-b border-slate-200/70 pb-5 shrink-0">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-500/20">
+                                <SparkIcon />
+                            </div>
+                            <div>
+                                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">Admin Suite</p>
+                                <p className="text-lg font-semibold text-slate-900">Control Center</p>
+                            </div>
                         </div>
-                    </div>
 
-                    <div className="space-y-6">
-                        <NavGroup title="Catalog" items={catalogItems} pathname={pathname} />
-                        <NavGroup title="Operations" items={operationsItems} pathname={pathname} />
-                    </div>
-
-                    <div className="mt-6 rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 to-white p-4 text-sm text-slate-600">
-                        <p className="font-semibold text-slate-900">Modern admin workspace</p>
-                        <p className="mt-1 leading-6">Klare Navigation, fokussierte Oberflaechen und sichtbare Aktionen fuer den taeglichen Betrieb.</p>
+                        <div className="space-y-6">
+                            <NavGroup title="Catalog" items={catalogItems} pathname={pathname} />
+                            <NavGroup title="Operations" items={operationsItems} pathname={pathname} />
+                        </div>
                     </div>
                 </div>
             </aside>
 
-            <div className="min-w-0">
-                <header className="sticky top-0 z-30 border-b border-slate-200/70 bg-white/75 backdrop-blur-xl">
+            <div className="flex min-w-0 flex-col lg:h-screen lg:overflow-hidden">
+                <header className="shrink-0 sticky top-0 z-30 border-b border-slate-200/70 bg-white/75 backdrop-blur-xl lg:static">
                     <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 lg:px-8">
                         <div className="flex min-w-0 items-center gap-3">
                             <button
@@ -171,7 +172,11 @@ export default function AdminShell({ children }: { children: ReactNode }) {
                     </div>
                 </header>
 
-                <main className="mx-auto max-w-7xl px-4 py-6 lg:px-8 lg:py-8">{children}</main>
+                <main className="flex-1 overflow-y-auto">
+                    <div className="mx-auto max-w-7xl px-4 py-6 lg:px-8 lg:py-6">
+                        {children}
+                    </div>
+                </main>
             </div>
         </div>
     );

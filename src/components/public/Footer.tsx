@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Instagram, Facebook } from "lucide-react";
 import { CopyableContact } from "@/components/public/CopyableContact";
+import { CookieSettingsTrigger } from "@/components/public/CookieSettingsTrigger";
 
 type FooterLink = {
     id: string;
@@ -159,6 +160,7 @@ export function Footer({
                                 {link.label}
                             </Link>
                         ))}
+                        <CookieSettingsTrigger />
                     </div>
                 </div>
             </div>

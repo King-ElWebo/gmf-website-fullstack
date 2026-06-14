@@ -1,165 +1,381 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
-import { getItemPriceDisplay } from "@/lib/items/price";
 import AdminPageHeader from "./_components/admin-page-header";
+import {
+  Calendar,
+  PackageSearch,
+  PackagePlus,
+  Image as ImageIcon,
+  MessageSquare,
+  ListTree,
+  CheckCircle2,
+  Clock,
+  Archive,
+  ChevronRight,
+  HardDrive,
+  Mail,
+  AlertCircle,
+  Truck,
+  MapPin
+} from "lucide-react";
+
+export const dynamic = "force-dynamic";
+
+function formatDate(date: Date) {
+  return new Intl.DateTimeFormat("de-DE", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric"
+  }).format(date);
+}
 
 export default async function AdminHome() {
-  const totalCatalogTypes = await db.catalogType.count();
-  const totalCategories = await db.category.count();
-  const totalItems = await db.item.count();
-  const totalFaqs = 0;
-  const totalImages = 0;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
-  const recentItems = await db.item.findMany({
-    orderBy: { createdAt: "desc" },
-    take: 5,
-    include: { category: true },
-  });
+  const nextWeek = new Date(today);
+  nextWeek.setDate(nextWeek.getDate() + 7);
 
-  const recentImages: any[] = [];
+  const [
+    openInquiries,
+    openInquiriesCount,
+    upcomingBookings,
+    upcomingBookingsCount,
+    thisWeekBookingsCount,
+    archivedCount,
+    totalCatalogTypes,
+    totalCategories,
+    totalItems,
+  ] = await Promise.all([
+    db.booking.findMany({
+      where: { status: "requested", archivedAt: null },
+      orderBy: { createdAt: "asc" },
+      take: 5,
+      include: { customer: true, items: { include: { item: true } } },
+    }),
+    db.booking.count({
+      where: { status: "requested", archivedAt: null },
+    }),
+    db.booking.findMany({
+      where: { status: "approved", endDate: { gte: today }, archivedAt: null },
+      orderBy: { startDate: "asc" },
+      take: 5,
+      include: { customer: true, items: { include: { item: true } } },
+    }),
+    db.booking.count({
+      where: { status: "approved", endDate: { gte: today }, archivedAt: null },
+    }),
+    db.booking.count({
+      where: {
+        status: "approved",
+        archivedAt: null,
+        startDate: { lte: nextWeek },
+        endDate: { gte: today },
+      },
+    }),
+    db.booking.count({
+      where: { archivedAt: { not: null } },
+    }),
+    db.catalogType.count(),
+    db.category.count(),
+    db.item.count(),
+  ]);
+
+  const hasVercelBlob = !!process.env.BLOB_READ_WRITE_TOKEN;
+  const hasResend = !!process.env.RESEND_API_KEY;
+  const hasAppUrl = !!process.env.NEXT_PUBLIC_APP_URL;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <AdminPageHeader
-        title="Dashboard"
-        description="Ein moderner Ueberblick ueber Inhalte, Medien und zentrale Arbeitsbereiche deines Admin-Backends."
+        title="Betriebszentrale"
+        description="Dein täglicher Überblick über offene Anfragen, Buchungen und wichtige Aktionen."
       />
 
-      <div className="grid grid-cols-2 gap-4 xl:grid-cols-5">
-        <OverviewCard title="Katalogtypen" value={totalCatalogTypes} accent="blue" />
-        <OverviewCard title="Kategorien" value={totalCategories} accent="slate" />
-        <OverviewCard title="Items" value={totalItems} accent="blue" />
-        <OverviewCard title="FAQs" value={totalFaqs} accent="slate" />
-        <OverviewCard title="Bilder" value={totalImages} accent="blue" />
+      {/* 1. Top-Kennzahlen */}
+      <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
+        <MetricCard
+          title="Offene Anfragen"
+          value={openInquiriesCount}
+          icon={<Clock className="text-amber-500" size={24} />}
+          accent="amber"
+          link="/admin/bookings/dashboard?status=requested"
+        />
+        <MetricCard
+          title="Kommende Buchungen"
+          value={upcomingBookingsCount}
+          icon={<Calendar className="text-blue-500" size={24} />}
+          accent="blue"
+          link="/admin/bookings/dashboard?status=approved"
+        />
+        <MetricCard
+          title="Diese Woche"
+          value={thisWeekBookingsCount}
+          icon={<CheckCircle2 className="text-emerald-500" size={24} />}
+          accent="emerald"
+        />
+        <MetricCard
+          title="Archiviert"
+          value={archivedCount}
+          icon={<Archive className="text-slate-400" size={24} />}
+          accent="slate"
+          link="/admin/bookings/dashboard?status=archived"
+        />
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[1.35fr_0.9fr]">
-        <section className="admin-surface rounded-[30px] p-5 sm:p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-lg font-semibold text-slate-900">Quick Actions</h2>
-              <p className="mt-1 text-sm text-slate-500">Direkte Einstiege fuer haeufige Verwaltungsaufgaben.</p>
-            </div>
-          </div>
-
-          <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            <ActionCard href="/admin/catalog-types/new" title="Neuer Katalogtyp" text="Neue Inhaltsstruktur anlegen" tone="blue" />
-            <ActionCard href="/admin/categories/new" title="Neue Kategorie" text="Navigation und Zuordnung erweitern" tone="slate" />
-            <ActionCard href="/admin/items/new" title="Neues Item" text="Produkte und Inhalte erfassen" tone="blue" />
-            <ActionCard href="/admin/faqs/new" title="Neue FAQ" text="Hilfreiche Antworten pflegen" tone="slate" />
-            <ActionCard href="/admin/images/new" title="Bild hochladen" text="Medien zentral verwalten" tone="blue" />
-            <ActionCard href="/admin/bookings/dashboard" title="Booking Dashboard" text="Anfragen und Signale priorisieren" tone="slate" />
-          </div>
-        </section>
-
-        <aside className="admin-surface rounded-[30px] p-5 sm:p-6">
-          <h2 className="text-lg font-semibold text-slate-900">Status</h2>
-          <div className="mt-4 space-y-4">
-            <StatusRow title="Struktur verwalten" text="Katalogtypen, Kategorien und Items in einer konsistenten Admin-Shell." />
-            <StatusRow title="Inhalte aktualisieren" text="FAQs, Medien und Seiteneinstellungen mit besserer Lesbarkeit pflegen." />
-            <StatusRow title="Betrieb im Blick" text="Buchungen, Ressourcen und Kalender sind prominent erreichbar." />
-          </div>
-        </aside>
-      </div>
-
-      <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
-        <section className="admin-surface rounded-[30px] p-5 sm:p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-lg font-semibold text-slate-900">Letzte Items</h2>
-              <p className="mt-1 text-sm text-slate-500">Aktuelle Produkte mit Preis und Status auf einen Blick.</p>
-            </div>
-            <Link href="/admin/items" className="font-medium text-blue-600 hover:text-blue-800">
-              Alle Items
-            </Link>
-          </div>
-
-          <div className="mt-5 space-y-3">
-            {recentItems.map((item) => (
-              <Link
-                key={item.id}
-                href={`/admin/items/${item.id}/edit`}
-                className="flex flex-col gap-3 rounded-[24px] border border-slate-200/70 bg-white/90 p-4 hover:border-blue-200 hover:bg-blue-50/40 sm:flex-row sm:items-center sm:justify-between"
-              >
-                <div>
-                  <p className="font-semibold text-slate-900">{item.title}</p>
-                  <p className="mt-1 text-sm text-slate-500">{item.category?.name || "Keine Kategorie"}</p>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-sm font-medium text-slate-600">{getItemPriceDisplay(item)}</span>
-                  <span className={`admin-badge ${item.published ? "admin-badge-green" : "admin-badge-neutral"}`}>
-                    {item.published ? "Aktiv" : "Draft"}
-                  </span>
-                </div>
+      <div className="grid gap-4 xl:grid-cols-[1.8fr_1fr] items-stretch">
+        
+        <div className="flex flex-col gap-4">
+          {/* 2. Offene Anfragen */}
+          <section className="admin-surface rounded-[24px] p-4 sm:p-5">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-lg font-semibold text-slate-900">Offene Anfragen</h2>
+                <p className="mt-1 text-sm text-slate-500">Kunden warten auf Bestätigung oder Angebot.</p>
+              </div>
+              <Link href="/admin/bookings/dashboard?status=requested" className="font-medium text-blue-600 hover:text-blue-800">
+                Alle ansehen
               </Link>
-            ))}
-            {recentItems.length === 0 ? (
-              <div className="rounded-[24px] border border-dashed border-slate-200 bg-slate-50/80 p-6 text-sm text-slate-500">
-                Keine Items vorhanden.
-              </div>
-            ) : null}
-          </div>
-        </section>
-
-        <section className="admin-surface rounded-[30px] p-5 sm:p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-lg font-semibold text-slate-900">Zuletzt hochgeladene Bilder</h2>
-              <p className="mt-1 text-sm text-slate-500">Medien mit schneller visueller Kontrolle.</p>
             </div>
-            <Link href="/admin/images" className="font-medium text-blue-600 hover:text-blue-800">
-              Alle Bilder
-            </Link>
+
+            <div className="mt-5 space-y-3">
+              {openInquiries.map((booking) => (
+                <div key={booking.id} className="flex flex-col gap-4 rounded-[24px] border border-amber-200/60 bg-amber-50/30 p-4 hover:border-amber-300 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-xs font-semibold text-amber-700 bg-amber-100/50 px-2 py-0.5 rounded-md">
+                        {booking.referenceCode}
+                      </span>
+                      <span className="font-semibold text-slate-900">
+                        {booking.customer?.firstName} {booking.customer?.lastName}
+                      </span>
+                    </div>
+                    <div className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-600">
+                      <span className="flex items-center gap-1.5">
+                        <Calendar size={14} className="text-slate-400" />
+                        {formatDate(booking.startDate)} - {formatDate(booking.endDate)}
+                      </span>
+                      <span className="flex items-center gap-1.5">
+                        <PackageSearch size={14} className="text-slate-400" />
+                        {booking.items.length} {booking.items.length === 1 ? "Produkt" : "Produkte"}
+                      </span>
+                    </div>
+                  </div>
+                  <Link
+                    href={`/admin/bookings/${booking.id}`}
+                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-2 text-sm font-medium text-amber-700 shadow-sm ring-1 ring-inset ring-amber-200 hover:bg-amber-50 sm:w-auto"
+                  >
+                    Ansehen
+                    <ChevronRight size={16} />
+                  </Link>
+                </div>
+              ))}
+              {openInquiries.length === 0 && (
+                <div className="flex flex-col items-center justify-center rounded-[24px] border border-dashed border-slate-200 bg-slate-50/80 py-8 text-center">
+                  <CheckCircle2 size={32} className="text-emerald-500 mb-3" />
+                  <p className="text-sm font-medium text-slate-900">Keine offenen Anfragen!</p>
+                  <p className="text-xs text-slate-500 mt-1">Alle Kunden wurden bedient.</p>
+                </div>
+              )}
+            </div>
+          </section>
+
+          {/* 3. Nächste bestätigte Buchungen */}
+          <section className="admin-surface rounded-[24px] p-5 flex-1 flex flex-col">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-lg font-semibold text-slate-900">Nächste Buchungen</h2>
+                <p className="mt-1 text-sm text-slate-500">Bestätigte Einsätze, die in Kürze anstehen.</p>
+              </div>
+              <Link href="/admin/bookings/dashboard?status=approved" className="font-medium text-blue-600 hover:text-blue-800">
+                Alle ansehen
+              </Link>
+            </div>
+
+            <div className="mt-5 space-y-3">
+              {upcomingBookings.map((booking) => {
+                const isDelivery = booking.deliveryType === "delivery";
+                return (
+                  <div key={booking.id} className="flex flex-col gap-4 rounded-[24px] border border-blue-200/60 bg-blue-50/30 p-4 hover:border-blue-300 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-slate-900">
+                          {booking.customer?.firstName} {booking.customer?.lastName}
+                        </span>
+                        {isDelivery ? (
+                          <span className="inline-flex items-center gap-1 rounded-md bg-blue-100/50 px-2 py-0.5 text-xs font-semibold text-blue-700">
+                            <Truck size={12} />
+                            Lieferung
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 rounded-md bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-700">
+                            <MapPin size={12} />
+                            Selbstabholer
+                          </span>
+                        )}
+                      </div>
+                      <div className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-600">
+                        <span className="flex items-center gap-1.5">
+                          <Calendar size={14} className="text-blue-500" />
+                          {formatDate(booking.startDate)} - {formatDate(booking.endDate)}
+                        </span>
+                        <span className="flex items-center gap-1.5">
+                          <PackageSearch size={14} className="text-slate-400" />
+                          {booking.items.length} {booking.items.length === 1 ? "Produkt" : "Produkte"}
+                        </span>
+                      </div>
+                    </div>
+                    <Link
+                      href={`/admin/bookings/${booking.id}`}
+                      className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-2 text-sm font-medium text-blue-700 shadow-sm ring-1 ring-inset ring-blue-200 hover:bg-blue-50 sm:w-auto"
+                    >
+                      Details
+                      <ChevronRight size={16} />
+                    </Link>
+                  </div>
+                );
+              })}
+              {upcomingBookings.length === 0 && (
+                <div className="flex flex-1 flex-col items-center justify-center rounded-[24px] border border-dashed border-slate-200 bg-slate-50/80 py-8 text-center min-h-[160px]">
+                  <Calendar size={32} className="text-slate-300 mb-3" />
+                  <p className="text-sm font-medium text-slate-900">Keine kommenden Einsätze.</p>
+                  <p className="text-xs text-slate-500 mt-1">Aktuell stehen keine bestätigten Buchungen an.</p>
+                </div>
+              )}
+            </div>
+          </section>
+        </div>
+
+        <div className="flex flex-col gap-4">
+          {/* 4. Quick Actions */}
+          <section className="admin-surface rounded-[24px] p-5 flex-1 flex flex-col">
+            <div>
+              <h2 className="text-lg font-semibold text-slate-900">Tagesgeschäft</h2>
+              <div className="mt-4 flex flex-col gap-3">
+              <ActionCard 
+                href="/admin/bookings/dashboard" 
+                title="Booking Dashboard" 
+                text="Alle Anfragen und Buchungen" 
+                icon={<Calendar />} 
+                isPrimary 
+              />
+              <ActionCard 
+                href="/admin/items/new" 
+                title="Neues Produkt" 
+                text="Hüpfburg oder Modul anlegen" 
+                icon={<PackagePlus />} 
+                isPrimary 
+              />
+              <ActionCard 
+                href="/admin/items" 
+                title="Produktliste" 
+                text="Bestand & Preise pflegen" 
+                icon={<PackageSearch />} 
+                isPrimary 
+              />
+              <ActionCard 
+                href="/admin/images/new" 
+                title="Bild hochladen" 
+                text="Zentrale Medienverwaltung" 
+                icon={<ImageIcon />} 
+                isPrimary 
+              />
+            </div>
           </div>
 
-          <div className="mt-5 grid grid-cols-2 gap-4">
-            {recentImages.map((img) => (
-              <div key={img.id} className="group relative overflow-hidden rounded-[24px] border border-slate-200/70 bg-slate-100">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={img.url} alt={img.alt || "Bild"} className="aspect-square w-full object-cover transition-transform duration-200 group-hover:scale-[1.03]" />
-                <div className="absolute left-3 top-3">
-                  <span className="admin-badge admin-badge-blue">{img.area.toLowerCase()}</span>
-                </div>
+          <div className="mt-auto pt-6">
+              <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Erweiterte Struktur</h3>
+              <div className="mt-3 grid grid-cols-3 gap-3">
+                <MiniActionCard href="/admin/categories/new" title="Kategorie" icon={<ListTree size={16} />} />
+                <MiniActionCard href="/admin/faqs/new" title="FAQ" icon={<MessageSquare size={16} />} />
+                <MiniActionCard href="/admin/catalog-types/new" title="Katalog" icon={<PackageSearch size={16} />} />
               </div>
-            ))}
-            {recentImages.length === 0 ? (
-              <div className="col-span-full rounded-[24px] border border-dashed border-slate-200 bg-slate-50/80 p-8 text-center text-sm text-slate-500">
-                Noch keine Bilder hochgeladen.
-              </div>
-            ) : null}
-          </div>
-        </section>
+            </div>
+          </section>
+        </div>
+
       </div>
     </div>
   );
 }
 
-function OverviewCard({ title, value, accent }: { title: string; value: number; accent: "blue" | "slate" }) {
-  return (
-    <div className={`admin-stat-card rounded-[26px] p-5 ${accent === "blue" ? "bg-gradient-to-br from-blue-50 to-white" : "bg-white"}`}>
-      <p className="text-sm font-medium text-slate-500">{title}</p>
-      <p className="mt-3 text-4xl font-semibold tracking-tight text-slate-900">{value}</p>
+function MetricCard({ title, value, icon, accent, link }: { title: string; value: number; icon: React.ReactNode; accent: "amber" | "blue" | "emerald" | "slate"; link?: string }) {
+  const bgColors = {
+    amber: "bg-gradient-to-br from-amber-50 to-white",
+    blue: "bg-gradient-to-br from-blue-50 to-white",
+    emerald: "bg-gradient-to-br from-emerald-50 to-white",
+    slate: "bg-white",
+  };
+  
+  const content = (
+    <div className={`admin-stat-card rounded-[26px] p-5 h-full transition-transform hover:-translate-y-0.5 ${bgColors[accent]}`}>
+      <div className="flex items-center justify-between mb-2">
+        <p className="text-sm font-medium text-slate-500">{title}</p>
+        {icon}
+      </div>
+      <p className="text-4xl font-bold tracking-tight text-slate-900">{value}</p>
     </div>
   );
+
+  if (link) {
+    return <Link href={link} className="block h-full">{content}</Link>;
+  }
+
+  return content;
 }
 
-function ActionCard({ href, title, text, tone }: { href: string; title: string; text: string; tone: "blue" | "slate" }) {
+function ActionCard({ href, title, text, icon, isPrimary }: { href: string; title: string; text: string; icon: React.ReactNode; isPrimary?: boolean }) {
   return (
     <Link
       href={href}
-      className={`rounded-[24px] border p-5 ${tone === "blue" ? "border-blue-100 bg-blue-50/70 hover:border-blue-200" : "border-slate-200 bg-white hover:border-blue-200"} transition-all hover:-translate-y-0.5`}
+      className={`group flex items-center gap-4 rounded-[20px] border p-4 transition-all hover:-translate-y-0.5 ${
+        isPrimary 
+          ? "border-blue-100 bg-blue-50/50 hover:border-blue-200 hover:bg-blue-50" 
+          : "border-slate-200 bg-white hover:border-slate-300"
+      }`}
     >
-      <p className={`text-sm font-semibold ${tone === "blue" ? "text-blue-700" : "text-slate-900"}`}>{title}</p>
-      <p className="mt-2 text-sm leading-6 text-slate-600">{text}</p>
+      <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${isPrimary ? "bg-blue-100 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors" : "bg-slate-100 text-slate-600"}`}>
+        {icon}
+      </div>
+      <div>
+        <p className={`text-sm font-semibold ${isPrimary ? "text-slate-900" : "text-slate-700"}`}>{title}</p>
+        <p className="text-xs text-slate-500 mt-0.5">{text}</p>
+      </div>
     </Link>
   );
 }
 
-function StatusRow({ title, text }: { title: string; text: string }) {
+function MiniActionCard({ href, title, icon }: { href: string; title: string; icon: React.ReactNode }) {
   return (
-    <div className="rounded-[22px] border border-slate-200/70 bg-white/90 p-4">
-      <p className="text-sm font-semibold text-slate-900">{title}</p>
-      <p className="mt-1 text-sm leading-6 text-slate-500">{text}</p>
+    <Link
+      href={href}
+      className="flex flex-col items-center justify-center gap-2 rounded-[16px] border border-slate-200 bg-white p-3 hover:-translate-y-0.5 hover:border-slate-300 hover:bg-slate-50 transition-all text-slate-600 hover:text-slate-900"
+    >
+      {icon}
+      <span className="text-xs font-semibold">{title}</span>
+    </Link>
+  );
+}
+
+function ContentStat({ label, value }: { label: string; value: number | string }) {
+  return (
+    <div className="rounded-[16px] border border-slate-100 bg-slate-50/50 p-3">
+      <p className="text-xs text-slate-500">{label}</p>
+      <p className="text-lg font-semibold text-slate-800">{value}</p>
+    </div>
+  );
+}
+
+function StatusBadge({ label, active, activeText, inactiveText, icon }: { label: string; active: boolean; activeText: string; inactiveText: string; icon: React.ReactNode }) {
+  return (
+    <div className="flex items-center justify-between rounded-[16px] border border-slate-100 bg-slate-50 p-3">
+      <div className="flex items-center gap-2 text-sm font-medium text-slate-700">
+        <div className="text-slate-400">{icon}</div>
+        {label}
+      </div>
+      <div className={`px-2 py-0.5 rounded-md text-xs font-semibold ${active ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-700"}`}>
+        {active ? activeText : inactiveText}
+      </div>
     </div>
   );
 }

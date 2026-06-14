@@ -8,6 +8,7 @@ import { formatPriceCents, getItemPriceDisplay } from "@/lib/items/price";
 import { BookingStatusBadge } from "../../_components/BookingStatusBadge";
 import { ClientBookingActions, ClientBookingDeleteButton } from "../../_components/ClientBookingActions";
 import { NotesSection } from "../../_components/NotesSection";
+import { AdminCard } from "../../_components/ui/AdminCard";
 
 export const dynamic = "force-dynamic";
 
@@ -210,12 +211,12 @@ function DetailField({
   children: ReactNode;
 }) {
   return (
-    <div className="rounded-xl border border-neutral-200 bg-neutral-50/60 p-4">
-      <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-neutral-500">
+    <div className="rounded-[20px] border border-slate-200 bg-slate-50/60 p-4">
+      <div className="mb-2 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-slate-500">
         {icon}
         <span>{label}</span>
       </div>
-      <div className="text-sm font-medium leading-relaxed text-neutral-900">{children}</div>
+      <div className="text-sm font-medium leading-relaxed text-slate-900">{children}</div>
     </div>
   );
 }
@@ -227,12 +228,12 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
 
   if (!booking) {
     return (
-      <div className="rounded-2xl border border-neutral-200 bg-white p-10 text-center shadow-sm">
-        <h1 className="text-xl font-semibold text-neutral-950">Anfrage nicht gefunden</h1>
-        <Link href="/admin/bookings" className="mt-4 inline-flex text-sm font-medium text-blue-700 hover:text-blue-900">
+      <AdminCard className="text-center">
+        <h1 className="text-xl font-semibold text-slate-950">Anfrage nicht gefunden</h1>
+        <Link href="/admin/bookings" className="mt-4 inline-flex text-sm font-medium text-blue-600 hover:text-blue-800">
           Zurueck zur Anfragenliste
         </Link>
-      </div>
+      </AdminCard>
     );
   }
 
@@ -244,20 +245,20 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
 
   return (
     <div className="space-y-6 pb-20">
-      <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
+      <AdminCard>
         <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
           <div>
             <Link
               href="/admin/bookings"
-              className="mb-3 inline-flex text-xs font-semibold uppercase tracking-wide text-neutral-500 transition hover:text-neutral-950"
+              className="mb-3 inline-flex text-[11px] font-semibold uppercase tracking-[0.1em] text-slate-500 transition hover:text-slate-900"
             >
               Zurueck zur Liste
             </Link>
             <div className="flex flex-wrap items-center gap-3">
-              <h1 className="text-2xl font-semibold tracking-tight text-neutral-950">{booking.referenceCode}</h1>
+              <h1 className="text-2xl font-semibold tracking-tight text-slate-950">{booking.referenceCode}</h1>
               <BookingStatusBadge status={booking.status} />
             </div>
-            <p className="mt-2 text-sm text-neutral-600">
+            <p className="mt-2 text-sm text-slate-500">
               Erstellt am {formatDateTime(booking.createdAt)} - zuletzt aktualisiert am {formatDateTime(booking.updatedAt)}
             </p>
           </div>
@@ -274,9 +275,9 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
                 href={`/admin/bookings/${booking.id}/mietvertrag`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700 shadow-sm transition hover:bg-blue-100"
+                className="admin-action-secondary px-4 py-2 text-sm"
               >
-                <FileText className="h-4 w-4" />
+                <FileText className="h-4 w-4 mr-2 inline-block" />
                 Mietvertrag drucken
               </Link>
             )}
@@ -297,7 +298,7 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
             {itemCount} Positionen / {quantityCount} Stk.
           </DetailField>
         </div>
-      </div>
+      </AdminCard>
 
       {booking.archivedAt ? (
         <div className="flex gap-3 rounded-2xl border border-blue-200 bg-blue-50 p-4 text-sm text-blue-900">
@@ -326,22 +327,19 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
         <div className="space-y-6">
-          <section className="rounded-2xl border border-neutral-200 bg-white shadow-sm">
-            <div className="border-b border-neutral-100 px-6 py-4">
-              <h2 className="text-base font-semibold text-neutral-950">Kundendaten</h2>
-            </div>
-            <div className="grid gap-4 p-6 md:grid-cols-2">
+          <AdminCard title="Kundendaten">
+            <div className="grid gap-4 md:grid-cols-2">
               <DetailField icon={<User className="h-4 w-4" />} label="Name">
                 {booking.customer.firstName} {booking.customer.lastName}
               </DetailField>
               <DetailField icon={<Mail className="h-4 w-4" />} label="E-Mail">
-                <a href={`mailto:${booking.customer.email}`} className="text-blue-700 hover:text-blue-900">
+                <a href={`mailto:${booking.customer.email}`} className="text-blue-600 hover:text-blue-800 transition-colors">
                   {booking.customer.email}
                 </a>
               </DetailField>
               <DetailField icon={<Phone className="h-4 w-4" />} label="Telefon">
                 {booking.customer.phone ? (
-                  <a href={`tel:${booking.customer.phone}`} className="text-blue-700 hover:text-blue-900">
+                  <a href={`tel:${booking.customer.phone}`} className="text-blue-600 hover:text-blue-800 transition-colors">
                     {booking.customer.phone}
                   </a>
                 ) : (
@@ -352,14 +350,14 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
                 {booking.customerMessage ? (
                   <span className="whitespace-pre-line">{booking.customerMessage}</span>
                 ) : (
-                  "Keine Nachricht hinterlegt"
+                  <span className="text-slate-400 italic">Keine Nachricht hinterlegt</span>
                 )}
               </DetailField>
               <DetailField icon={<MapPin className="h-4 w-4" />} label="Lieferadresse">
                 {deliveryAddress.length > 0 ? (
                   <span className="whitespace-pre-line">{deliveryAddress.join("\n")}</span>
                 ) : (
-                  "Nicht angegeben"
+                  <span className="text-slate-400 italic">Nicht angegeben</span>
                 )}
               </DetailField>
               <DetailField icon={<ReceiptText className="h-4 w-4" />} label="Rechnungsadresse">
@@ -368,22 +366,18 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
                 ) : billingAddress.length > 0 ? (
                   <span className="whitespace-pre-line">{billingAddress.join("\n")}</span>
                 ) : (
-                  "Abweichend markiert, aber keine Adresse gespeichert"
+                  <span className="text-slate-400 italic">Abweichend markiert, aber keine Adresse gespeichert</span>
                 )}
               </DetailField>
             </div>
-          </section>
+          </AdminCard>
 
-          <section className="rounded-2xl border border-neutral-200 bg-white shadow-sm">
-            <div className="flex flex-col gap-2 border-b border-neutral-100 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <h2 className="text-base font-semibold text-neutral-950">Angefragte Produkte</h2>
-                <p className="mt-1 text-sm text-neutral-500">Alle Positionen aus dem Anfragekorb mit Preis-Snapshot.</p>
-              </div>
-              <p className="text-sm font-semibold text-neutral-900">{getPriceSummary(booking)}</p>
-            </div>
-
-            <div className="divide-y divide-neutral-100">
+          <AdminCard
+            title="Angefragte Produkte"
+            description="Alle Positionen aus dem Anfragekorb mit Preis-Snapshot."
+            headerAction={<p className="text-sm font-semibold text-slate-900">{getPriceSummary(booking)}</p>}
+          >
+            <div className="-mx-5 -mb-5 divide-y divide-slate-100 sm:-mx-6 sm:-mb-6">
               {booking.items.map((item) => {
                 const image = getItemImage(item);
                 const relevantInfos = [
@@ -399,8 +393,8 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
                 ].filter((info): info is string => Boolean(info?.trim()));
 
                 return (
-                  <article key={item.id} className="grid gap-5 p-6 md:grid-cols-[112px_minmax(0,1fr)_220px]">
-                    <div className="relative h-28 w-28 overflow-hidden rounded-xl border border-neutral-200 bg-neutral-100">
+                  <article key={item.id} className="grid gap-5 p-5 sm:p-6 md:grid-cols-[112px_minmax(0,1fr)_220px]">
+                    <div className="relative h-28 w-28 overflow-hidden rounded-[18px] border border-slate-200 bg-slate-100">
                       {image ? (
                         <Image
                           src={image.url}
@@ -410,30 +404,30 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
                           sizes="112px"
                         />
                       ) : (
-                        <div className="flex h-full w-full items-center justify-center text-xs text-neutral-400">Kein Bild</div>
+                        <div className="flex h-full w-full items-center justify-center text-xs text-slate-400">Kein Bild</div>
                       )}
                     </div>
 
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-start gap-2">
-                        <h3 className="text-lg font-semibold text-neutral-950">{getItemTitle(item)}</h3>
+                        <h3 className="text-lg font-semibold text-slate-900">{getItemTitle(item)}</h3>
                         {item.item?.category?.name ? (
-                          <span className="rounded-full bg-neutral-100 px-2.5 py-1 text-xs font-medium text-neutral-700">
+                          <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-medium text-slate-700">
                             {item.item.category.name}
                           </span>
                         ) : null}
                       </div>
-                      <p className="mt-1 text-sm text-neutral-500">Menge: {item.quantity} Stk.</p>
+                      <p className="mt-1 text-sm text-slate-500">Menge: {item.quantity} Stk.</p>
                       {item.item?.shortDescription || item.item?.description ? (
-                        <p className="mt-3 text-sm leading-relaxed text-neutral-700">
+                        <p className="mt-3 text-sm leading-relaxed text-slate-700">
                           {item.item.shortDescription || item.item.description}
                         </p>
                       ) : null}
 
                       {relevantInfos.length > 0 ? (
-                        <div className="mt-4 rounded-xl bg-neutral-50 p-3">
-                          <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500">Zusatzinfos</p>
-                          <ul className="mt-2 space-y-1 text-sm text-neutral-700">
+                        <div className="mt-4 rounded-xl bg-slate-50 p-3">
+                          <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-slate-500">Zusatzinfos</p>
+                          <ul className="mt-2 space-y-1 text-sm text-slate-700">
                             {relevantInfos.slice(0, 4).map((info, index) => (
                               <li key={`${item.id}-info-${index}`}>{info}</li>
                             ))}
@@ -442,19 +436,19 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
                       ) : null}
                     </div>
 
-                    <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-4 text-sm">
+                    <div className="rounded-[18px] border border-slate-200 bg-slate-50 p-4 text-sm">
                       <div className="space-y-3">
                         <div>
-                          <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500">priceType</p>
-                          <p className="mt-1 font-semibold text-neutral-950">{getPriceType(item)}</p>
+                          <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-slate-500">priceType</p>
+                          <p className="mt-1 font-semibold text-slate-900">{getPriceType(item)}</p>
                         </div>
                         <div>
-                          <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500">Basispreis</p>
-                          <p className="mt-1 font-semibold text-neutral-950">{getBasePriceDisplay(item)}</p>
+                          <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-slate-500">Basispreis</p>
+                          <p className="mt-1 font-semibold text-slate-900">{getBasePriceDisplay(item)}</p>
                         </div>
                         <div>
-                          <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500">Berechneter Preis</p>
-                          <p className="mt-1 font-semibold text-neutral-950">{getCalculatedPriceDisplay(item)}</p>
+                          <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-slate-500">Berechneter Preis</p>
+                          <p className="mt-1 font-semibold text-slate-900">{getCalculatedPriceDisplay(item)}</p>
                           {item.pricingReason ? (
                             <p className="mt-1 text-xs text-amber-700">
                               {pricingReasonLabels[item.pricingReason] || item.pricingReason}
@@ -463,8 +457,8 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
                         </div>
                         {typeof item.bookingDays === "number" ? (
                           <div>
-                            <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500">Preis-Tage</p>
-                            <p className="mt-1 font-semibold text-neutral-950">{item.bookingDays}</p>
+                            <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-slate-500">Preis-Tage</p>
+                            <p className="mt-1 font-semibold text-slate-900">{item.bookingDays}</p>
                           </div>
                         ) : null}
                       </div>
@@ -473,41 +467,39 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
                 );
               })}
             </div>
-          </section>
+          </AdminCard>
         </div>
 
         <aside className="space-y-6">
-          <section className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
+          <AdminCard title="Notizen">
             <NotesSection bookingId={booking.id} initialNotes={booking.notes || []} />
-          </section>
+          </AdminCard>
 
-          <section className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-neutral-950">Meta</h2>
-            <div className="mt-4 space-y-4 text-sm">
-              <div className="flex items-center justify-between gap-4 border-b border-neutral-100 pb-3">
-                <span className="text-neutral-500">Lieferart</span>
-                <span className="font-medium text-neutral-900">{booking.deliveryType}</span>
+          <AdminCard title="Meta">
+            <div className="mt-2 space-y-4 text-sm">
+              <div className="flex items-center justify-between gap-4 border-b border-slate-100 pb-3">
+                <span className="text-slate-500">Lieferart</span>
+                <span className="font-medium text-slate-900">{booking.deliveryType}</span>
               </div>
-              <div className="flex items-center justify-between gap-4 border-b border-neutral-100 pb-3">
-                <span className="text-neutral-500">Calendar Sync</span>
-                <span className="font-medium text-neutral-900">{booking.calendarSync?.syncStatus || "Nicht aktiv"}</span>
+              <div className="flex items-center justify-between gap-4 border-b border-slate-100 pb-3">
+                <span className="text-slate-500">Calendar Sync</span>
+                <span className="font-medium text-slate-900">{booking.calendarSync?.syncStatus || "Nicht aktiv"}</span>
               </div>
               <div className="flex items-center justify-between gap-4">
-                <span className="text-neutral-500">Interne Notizen</span>
-                <span className="font-medium text-neutral-900">{booking.notes?.length || 0}</span>
+                <span className="text-slate-500">Interne Notizen</span>
+                <span className="font-medium text-slate-900">{booking.notes?.length || 0}</span>
               </div>
             </div>
-          </section>
+          </AdminCard>
         </aside>
       </div>
 
-      <div className="rounded-2xl border border-red-200 bg-red-50/20 p-6 shadow-sm">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-red-700">Gefahrenbereich</h2>
-        <p className="mt-1 text-sm text-neutral-600 mb-4">
+      <AdminCard title="Gefahrenbereich" className="border-red-200 bg-red-50/20">
+        <p className="mt-1 text-sm text-slate-600 mb-4">
           Hier können Sie diese Buchung und alle damit verknüpften Kundendaten, Buchungsartikel und Notizen endgültig aus der Datenbank löschen. Dies ist nur für Testdaten oder Sonderfälle gedacht.
         </p>
         <ClientBookingDeleteButton bookingId={booking.id} />
-      </div>
+      </AdminCard>
     </div>
   );
 }

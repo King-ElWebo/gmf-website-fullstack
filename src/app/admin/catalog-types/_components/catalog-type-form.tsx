@@ -3,6 +3,9 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { slugify } from "@/lib/slug";
+import { AdminCard } from "../../_components/ui/AdminCard";
+import { AdminField, AdminInput, AdminTextarea, AdminCheckbox } from "../../_components/ui/AdminInputs";
+import { AdminButton } from "../../_components/ui/AdminButton";
 
 type CatalogTypeData = {
     id: string;
@@ -32,7 +35,6 @@ export default function CatalogTypeForm({
     const [navLabel, setNavLabel] = useState(catalogType?.navLabel ?? "");
     const [showInNav, setShowInNav] = useState(catalogType?.showInNav ?? true);
     const [isDefault, setIsDefault] = useState(catalogType?.isDefault ?? false);
-    const [sortOrder, setSortOrder] = useState(String(catalogType?.sortOrder ?? 0));
     const [isActive, setIsActive] = useState(catalogType?.isActive ?? true);
     const [error, setError] = useState<string | null>(null);
     const [saving, setSaving] = useState(false);
@@ -55,7 +57,6 @@ export default function CatalogTypeForm({
             navLabel: navLabel.trim() || null,
             showInNav,
             isDefault,
-            sortOrder: sortOrder.trim() === "" ? 0 : Number(sortOrder),
             isActive,
         };
 
@@ -99,113 +100,110 @@ export default function CatalogTypeForm({
     }
 
     return (
-        <div className="max-w-xl space-y-4">
-            <h1 className="text-2xl font-semibold">{mode === "create" ? "New Catalog Type" : "Edit Catalog Type"}</h1>
+        <div className="max-w-5xl space-y-6">
+            <h1 className="text-2xl font-semibold text-slate-900">{mode === "create" ? "New Catalog Type" : "Edit Catalog Type"}</h1>
 
-            <form onSubmit={onSubmit} className="space-y-4">
-                <div className="space-y-1">
-                    <label className="text-sm font-medium">
-                        Name <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                        className="w-full rounded-md border px-3 py-2"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        required
-                    />
-                </div>
+            <form onSubmit={onSubmit} className="space-y-6">
+                <div className="grid gap-6 lg:grid-cols-2 lg:items-start">
+                    {/* Left Column */}
+                    <AdminCard title="General Information" description="Basic details about this catalog type.">
+                        <div className="space-y-5">
+                            <AdminField label="Name *" htmlFor="name">
+                                <AdminInput
+                                    id="name"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    required
+                                />
+                            </AdminField>
 
-                <div className="space-y-1">
-                    <label className="text-sm font-medium">Slug</label>
-                    <input
-                        className="w-full rounded-md border px-3 py-2"
-                        value={slug}
-                        onChange={(e) => {
-                            setSlugTouched(true);
-                            setSlugManual(e.target.value);
-                        }}
-                    />
-                    <p className="text-xs text-neutral-600">Used as a stable key for filtering and integrations.</p>
-                </div>
+                            <AdminField label="Slug" htmlFor="slug" helperText="Used as a stable key for filtering and integrations.">
+                                <AdminInput
+                                    id="slug"
+                                    value={slug}
+                                    onChange={(e) => {
+                                        setSlugTouched(true);
+                                        setSlugManual(e.target.value);
+                                    }}
+                                />
+                            </AdminField>
 
-                <div className="space-y-1">
-                    <label className="text-sm font-medium">Beschreibung</label>
-                    <textarea
-                        className="min-h-[100px] w-full resize-y rounded-md border px-3 py-2"
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        placeholder="Optionale Beschreibung dieses Katalogtyps..."
-                    />
-                </div>
+                            <AdminField label="Beschreibung" htmlFor="description">
+                                <AdminTextarea
+                                    id="description"
+                                    rows={6}
+                                    value={description}
+                                    onChange={(e) => setDescription(e.target.value)}
+                                    placeholder="Optionale Beschreibung dieses Katalogtyps..."
+                                />
+                            </AdminField>
+                        </div>
+                    </AdminCard>
 
-                <div className="rounded-md border bg-neutral-50 p-4 space-y-3">
-                    <h3 className="text-sm font-semibold text-neutral-800">Navigation & Frontend</h3>
+                    {/* Right Column */}
+                    <div className="space-y-6">
+                        <AdminCard title="Navigation & Frontend" description="Settings for displaying this type on the website.">
+                            <div className="space-y-5">
+                                <AdminField label="Navbar-Linkname" htmlFor="navLabel" helperText="Wird als Linktext in der Navigation angezeigt. Wenn leer, wird der Name verwendet.">
+                                    <AdminInput
+                                        id="navLabel"
+                                        value={navLabel}
+                                        onChange={(e) => setNavLabel(e.target.value)}
+                                        placeholder={name || "z.B. Licht & Ton"}
+                                    />
+                                </AdminField>
 
-                    <div className="space-y-1">
-                        <label className="text-sm font-medium">Navbar-Linkname</label>
-                        <input
-                            className="w-full rounded-md border px-3 py-2"
-                            value={navLabel}
-                            onChange={(e) => setNavLabel(e.target.value)}
-                            placeholder={name || "z.B. Licht & Ton"}
-                        />
-                        <p className="text-xs text-neutral-600">
-                            Wird als Linktext in der Navigation angezeigt. Wenn leer, wird der Name verwendet.
-                        </p>
+                                <div className="space-y-4 pt-2">
+                                    <AdminCheckbox
+                                        label="In der Navigation anzeigen"
+                                        checked={showInNav}
+                                        onChange={(e) => setShowInNav(e.target.checked)}
+                                    />
+
+                                    <AdminCheckbox
+                                        label="Standard-Produktseite"
+                                        description="Produkte-Hauptseite zeigt primär diesen Typ."
+                                        checked={isDefault}
+                                        onChange={(e) => setIsDefault(e.target.checked)}
+                                    />
+                                </div>
+                            </div>
+                        </AdminCard>
+
+                        <AdminCard title="Status" description="Control visibility of this catalog type.">
+                            <div className="space-y-5">
+                                <AdminCheckbox
+                                    label="Aktiv"
+                                    checked={isActive}
+                                    onChange={(e) => setIsActive(e.target.checked)}
+                                />
+
+                                {mode === "edit" && typeof catalogType?.categoryCount === "number" && (
+                                    <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
+                                        Zugeordnete Kategorien: <span className="font-semibold">{catalogType.categoryCount}</span>
+                                    </div>
+                                )}
+                            </div>
+                        </AdminCard>
                     </div>
-
-                    <label className="flex items-center gap-2 text-sm">
-                        <input type="checkbox" checked={showInNav} onChange={(e) => setShowInNav(e.target.checked)} />
-                        In der Navigation anzeigen
-                    </label>
-
-                    <label className="flex items-center gap-2 text-sm">
-                        <input type="checkbox" checked={isDefault} onChange={(e) => setIsDefault(e.target.checked)} />
-                        Standard-Produktseite (Produkte-Hauptseite zeigt nur diesen Typ)
-                    </label>
                 </div>
-
-                <div className="space-y-1">
-                    <label className="text-sm font-medium">Sortierung</label>
-                    <input
-                        type="number"
-                        className="w-full rounded-md border px-3 py-2"
-                        value={sortOrder}
-                        onChange={(e) => setSortOrder(e.target.value)}
-                        step={1}
-                    />
-                </div>
-
-                <label className="flex items-center gap-2 text-sm">
-                    <input type="checkbox" checked={isActive} onChange={(e) => setIsActive(e.target.checked)} />
-                    Aktiv
-                </label>
-
-                {mode === "edit" && typeof catalogType?.categoryCount === "number" && (
-                    <div className="rounded-md border bg-neutral-50 p-3 text-sm text-neutral-700">
-                        Zugeordnete Kategorien: {catalogType.categoryCount}
-                    </div>
-                )}
 
                 {error && <p className="text-sm text-red-600">{error}</p>}
 
-                <div className="flex gap-2">
-                    <button
-                        disabled={saving || !canSave}
-                        className="rounded-md bg-black px-4 py-2 text-sm text-white disabled:opacity-60"
-                    >
-                        {saving ? "Saving..." : mode === "create" ? "Create" : "Save"}
-                    </button>
+                <div className="flex items-center gap-3">
+                    <AdminButton type="submit" disabled={saving || !canSave}>
+                        {saving ? "Speichert..." : mode === "create" ? "Erstellen" : "Speichern"}
+                    </AdminButton>
 
                     {mode === "edit" && (
-                        <button
+                        <AdminButton
                             type="button"
+                            variant="danger"
                             onClick={onDelete}
                             disabled={deleting}
-                            className="rounded-md border px-4 py-2 text-sm disabled:opacity-60"
                         >
-                            {deleting ? "Deleting..." : "Delete"}
-                        </button>
+                            {deleting ? "Löscht..." : "Löschen"}
+                        </AdminButton>
                     )}
                 </div>
             </form>

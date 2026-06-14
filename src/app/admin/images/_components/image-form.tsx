@@ -4,6 +4,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { DisplayArea } from "@/lib/display-area";
 import { clientOptimizeImage } from "@/lib/images/client-optimize";
+import { AdminCard } from "../../_components/ui/AdminCard";
+import { AdminField, AdminInput, AdminCheckbox } from "../../_components/ui/AdminInputs";
+import { AdminButton } from "../../_components/ui/AdminButton";
 
 type ImageFormProps = {
     mode: "create" | "edit";
@@ -116,97 +119,97 @@ export default function ImageForm({ mode, initialData }: ImageFormProps) {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="max-w-xl space-y-6">
-            <h1 className="text-2xl font-semibold">
+        <div className="max-w-2xl space-y-6">
+            <h1 className="text-2xl font-semibold text-slate-900">
                 {mode === "create" ? "Neues Bild hochladen" : "Bild bearbeiten"}
             </h1>
 
-            {error && <div className="text-sm text-red-600">{error}</div>}
+            <form onSubmit={handleSubmit} className="space-y-6">
+                <AdminCard title="Bilddatei">
+                    {mode === "edit" && initialData?.url && (
+                        <div className="space-y-3 mb-6">
+                            <label className="text-xs font-semibold uppercase tracking-[0.1em] text-slate-500">Aktuelles Bild</label>
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                                src={initialData.url}
+                                alt="Preview"
+                                className="h-48 w-48 rounded-xl border border-slate-200 object-cover bg-slate-50"
+                            />
+                        </div>
+                    )}
 
-            {mode === "edit" && initialData?.url && (
-                <div className="space-y-1">
-                    <label className="text-sm font-medium">Aktuelles Bild</label>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                        src={initialData.url}
-                        alt="Preview"
-                        className="h-48 w-48 rounded-md border object-cover"
-                    />
-                </div>
-            )}
+                    <AdminField label={mode === "create" ? "Bilder *" : "Bild austauschen (optional)"} htmlFor="files">
+                        <input
+                            id="files"
+                            type="file"
+                            accept="image/*"
+                            multiple={mode === "create"}
+                            required={mode === "create"}
+                            onChange={(e) => setFiles(e.target.files)}
+                            className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm transition outline-none focus:border-slate-400 focus:ring-4 focus:ring-slate-100"
+                        />
+                    </AdminField>
+                </AdminCard>
 
-            <div className="space-y-1">
-                <label className="text-sm font-medium">
-                    {mode === "create" ? "Bilder *" : "Bild austauschen (optional)"}
-                </label>
-                <input
-                    type="file"
-                    accept="image/*"
-                    multiple={mode === "create"}
-                    required={mode === "create"}
-                    onChange={(e) => setFiles(e.target.files)}
-                    className="w-full rounded-md border p-2 text-sm"
-                />
-            </div>
+                <AdminCard title="Metadaten & Anzeige">
+                    <div className="space-y-5">
+                        <AdminField label="Anzeigebereich" htmlFor="area">
+                            <select
+                                id="area"
+                                value={area}
+                                onChange={(e) => setArea(e.target.value as DisplayArea)}
+                                className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm shadow-sm transition outline-none focus:border-slate-400 focus:ring-4 focus:ring-slate-100"
+                            >
+                                <option value={DisplayArea.CAROUSEL}>Carousel</option>
+                                <option value={DisplayArea.GALLERY}>Galerie</option>
+                                <option value={DisplayArea.SOCIAL}>Social Media</option>
+                                <option value={DisplayArea.OTHER}>Sonstige</option>
+                            </select>
+                        </AdminField>
 
-            <div className="space-y-1">
-                <label className="text-sm font-medium">Anzeigebereich</label>
-                <select
-                    value={area}
-                    onChange={(e) => setArea(e.target.value as DisplayArea)}
-                    className="w-full rounded-md border p-2 text-sm"
-                >
-                    <option value={DisplayArea.CAROUSEL}>Carousel</option>
-                    <option value={DisplayArea.GALLERY}>Galerie</option>
-                    <option value={DisplayArea.SOCIAL}>Social Media</option>
-                    <option value={DisplayArea.OTHER}>Sonstige</option>
-                </select>
-            </div>
+                        <AdminField label="Alternativtext (Alt)" htmlFor="alt">
+                            <AdminInput
+                                id="alt"
+                                value={alt}
+                                onChange={(e) => setAlt(e.target.value)}
+                            />
+                        </AdminField>
 
-            <div className="space-y-1">
-                <label className="text-sm font-medium">Alternativtext (Alt)</label>
-                <input
-                    type="text"
-                    value={alt}
-                    onChange={(e) => setAlt(e.target.value)}
-                    className="w-full rounded-md border p-2 text-sm"
-                />
-            </div>
+                        <div className="pt-2 space-y-2">
+                            <AdminCheckbox
+                                label="Online (veröffentlicht)"
+                                checked={published}
+                                onChange={(e) => setPublished(e.target.checked)}
+                            />
+                            <p className="text-xs text-slate-500 ml-7">
+                                Die Reihenfolge pflegst du in der Bilder-Übersicht per Drag-and-drop.
+                            </p>
+                        </div>
+                    </div>
+                </AdminCard>
 
-            <label className="flex cursor-pointer items-center gap-2">
-                <input
-                    type="checkbox"
-                    checked={published}
-                    onChange={(e) => setPublished(e.target.checked)}
-                    className="rounded text-black focus:ring-black"
-                />
-                <span className="text-sm">Online (veröffentlicht)</span>
-            </label>
+                {error && <div className="text-sm text-red-600">{error}</div>}
 
-            <p className="text-xs text-neutral-500">
-                Die Reihenfolge pflegst du in der Bilder-Übersicht per Drag-and-drop.
-            </p>
-
-            <div className="flex items-center gap-4">
-                <button
-                    type="submit"
-                    disabled={loading || deleting}
-                    className="rounded-md bg-black px-4 py-2 text-sm text-white hover:bg-neutral-800 disabled:opacity-50"
-                >
-                    {loading ? "Speichert..." : "Speichern"}
-                </button>
-
-                {mode === "edit" && (
-                    <button
-                        type="button"
-                        onClick={handleDelete}
+                <div className="flex items-center gap-4">
+                    <AdminButton
+                        type="submit"
                         disabled={loading || deleting}
-                        className="rounded-md border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-600 hover:bg-red-100 disabled:opacity-50"
                     >
-                        {deleting ? "Löscht..." : "Bild löschen"}
-                    </button>
-                )}
-            </div>
-        </form>
+                        {loading ? "Speichert..." : "Speichern"}
+                    </AdminButton>
+
+                    {mode === "edit" && (
+                        <AdminButton
+                            type="button"
+                            variant="danger"
+                            onClick={handleDelete}
+                            disabled={loading || deleting}
+                        >
+                            {deleting ? "Löscht..." : "Bild löschen"}
+                        </AdminButton>
+                    )}
+                </div>
+            </form>
+        </div>
     );
 }

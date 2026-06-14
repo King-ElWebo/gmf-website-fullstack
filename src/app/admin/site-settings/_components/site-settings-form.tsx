@@ -2,6 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { AdminCard } from "../../_components/ui/AdminCard";
+import { AdminField, AdminInput, AdminTextarea, AdminCheckbox } from "../../_components/ui/AdminInputs";
+import { AdminButton } from "../../_components/ui/AdminButton";
 
 type SocialLinkFormRow = {
     id: string;
@@ -120,140 +123,139 @@ export default function SiteSettingsForm({ initial }: { initial: SiteSettingsFor
     }
 
     return (
-        <form onSubmit={onSubmit} className="space-y-6">
+        <form onSubmit={onSubmit} className="max-w-5xl space-y-6">
             <div>
-                <h1 className="text-2xl font-semibold">Site Settings</h1>
-                <p className="mt-1 text-sm text-neutral-600">
+                <h1 className="text-2xl font-semibold text-slate-900">Site Settings</h1>
+                <p className="mt-1 text-sm text-slate-500">
                     Zentrale Inhalte für Kontakt, Hero, Footer und allgemeine Infobereiche.
                 </p>
             </div>
 
-            <div className="grid gap-6 lg:grid-cols-2">
-                <section className="space-y-4 rounded-xl border p-4">
-                    <h2 className="text-lg font-semibold">Kontakt</h2>
-                    <div className="space-y-1">
-                        <label className="text-sm font-medium">Telefonnummer</label>
-                        <input className="w-full rounded-md border px-3 py-2" value={phone} onChange={(e) => setPhone(e.target.value)} />
-                    </div>
-                    <div className="space-y-1">
-                        <label className="text-sm font-medium">E-Mail</label>
-                        <input className="w-full rounded-md border px-3 py-2" value={email} onChange={(e) => setEmail(e.target.value)} />
-                    </div>
-                    <div className="space-y-1">
-                        <label className="text-sm font-medium">Standort / Adresse</label>
-                        <textarea className="min-h-[110px] w-full rounded-md border px-3 py-2" value={address} onChange={(e) => setAddress(e.target.value)} />
-                    </div>
-                    <div className="space-y-1">
-                        <label className="text-sm font-medium">Öffnungszeiten</label>
-                        <textarea className="min-h-[110px] w-full rounded-md border px-3 py-2" value={openingHours} onChange={(e) => setOpeningHours(e.target.value)} />
-                    </div>
-                </section>
-
-                <section className="space-y-4 rounded-xl border p-4">
-                    <h2 className="text-lg font-semibold">Inhalte</h2>
-                    <div className="space-y-1">
-                        <label className="text-sm font-medium">Hero-Titel</label>
-                        <input className="w-full rounded-md border px-3 py-2" value={heroTitle} onChange={(e) => setHeroTitle(e.target.value)} />
-                    </div>
-                    <div className="space-y-1">
-                        <label className="text-sm font-medium">Hero-Text</label>
-                        <textarea className="min-h-[110px] w-full rounded-md border px-3 py-2" value={heroText} onChange={(e) => setHeroText(e.target.value)} />
-                    </div>
-                    <div className="space-y-1">
-                        <label className="text-sm font-medium">Hinweistexte</label>
-                        <textarea className="min-h-[110px] w-full rounded-md border px-3 py-2" value={noticeText} onChange={(e) => setNoticeText(e.target.value)} />
-                    </div>
-                    <div className="space-y-1">
-                        <label className="text-sm font-medium">Allgemeine Zusatzinfos</label>
-                        <textarea className="min-h-[110px] w-full rounded-md border px-3 py-2" value={additionalInfo} onChange={(e) => setAdditionalInfo(e.target.value)} />
-                    </div>
-                    <div className="space-y-1">
-                        <label className="text-sm font-medium">Anfahrtsklausel / Lieferbedingungen</label>
-                        <textarea 
-                            className="min-h-[110px] w-full rounded-md border px-3 py-2" 
-                            value={deliveryTerms} 
-                            onChange={(e) => setDeliveryTerms(e.target.value)} 
-                            placeholder="Anfahrt und Lieferung werden nach Entfernung berechnet und im Zuge der Anfrage individuell vereinbart."
-                        />
-                        <p className="text-xs text-neutral-500">
-                            Wird auf der Produktdetailseite und im Anfragekorb/Checkout angezeigt.
-                        </p>
-                    </div>
-                </section>
-            </div>
-
-            <section className="space-y-4 rounded-xl border p-4">
-                <div className="flex items-center justify-between">
-                    <div>
-                        <h2 className="text-lg font-semibold">Social Links</h2>
-                        <p className="text-sm text-neutral-600">Mehrere Plattformen zentral pflegen.</p>
-                    </div>
-                    <button type="button" onClick={addSocialLink} className="rounded-md border px-3 py-2 text-sm">
-                        Link hinzufügen
-                    </button>
-                </div>
-
-                <div className="space-y-3">
-                    {socialLinks.map((link, index) => (
-                        <div key={link.id} className="grid gap-3 rounded-lg border p-3 lg:grid-cols-[1fr_1fr_2fr_auto]">
-                            <div className="space-y-1">
-                                <label className="text-sm font-medium">Plattform</label>
-                                <input
-                                    className="w-full rounded-md border px-3 py-2"
-                                    value={link.platform}
-                                    onChange={(e) => updateSocialLink(link.id, { platform: e.target.value })}
-                                    placeholder="Instagram"
-                                />
-                            </div>
-                            <div className="space-y-1">
-                                <label className="text-sm font-medium">Label</label>
-                                <input
-                                    className="w-full rounded-md border px-3 py-2"
-                                    value={link.label}
-                                    onChange={(e) => updateSocialLink(link.id, { label: e.target.value })}
-                                    placeholder="Folge uns"
-                                />
-                            </div>
-                            <div className="space-y-1">
-                                <label className="text-sm font-medium">URL</label>
-                                <input
-                                    className="w-full rounded-md border px-3 py-2"
-                                    value={link.url}
-                                    onChange={(e) => updateSocialLink(link.id, { url: e.target.value })}
-                                    placeholder="https://..."
-                                />
-                            </div>
-                            <div className="flex items-end gap-2">
-                                <label className="flex items-center gap-2 text-sm">
-                                    <input
-                                        type="checkbox"
-                                        checked={link.isActive}
-                                        onChange={(e) => updateSocialLink(link.id, { isActive: e.target.checked })}
-                                    />
-                                    Aktiv
-                                </label>
-                            </div>
-                            <div className="lg:col-span-4 flex gap-2">
-                                <button type="button" onClick={() => moveSocialLink(link.id, -1)} className="rounded-md border px-3 py-1.5 text-sm" disabled={index === 0}>
-                                    Hoch
-                                </button>
-                                <button type="button" onClick={() => moveSocialLink(link.id, 1)} className="rounded-md border px-3 py-1.5 text-sm" disabled={index === socialLinks.length - 1}>
-                                    Runter
-                                </button>
-                                <button type="button" onClick={() => removeSocialLink(link.id)} className="rounded-md border px-3 py-1.5 text-sm text-red-600">
-                                    Entfernen
-                                </button>
-                            </div>
+            <div className="grid gap-6 lg:grid-cols-2 lg:items-start">
+                <div className="space-y-6">
+                    <AdminCard title="Kontakt" description="Ihre Erreichbarkeit auf der Webseite.">
+                        <div className="space-y-5">
+                            <AdminField label="Telefonnummer" htmlFor="phone">
+                                <AdminInput id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} />
+                            </AdminField>
+                            
+                            <AdminField label="E-Mail" htmlFor="email">
+                                <AdminInput id="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                            </AdminField>
+                            
+                            <AdminField label="Standort / Adresse" htmlFor="address">
+                                <AdminTextarea id="address" rows={4} value={address} onChange={(e) => setAddress(e.target.value)} />
+                            </AdminField>
+                            
+                            <AdminField label="Öffnungszeiten" htmlFor="openingHours">
+                                <AdminTextarea id="openingHours" rows={4} value={openingHours} onChange={(e) => setOpeningHours(e.target.value)} />
+                            </AdminField>
                         </div>
-                    ))}
+                    </AdminCard>
+
+                    <AdminCard 
+                        title="Social Links" 
+                        description="Mehrere Plattformen zentral pflegen." 
+                        headerAction={
+                            <AdminButton type="button" variant="secondary" onClick={addSocialLink} className="h-8 px-3 text-xs">
+                                Link hinzufügen
+                            </AdminButton>
+                        }
+                    >
+                        <div className="space-y-4">
+                            {socialLinks.map((link, index) => (
+                                <div key={link.id} className="relative grid gap-4 rounded-xl border border-slate-200 bg-slate-50 p-4 lg:grid-cols-[1fr_1fr_2fr_auto]">
+                                    <AdminField label="Plattform">
+                                        <AdminInput
+                                            value={link.platform}
+                                            onChange={(e) => updateSocialLink(link.id, { platform: e.target.value })}
+                                            placeholder="Instagram"
+                                        />
+                                    </AdminField>
+                                    <AdminField label="Label">
+                                        <AdminInput
+                                            value={link.label}
+                                            onChange={(e) => updateSocialLink(link.id, { label: e.target.value })}
+                                            placeholder="Folge uns"
+                                        />
+                                    </AdminField>
+                                    <AdminField label="URL">
+                                        <AdminInput
+                                            value={link.url}
+                                            onChange={(e) => updateSocialLink(link.id, { url: e.target.value })}
+                                            placeholder="https://..."
+                                        />
+                                    </AdminField>
+                                    <div className="flex items-end gap-2 pb-1">
+                                        <AdminCheckbox
+                                            checked={link.isActive}
+                                            onChange={(e) => updateSocialLink(link.id, { isActive: e.target.checked })}
+                                            label="Aktiv"
+                                        />
+                                    </div>
+                                    <div className="lg:col-span-4 flex items-center justify-end gap-2 pt-2 border-t border-slate-200 mt-2">
+                                        <AdminButton type="button" variant="ghost" onClick={() => moveSocialLink(link.id, -1)} disabled={index === 0} className="h-8 px-3 text-xs">
+                                            Hoch
+                                        </AdminButton>
+                                        <AdminButton type="button" variant="ghost" onClick={() => moveSocialLink(link.id, 1)} disabled={index === socialLinks.length - 1} className="h-8 px-3 text-xs">
+                                            Runter
+                                        </AdminButton>
+                                        <div className="h-4 w-px bg-slate-300 mx-1"></div>
+                                        <AdminButton type="button" variant="ghost" onClick={() => removeSocialLink(link.id)} className="h-8 px-3 text-xs text-red-600 hover:text-red-700 hover:bg-red-50">
+                                            Entfernen
+                                        </AdminButton>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </AdminCard>
                 </div>
-            </section>
+
+                <div className="h-full space-y-6">
+                    <AdminCard title="Inhalte" description="Globale Texte für die gesamte Webseite." className="h-full">
+                    <div className="space-y-5">
+                        <AdminField label="Hero-Titel" htmlFor="heroTitle">
+                            <AdminInput id="heroTitle" value={heroTitle} onChange={(e) => setHeroTitle(e.target.value)} />
+                        </AdminField>
+                        
+                        <AdminField label="Hero-Text" htmlFor="heroText">
+                            <AdminTextarea id="heroText" rows={5} value={heroText} onChange={(e) => setHeroText(e.target.value)} />
+                        </AdminField>
+                        
+                        <AdminField label="Hinweistexte" htmlFor="noticeText">
+                            <AdminTextarea id="noticeText" rows={5} value={noticeText} onChange={(e) => setNoticeText(e.target.value)} />
+                        </AdminField>
+                        
+                        <AdminField label="Allgemeine Zusatzinfos" htmlFor="additionalInfo">
+                            <AdminTextarea id="additionalInfo" rows={6} value={additionalInfo} onChange={(e) => setAdditionalInfo(e.target.value)} />
+                        </AdminField>
+                        
+                        <AdminField 
+                            label="Anfahrtsklausel / Lieferbedingungen" 
+                            htmlFor="deliveryTerms" 
+                            helperText="Wird auf der Produktdetailseite und im Anfragekorb/Checkout angezeigt."
+                        >
+                            <AdminTextarea 
+                                id="deliveryTerms" 
+                                rows={6} 
+                                value={deliveryTerms} 
+                                onChange={(e) => setDeliveryTerms(e.target.value)} 
+                                placeholder="Anfahrt und Lieferung werden nach Entfernung berechnet und im Zuge der Anfrage individuell vereinbart."
+                            />
+                        </AdminField>
+                    </div>
+                </AdminCard>
+                </div>
+            </div>
 
             {error && <p className="text-sm text-red-600">{error}</p>}
 
-            <button disabled={saving} className="rounded-md bg-black px-4 py-2 text-sm text-white disabled:opacity-60">
-                {saving ? "Speichert..." : "Einstellungen speichern"}
-            </button>
+            <div className="sticky bottom-6 z-10 flex items-center justify-between rounded-2xl border border-slate-200 bg-white/80 p-4 shadow-lg backdrop-blur-md">
+                <p className="text-sm text-slate-500">Ihre Änderungen sind noch nicht gespeichert.</p>
+                <AdminButton type="submit" disabled={saving}>
+                    {saving ? "Speichert..." : "Einstellungen speichern"}
+                </AdminButton>
+            </div>
         </form>
     );
 }
