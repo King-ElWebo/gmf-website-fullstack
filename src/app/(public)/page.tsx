@@ -68,14 +68,14 @@ export default async function HomePage() {
             />
 
             {/* === Willkommenstext === Surface B: Cream Accent */}
-            <section className="relative py-20 sm:py-28 overflow-hidden">
+            <section className="relative overflow-hidden pb-20 pt-14 sm:pb-28 sm:pt-20">
                 <div className="absolute inset-0 bg-[var(--gmf-surface-cream-accent)]" />
 
                 <div className="relative max-w-[850px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#f13c20] to-[#ff7a3d] text-white px-5 py-2 rounded-full text-[13px] font-bold uppercase tracking-widest mb-8 shadow-lg shadow-red-500/20">
-                        <Sparkles size={16} />
+                    <div className="inline-flex items-center gap-1.5 bg-gradient-to-r from-[#f13c20] to-[#ff7a3d] text-white px-4 py-1.5 rounded-full text-[11px] sm:text-[12px] font-bold uppercase tracking-widest mb-6 shadow-md shadow-red-500/20">
+                        <Sparkles size={14} />
                         Willkommen bei GMF Eventmodule
-                        <Sparkles size={16} />
+                        <Sparkles size={14} />
                     </div>
                     <h2 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="text-[clamp(2rem,7vw,3rem)] text-[#1a3a52] mb-8 leading-tight">
                         Ihr Verleih für{" "}

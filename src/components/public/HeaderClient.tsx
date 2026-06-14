@@ -85,12 +85,12 @@ export function HeaderClient({ navCatalogTypes }: HeaderClientProps) {
     <header className="sticky top-0 z-50 bg-[#fffdf5]/96 backdrop-blur-md shadow-md shadow-[#1a3a52]/5 border-b border-orange-100/50">
       <div className="h-[3px] w-full bg-gradient-to-r from-[#f13c20] via-[#fcd01b] to-[#066bb7]" />
       <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex h-[86px] items-center justify-between sm:h-[98px]">
+        <div className="flex h-[72px] items-center justify-between sm:h-[84px]">
 
           {/* Logo */}
           <Link
             href="/"
-            className="group relative flex items-center px-3.5 py-1.5 bg-white rounded-2xl border border-orange-100/80 shadow-sm transition-[transform,opacity,box-shadow] duration-200 ease-out-strong hover:-translate-y-0.5 hover:shadow-md hover:border-orange-200/80 active:scale-[0.97]"
+            className="group relative flex items-center px-2.5 py-1 bg-white rounded-xl border border-orange-100/80 shadow-sm transition-[transform,opacity,box-shadow] duration-200 ease-out-strong hover:-translate-y-0.5 hover:shadow-md hover:border-orange-200/80 active:scale-[0.97]"
             aria-label="GMF Eventmodule Startseite"
           >
             <Image
@@ -99,12 +99,12 @@ export function HeaderClient({ navCatalogTypes }: HeaderClientProps) {
               width={2520}
               height={1696}
               sizes="(max-width: 640px) 120px, 140px"
-              className="relative h-[44px] w-auto object-contain transition-transform duration-200 ease-out-strong group-hover:scale-[1.02] sm:h-[50px]"
+              className="relative h-[38px] w-auto object-contain transition-transform duration-200 ease-out-strong group-hover:scale-[1.02] sm:h-[44px]"
             />
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden items-center gap-2 rounded-full border border-[#fcd01b]/40 bg-white/90 px-2.5 py-2 shadow-sm backdrop-blur-sm lg:flex xl:gap-3">
+          <nav className="hidden items-center gap-1.5 rounded-full border border-[#fcd01b]/40 bg-white/90 px-2 py-1.5 shadow-sm backdrop-blur-sm lg:flex xl:gap-2">
             {navLinks.map((link, index) => {
               const isActive = pathname === link.href || (link.href !== '/' && pathname?.startsWith(link.href));
               const color = navColors[index % navColors.length];
@@ -119,7 +119,7 @@ export function HeaderClient({ navCatalogTypes }: HeaderClientProps) {
                   href={link.href}
                   aria-current={isActive ? "page" : undefined}
                   style={{ fontFamily: 'var(--font-fredoka), sans-serif' }}
-                  className={`rounded-full px-4 py-2 text-[16px] font-bold transition-[transform,background-color,box-shadow] duration-150 ease-out-strong active:scale-[0.97] hover:-translate-y-0.5 ${linkClassName}`}
+                  className={`rounded-full px-3.5 py-1.5 text-[15px] font-bold transition-[transform,background-color,box-shadow] duration-150 ease-out-strong active:scale-[0.97] hover:-translate-y-0.5 ${linkClassName}`}
                 >
                   {link.label}
                 </Link>
@@ -128,12 +128,12 @@ export function HeaderClient({ navCatalogTypes }: HeaderClientProps) {
 
             <Link
               href="/anfragekorb"
-              className="group relative ml-1 flex h-[48px] w-[48px] items-center justify-center rounded-full bg-gradient-to-br from-[#f13c20] to-[#d93018] text-white shadow-md shadow-red-500/30 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-red-500/40 active:scale-[0.97]"
+              className="group relative ml-1 flex h-[42px] w-[42px] items-center justify-center rounded-full bg-gradient-to-br from-[#f13c20] to-[#d93018] text-white shadow-md shadow-red-500/30 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-red-500/40 active:scale-[0.97]"
               aria-label="Anfragekorb"
             >
-              <ShoppingCart size={22} className="transition-transform duration-150 ease-out-strong group-hover:scale-110" />
+              <ShoppingCart size={18} className="transition-transform duration-150 ease-out-strong group-hover:scale-110" />
               {hasHydrated && itemCount > 0 && (
-                <span className="absolute -right-1 -top-1 flex min-h-[22px] min-w-[22px] items-center justify-center rounded-full bg-[#fcd01b] px-1 text-[12px] font-bold text-[#332600] shadow-sm transition-transform duration-150 ease-out-strong group-hover:scale-110">
+                <span className="absolute -right-1 -top-1 flex min-h-[20px] min-w-[20px] items-center justify-center rounded-full bg-[#fcd01b] px-1 text-[11px] font-bold text-[#332600] shadow-sm transition-transform duration-150 ease-out-strong group-hover:scale-110">
                   {itemCount}
                 </span>
               )}
@@ -141,15 +141,15 @@ export function HeaderClient({ navCatalogTypes }: HeaderClientProps) {
           </nav>
 
           {/* Mobile Navigation controls (Cart icon next to Burger menu) */}
-          <div className="flex items-center gap-3 lg:hidden">
+          <div className="flex items-center gap-2.5 lg:hidden">
             <Link
               href="/anfragekorb"
-              className="group relative flex h-12 w-12 items-center justify-center rounded-[18px] bg-gradient-to-br from-[#f13c20] to-[#d93018] text-white shadow-md shadow-red-500/20 transition-all duration-150 active:scale-[0.95] transform-gpu hover:-translate-y-0.5"
+              className="group relative flex h-11 w-11 items-center justify-center rounded-[14px] bg-gradient-to-br from-[#f13c20] to-[#d93018] text-white shadow-md shadow-red-500/20 transition-all duration-150 active:scale-[0.95] transform-gpu hover:-translate-y-0.5"
               aria-label="Anfragekorb"
             >
-              <ShoppingCart size={22} className="transition-transform duration-150 ease-out-strong group-hover:scale-110" />
+              <ShoppingCart size={20} className="transition-transform duration-150 ease-out-strong group-hover:scale-110" />
               {hasHydrated && itemCount > 0 && (
-                <span className="absolute -right-1.5 -top-1.5 flex min-h-[22px] min-w-[22px] items-center justify-center rounded-full bg-[#fcd01b] px-1 text-[11px] font-bold text-[#332600] shadow-sm transition-transform duration-150 ease-out-strong group-hover:scale-110 border border-white/20">
+                <span className="absolute -right-1.5 -top-1.5 flex min-h-[20px] min-w-[20px] items-center justify-center rounded-full bg-[#fcd01b] px-1 text-[11px] font-bold text-[#332600] shadow-sm transition-transform duration-150 ease-out-strong group-hover:scale-110 border border-white/20">
                   {itemCount}
                 </span>
               )}
@@ -157,18 +157,18 @@ export function HeaderClient({ navCatalogTypes }: HeaderClientProps) {
 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="flex h-12 w-12 items-center justify-center rounded-[18px] bg-[#f7f8fa] text-[#1a202c] shadow-sm transition-[transform,background-color,box-shadow] duration-150 ease-out-strong hover:-translate-y-0.5 hover:bg-white hover:shadow-md active:scale-[0.97]"
+              className="flex h-11 w-11 items-center justify-center rounded-[14px] bg-[#f7f8fa] text-[#1a202c] shadow-sm transition-[transform,background-color,box-shadow] duration-150 ease-out-strong hover:-translate-y-0.5 hover:bg-white hover:shadow-md active:scale-[0.97]"
               aria-expanded={mobileMenuOpen}
               aria-label={mobileMenuOpen ? "Menue schliessen" : "Menue oeffnen"}
             >
-              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
             </button>
           </div>
         </div>
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <nav className="lg:hidden -mx-4 flex max-h-[calc(100vh-86px)] flex-col gap-3 overflow-y-auto border-t border-[#fcd01b]/30 bg-[#fffdf8] px-4 py-5 shadow-inner sm:-mx-6 sm:max-h-[calc(100vh-98px)] sm:px-6">
+          <nav className="lg:hidden -mx-4 flex max-h-[calc(100vh-72px)] flex-col gap-3 overflow-y-auto border-t border-[#fcd01b]/30 bg-[#fffdf8] px-4 py-5 shadow-inner sm:-mx-6 sm:max-h-[calc(100vh-84px)] sm:px-6">
             {navLinks.map((link, index) => {
               const isActive = pathname === link.href || (link.href !== '/' && pathname?.startsWith(link.href));
               const color = navColors[index % navColors.length];

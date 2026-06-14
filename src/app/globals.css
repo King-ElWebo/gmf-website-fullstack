@@ -47,7 +47,7 @@ iframe {
 }
 
 .home-category-heading {
-  font-size: 31px !important;
+  font-size: 36px !important;
 }
 
 @media (min-width: 640px) {
@@ -56,7 +56,7 @@ iframe {
   }
 
   .home-category-heading {
-    font-size: 41px !important;
+    font-size: 48px !important;
   }
 }
 
@@ -69,6 +69,10 @@ iframe {
 @media (min-width: 1024px) {
   .hero-title-heading {
     font-size: 64px !important;
+  }
+
+  .home-category-heading {
+    font-size: 54px !important;
   }
 }
 
