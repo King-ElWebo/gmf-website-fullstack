@@ -1,12 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { AlertTriangle, CalendarDays, FileText, Mail, MapPin, MessageSquare, Phone, ReceiptText, User } from "lucide-react";
+import { AlertTriangle, CalendarDays, FileText, Mail, MapPin, MessageSquare, Phone, ReceiptText, User, Archive } from "lucide-react";
 import { PrismaBookingRepository } from "@/lib/booking-core/infrastructure/database/PrismaBookingRepository";
 import { getBookingDurationDays } from "@/lib/inquiry-cart/pricing";
 import { formatPriceCents, getItemPriceDisplay } from "@/lib/items/price";
 import { BookingStatusBadge } from "../../_components/BookingStatusBadge";
-import { ClientBookingActions } from "../../_components/ClientBookingActions";
+import { ClientBookingActions, ClientBookingDeleteButton } from "../../_components/ClientBookingActions";
 import { NotesSection } from "../../_components/NotesSection";
 
 export const dynamic = "force-dynamic";
@@ -97,6 +97,9 @@ type BookingDetailRecord = {
     lastSyncedAt?: Date | string | null;
     syncError?: string | null;
   } | null;
+  archivedAt?: Date | string | null;
+  archivedBy?: string | null;
+  archiveReason?: string | null;
 };
 
 const pricingReasonLabels: Record<string, string> = {
@@ -260,7 +263,12 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
-            <ClientBookingActions bookingId={booking.id} currentStatus={booking.status} />
+            <ClientBookingActions
+              bookingId={booking.id}
+              currentStatus={booking.status}
+              isArchived={!!booking.archivedAt}
+              isApprovedFuture={booking.status === "approved" && new Date(booking.startDate) > new Date()}
+            />
             {booking.status === "approved" && (
               <Link
                 href={`/admin/bookings/${booking.id}/mietvertrag`}
@@ -290,6 +298,19 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
           </DetailField>
         </div>
       </div>
+
+      {booking.archivedAt ? (
+        <div className="flex gap-3 rounded-2xl border border-blue-200 bg-blue-50 p-4 text-sm text-blue-900">
+          <Archive className="mt-0.5 h-5 w-5 shrink-0 text-blue-700" />
+          <div>
+            <p className="font-semibold">Diese Anfrage ist archiviert.</p>
+            <p className="mt-1 text-blue-800">
+              Archiviert am {formatDateTime(booking.archivedAt)} von {booking.archivedBy || "System-Admin"}.
+              {booking.archiveReason ? ` (Grund: ${booking.archiveReason})` : ""}
+            </p>
+          </div>
+        </div>
+      ) : null}
 
       {booking.hasIndividualPricing ? (
         <div className="flex gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
@@ -478,6 +499,14 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
             </div>
           </section>
         </aside>
+      </div>
+
+      <div className="rounded-2xl border border-red-200 bg-red-50/20 p-6 shadow-sm">
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-red-700">Gefahrenbereich</h2>
+        <p className="mt-1 text-sm text-neutral-600 mb-4">
+          Hier können Sie diese Buchung und alle damit verknüpften Kundendaten, Buchungsartikel und Notizen endgültig aus der Datenbank löschen. Dies ist nur für Testdaten oder Sonderfälle gedacht.
+        </p>
+        <ClientBookingDeleteButton bookingId={booking.id} />
       </div>
     </div>
   );

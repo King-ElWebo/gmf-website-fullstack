@@ -32,7 +32,7 @@ export default async function BookingDashboard() {
               <p className="text-sm font-semibold text-blue-700">Zu den Buchungen</p>
               <p className="mt-2 text-sm leading-6 text-slate-600">Anfragen sichten, Status aendern und Konflikte pruefen.</p>
             </Link>
-            <Link href="/admin/resources" className="admin-surface-strong rounded-[24px] p-5 hover:border-blue-200">
+            <Link href="/admin/items" className="admin-surface-strong rounded-[24px] p-5 hover:border-blue-200">
               <p className="text-sm font-semibold text-slate-900">Ressourcen verwalten</p>
               <p className="mt-2 text-sm leading-6 text-slate-600">Bestand, Tracking und Verfuegbarkeit strukturiert ueberblicken.</p>
             </Link>

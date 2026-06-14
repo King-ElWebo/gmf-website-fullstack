@@ -336,6 +336,22 @@ export class PrismaBookingRepository implements BookingRepository {
         { items: { some: { item: { title: { contains: filters.keyword, mode: 'insensitive' } } } } },
       ];
     }
+
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+
+    const tab = filters.tab || 'active';
+    if (tab === 'active') {
+      whereClause.archivedAt = null;
+      whereClause.endDate = { gte: todayStart };
+    } else if (tab === 'past') {
+      whereClause.archivedAt = null;
+      whereClause.endDate = { lt: todayStart };
+    } else if (tab === 'archived') {
+      whereClause.archivedAt = { not: null };
+    } else if (tab === 'all') {
+      // Show all bookings regardless of archived status or date
+    }
     
     const [data, total] = await Promise.all([
       (db as any).booking.findMany({
@@ -373,11 +389,12 @@ export class PrismaBookingRepository implements BookingRepository {
       failedEmailsCount,
       failedCalendarSyncsCount
     ] = await Promise.all([
-      (db as any).booking.count({ where: { status: 'requested' } }),
+      (db as any).booking.count({ where: { status: 'requested', archivedAt: null } }),
       (db as any).booking.count({ 
         where: { 
           status: 'approved',
-          startDate: { gt: new Date() }
+          startDate: { gt: new Date() },
+          archivedAt: null
         } 
       }),
       0, // db.emailLog.count
@@ -403,5 +420,51 @@ export class PrismaBookingRepository implements BookingRepository {
       }
     });
     return note as unknown as InternalNote;
+  }
+
+  async archive(id: string, archivedBy: string, archiveReason?: string): Promise<Booking> {
+    const updated = await (db as any).booking.update({
+      where: { id },
+      data: {
+        archivedAt: new Date(),
+        archivedBy,
+        archiveReason: archiveReason || null,
+      },
+      include: {
+        customer: true,
+        items: {
+          include: {
+            item: true,
+          },
+        },
+      }
+    });
+    return updated as unknown as Booking;
+  }
+
+  async unarchive(id: string): Promise<Booking> {
+    const updated = await (db as any).booking.update({
+      where: { id },
+      data: {
+        archivedAt: null,
+        archivedBy: null,
+        archiveReason: null,
+      },
+      include: {
+        customer: true,
+        items: {
+          include: {
+            item: true,
+          },
+        },
+      }
+    });
+    return updated as unknown as Booking;
+  }
+
+  async deleteBooking(id: string): Promise<void> {
+    await (db as any).booking.delete({
+      where: { id }
+    });
   }
 }

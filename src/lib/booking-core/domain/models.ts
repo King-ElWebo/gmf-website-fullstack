@@ -75,6 +75,9 @@ export interface Booking {
   hasIndividualPricing?: boolean;
   customerMessage?: string;
   internalNotes?: InternalNote[];
+  archivedAt?: Date | null;
+  archivedBy?: string | null;
+  archiveReason?: string | null;
   createdAt: Date;
   updatedAt: Date;
 }

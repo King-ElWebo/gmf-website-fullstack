@@ -10,6 +10,7 @@ export interface BookingFilters {
   startDate?: Date;
   endDate?: Date;
   keyword?: string; // name, email or reference
+  tab?: 'active' | 'past' | 'archived' | 'all';
 }
 
 export interface BookingRepository {
@@ -21,6 +22,9 @@ export interface BookingRepository {
   findForAdminView(filters: BookingFilters, page?: number, limit?: number): Promise<Paginated<any>>;
   getDashboardStats(): Promise<AdminDashboardStats>;
   addNote(bookingId: string, content: string, authorId: string): Promise<any>;
+  archive(id: string, archivedBy: string, archiveReason?: string): Promise<Booking>;
+  unarchive(id: string): Promise<Booking>;
+  deleteBooking(id: string): Promise<void>;
 }
 
 export interface CalendarBlockerRepository {

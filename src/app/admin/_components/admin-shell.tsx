@@ -23,7 +23,6 @@ const catalogItems: NavItem[] = [
 const operationsItems: NavItem[] = [
     { href: "/admin/bookings/dashboard", label: "Booking Dashboard", icon: <ChartIcon /> },
     { href: "/admin/bookings", label: "Bookings", icon: <CalendarIcon /> },
-    { href: "/admin/resources", label: "Resources", icon: <LayersIcon /> },
     { href: "/admin/emails", label: "Emails", icon: <MailIcon /> },
     { href: "/admin/calendar", label: "Calendar", icon: <ScheduleIcon /> },
 ];

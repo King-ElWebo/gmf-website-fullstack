@@ -123,5 +123,28 @@ export class AdminBookingCommands {
       bookingId
     );
   }
+
+  async archiveBooking(bookingId: string, reasonDetails: string = "Kein Grund angegeben", adminId: string = "system-admin"): Promise<void> {
+    const booking = await this.bookingRepo.findById(bookingId);
+    if (!booking) throw new Error('Booking not found');
+
+    await this.bookingRepo.archive(bookingId, adminId, reasonDetails);
+    await this.bookingRepo.addNote(bookingId, `Archiviert: ${reasonDetails}`, adminId);
+  }
+
+  async unarchiveBooking(bookingId: string, adminId: string = "system-admin"): Promise<void> {
+    const booking = await this.bookingRepo.findById(bookingId);
+    if (!booking) throw new Error('Booking not found');
+
+    await this.bookingRepo.unarchive(bookingId);
+    await this.bookingRepo.addNote(bookingId, 'Aus dem Archiv geholt', adminId);
+  }
+
+  async deleteBooking(bookingId: string, adminId: string = "system-admin"): Promise<void> {
+    const booking = await this.bookingRepo.findById(bookingId);
+    if (!booking) throw new Error('Booking not found');
+
+    await this.bookingRepo.deleteBooking(bookingId);
+  }
 }
 

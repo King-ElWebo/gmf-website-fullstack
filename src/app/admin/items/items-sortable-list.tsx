@@ -18,6 +18,8 @@ type ItemRow = {
     basePriceCents: number | null;
     priceLabel: string | null;
     published: boolean;
+    trackInventory: boolean;
+    totalStock: number;
     category: {
         name: string | null;
         catalogType?: {
@@ -110,6 +112,34 @@ export default function ItemsSortableList({
                     key: "price",
                     header: "Price",
                     render: (item) => <span className="font-medium text-slate-700">{getItemPriceDisplay(item)}</span>,
+                },
+                {
+                    key: "trackInventory",
+                    header: "Bestands-Tracking",
+                    render: (item) =>
+                        item.trackInventory ? (
+                            <span className="admin-badge admin-badge-green">Aktiv</span>
+                        ) : (
+                            <span className="admin-badge admin-badge-neutral">Aus</span>
+                        ),
+                },
+                {
+                    key: "totalStock",
+                    header: "Auf Lager",
+                    render: (item) =>
+                        item.trackInventory ? (
+                            <span
+                                className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold ${
+                                    item.totalStock <= 1
+                                        ? "border-red-200 bg-red-50 text-red-700"
+                                        : "border-slate-200 bg-slate-100 text-slate-700"
+                                }`}
+                            >
+                                {item.totalStock} Stück
+                            </span>
+                        ) : (
+                            <span className="text-slate-400">-</span>
+                        ),
                 },
                 {
                     key: "status",

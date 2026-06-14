@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
 import { PrismaBookingRepository } from '@/lib/booking-core/infrastructure/database/PrismaBookingRepository';
+import { createAdminBookingCommands } from '@/lib/booking-core/server';
 
 const bookingRepo = new PrismaBookingRepository();
+const adminCommands = createAdminBookingCommands();
 
 export async function GET(
   req: Request,
@@ -36,6 +38,9 @@ export async function GET(
       notes: booking.internalNotes || [],
       emailLogs: bookingWithSystemLinks.emailLogs || [],
       calendarSync: bookingWithSystemLinks.calendarSync || null,
+      archivedAt: (booking as any).archivedAt,
+      archivedBy: (booking as any).archivedBy,
+      archiveReason: (booking as any).archiveReason,
       createdAt: booking.createdAt,
       updatedAt: booking.updatedAt
     };
@@ -44,5 +49,22 @@ export async function GET(
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json({ error: message }, { status: 500 });
+  }
+}
+
+export async function DELETE(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const resolvedParams = await params;
+    const { id } = resolvedParams;
+    const adminId = 'system-admin';
+
+    await adminCommands.deleteBooking(id, adminId);
+
+    return NextResponse.json({ success: true, message: 'Booking deleted successfully' });
+  } catch (error: unknown) {
+    return NextResponse.json({ error: error instanceof Error ? error.message : 'Deletion failed' }, { status: 400 });
   }
 }

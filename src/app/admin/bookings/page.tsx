@@ -9,6 +9,7 @@ export const dynamic = "force-dynamic";
 
 type AdminBookingsSearchParams = {
   status?: string;
+  tab?: string;
   page?: string;
   q?: string;
 };
@@ -22,6 +23,7 @@ type AdminBookingListItem = {
   createdAt: Date | string;
   totalPriceCents?: number | null;
   hasIndividualPricing?: boolean | null;
+  archivedAt?: Date | string | null;
   customer?: {
     firstName?: string | null;
     lastName?: string | null;
@@ -41,13 +43,14 @@ type AdminBookingListItem = {
   }>;
 };
 
-const statusFilters = [
-  { href: "/admin/bookings", label: "Alle", value: null },
-  { href: "/admin/bookings?status=requested", label: "Offen", value: "requested" },
-  { href: "/admin/bookings?status=approved", label: "Bestatigt", value: "approved" },
-  { href: "/admin/bookings?status=rejected", label: "Abgelehnt", value: "rejected" },
-  { href: "/admin/bookings?status=cancelled", label: "Storniert", value: "cancelled" },
-];
+function buildFilterUrl(tab: string | null, status: string | null, query: string | null) {
+  const params = new URLSearchParams();
+  if (tab && tab !== "active") params.set("tab", tab);
+  if (status) params.set("status", status);
+  if (query) params.set("q", query);
+  const searchStr = params.toString();
+  return searchStr ? `/admin/bookings?${searchStr}` : "/admin/bookings";
+}
 
 function formatDate(value: Date | string) {
   return new Intl.DateTimeFormat("de-DE", {
@@ -106,14 +109,35 @@ export default async function AdminBookingsPage({
 }) {
   const resolvedSearchParams = await searchParams;
   const repo = new PrismaBookingRepository();
+  
+  const tab = resolvedSearchParams.tab || "active";
+  const status = resolvedSearchParams.status || null;
+  const q = resolvedSearchParams.q?.trim() || null;
   const page = Number.parseInt(resolvedSearchParams.page || "1", 10) || 1;
+
   const filters = {
-    statuses: resolvedSearchParams.status ? ([resolvedSearchParams.status] as BookingStatus[]) : undefined,
-    keyword: resolvedSearchParams.q?.trim() || undefined,
+    statuses: status ? ([status] as any[]) : undefined,
+    keyword: q || undefined,
+    tab: tab as any,
   };
 
   const result = await repo.findForAdminView(filters, page, 50);
   const bookings = result.data as AdminBookingListItem[];
+
+  const viewTabs = [
+    { label: "Aktive Buchungen", value: "active" },
+    { label: "Vergangene Buchungen", value: "past" },
+    { label: "Archivierte Buchungen", value: "archived" },
+    { label: "Alle Buchungen", value: "all" },
+  ];
+
+  const statusOptions = [
+    { label: "Alle Status", value: null },
+    { label: "Offen (requested)", value: "requested" },
+    { label: "Bestätigt (approved)", value: "approved" },
+    { label: "Abgelehnt (rejected)", value: "rejected" },
+    { label: "Storniert (cancelled)", value: "cancelled" },
+  ];
 
   return (
     <div className="space-y-6 pb-10">
@@ -126,8 +150,11 @@ export default async function AdminBookingsPage({
         </div>
 
         <form action="/admin/bookings" className="flex w-full flex-col gap-2 sm:flex-row xl:w-auto">
-          {resolvedSearchParams.status ? (
-            <input type="hidden" name="status" value={resolvedSearchParams.status} />
+          {tab && tab !== "active" ? (
+            <input type="hidden" name="tab" value={tab} />
+          ) : null}
+          {status ? (
+            <input type="hidden" name="status" value={status} />
           ) : null}
           <div className="relative min-w-0 sm:min-w-[320px]">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
@@ -144,23 +171,47 @@ export default async function AdminBookingsPage({
         </form>
       </div>
 
+      {/* View Tabs switcher */}
       <div className="flex flex-wrap gap-2 rounded-xl border border-neutral-200 bg-white p-2 shadow-sm">
-        {statusFilters.map((filter) => {
-          const isActive = filter.value === null ? !resolvedSearchParams.status : resolvedSearchParams.status === filter.value;
+        {viewTabs.map((vt) => {
+          const isActive = tab === vt.value;
           return (
             <Link
-              key={filter.label}
-              href={filter.href}
+              key={vt.value}
+              href={buildFilterUrl(vt.value, status, q)}
               className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
                 isActive
                   ? "bg-neutral-950 text-white shadow-sm"
                   : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-950"
               }`}
             >
-              {filter.label}
+              {vt.label}
             </Link>
           );
         })}
+      </div>
+
+      {/* Status Filters switcher */}
+      <div className="flex flex-wrap gap-1 items-center rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-xs">
+        <span className="font-semibold uppercase tracking-wider text-neutral-400 mr-2">Status:</span>
+        <div className="flex flex-wrap gap-1.5">
+          {statusOptions.map((so) => {
+            const isActive = status === so.value;
+            return (
+              <Link
+                key={so.value || "all-status"}
+                href={buildFilterUrl(tab, so.value, q)}
+                className={`rounded-md px-3 py-1.5 font-medium transition ${
+                  isActive
+                    ? "bg-white text-neutral-950 font-semibold shadow-xs border border-neutral-200"
+                    : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-950"
+                }`}
+              >
+                {so.label}
+              </Link>
+            );
+          })}
+        </div>
       </div>
 
       <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-sm">
@@ -179,7 +230,9 @@ export default async function AdminBookingsPage({
             <Link
               key={booking.id}
               href={`/admin/bookings/${booking.id}`}
-              className="grid gap-4 px-5 py-4 transition hover:bg-neutral-50 lg:grid-cols-[1.25fr_1fr_1fr_0.8fr_1fr_1fr_0.7fr] lg:items-center"
+              className={`grid gap-4 px-5 py-4 transition hover:bg-neutral-50 lg:grid-cols-[1.25fr_1fr_1fr_0.8fr_1fr_1fr_0.7fr] lg:items-center ${
+                booking.archivedAt ? "opacity-60 bg-neutral-50/50" : ""
+              }`}
             >
               <div>
                 <p className="font-semibold text-neutral-950">{getCustomerName(booking)}</p>
@@ -193,8 +246,13 @@ export default async function AdminBookingsPage({
                 <span className="font-medium">{formatDate(booking.endDate)}</span>
               </div>
 
-              <div>
+              <div className="flex flex-col gap-1 items-start">
                 <BookingStatusBadge status={booking.status} />
+                {booking.archivedAt && (
+                  <span className="inline-flex items-center gap-1 rounded bg-neutral-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-neutral-500 border border-neutral-200/50">
+                    Archiviert
+                  </span>
+                )}
               </div>
 
               <div className="text-sm text-neutral-700">{getProductSummary(booking)}</div>
