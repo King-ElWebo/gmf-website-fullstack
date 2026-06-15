@@ -277,7 +277,13 @@ export async function getAdminCalendarFeed(filters: CalendarFeedFilters): Promis
       throw error;
     });
 
-  const syncLogsPromise = Promise.resolve([] as any[]); // db.calendarSyncRecord is missing
+  const syncLogsPromise = db.calendarSyncRecord.findMany({
+    include: {
+      booking: { select: { referenceCode: true } }
+    },
+    orderBy: { updatedAt: "desc" },
+    take: 50
+  }).catch(() => [] as any[]);
 
   const [bookings, blockers, syncLogs] = await Promise.all([bookingsPromise, blockersPromise, syncLogsPromise]);
 
@@ -340,4 +346,167 @@ export async function getCalendarCategoryOptions(): Promise<CalendarCategoryOpti
     name: category.name,
     slug: category.slug,
   }));
+}
+
+// --- Google Calendar Sync ---
+
+import { isGoogleCalendarEnabled, createGoogleCalendarEvent, updateGoogleCalendarEvent, deleteGoogleCalendarEvent } from "./google-calendar-client";
+
+function buildEventPayload(booking: any) {
+  const startDate = new Date(booking.startDate);
+  // All day event: end date is exclusive, so add 1 day to the end date
+  const endDate = new Date(booking.endDate);
+  endDate.setDate(endDate.getDate() + 1);
+
+  const startString = startDate.toISOString().split("T")[0];
+  const endString = endDate.toISOString().split("T")[0];
+
+  const baseUrl = process.env.APP_URL || "http://localhost:3000";
+  const adminUrl = `${baseUrl}/admin/bookings/${booking.id}`;
+
+  const customerName = `${booking.customer?.firstName || ""} ${booking.customer?.lastName || ""}`.trim();
+  const addressLines = [
+    booking.customer?.addressLine1,
+    booking.customer?.zip ? `${booking.customer.zip} ${booking.customer.city || ""}` : booking.customer?.city
+  ].filter(Boolean).join(", ");
+
+  const itemsList = booking.items.map((i: any) => `- ${i.quantity}x ${i.resourceTitle || i.item?.title || "Produkt"}`).join("\n");
+
+  const description = `Referenz: ${booking.referenceCode}
+Status: ${booking.status}
+Zeitraum: ${startDate.toLocaleDateString("de-DE")} bis ${new Date(booking.endDate).toLocaleDateString("de-DE")}
+Lieferart: ${booking.deliveryType}
+
+Produkte:
+${itemsList}
+
+Kunde:
+Name: ${customerName}
+Adresse: ${addressLines || "Nicht angegeben"}
+E-Mail: ${booking.customer?.email || "Nicht angegeben"}
+Telefon: ${booking.customer?.phone || "Nicht angegeben"}
+
+Detailansicht (Admin):
+${adminUrl}
+
+Automatisch generiert aus der GMF Website.`;
+
+  return {
+    summary: `GMF: ${booking.referenceCode} - ${customerName}`,
+    description,
+    location: addressLines || undefined,
+    start: { date: startString },
+    end: { date: endString },
+    // Keine Attendees eintragen, damit Google keine Mails schickt!
+  };
+}
+
+export async function syncBookingToGoogleCalendar(bookingId: string) {
+  if (!isGoogleCalendarEnabled()) {
+    return;
+  }
+
+  const booking = await db.booking.findUnique({
+    where: { id: bookingId },
+    include: {
+      customer: true,
+      items: { include: { item: true } },
+      calendarSync: true,
+    }
+  });
+
+  if (!booking) throw new Error("Booking not found");
+  if (booking.status === "requested") return; // We do not sync requested bookings
+
+  const eventPayload = buildEventPayload(booking);
+  const syncRecord = booking.calendarSync;
+
+  try {
+    let resultEvent;
+
+    if (syncRecord?.externalEventId) {
+      resultEvent = await updateGoogleCalendarEvent(syncRecord.externalEventId, eventPayload);
+    } else {
+      resultEvent = await createGoogleCalendarEvent(eventPayload);
+    }
+
+    const htmlLink = resultEvent?.htmlLink || null;
+    const externalEventId = resultEvent?.id || syncRecord?.externalEventId;
+
+    await db.calendarSyncRecord.upsert({
+      where: { bookingId },
+      create: {
+        bookingId,
+        externalEventId,
+        htmlLink,
+        syncStatus: "synced",
+        lastSyncedAt: new Date(),
+        syncError: null,
+      },
+      update: {
+        externalEventId,
+        htmlLink,
+        syncStatus: "synced",
+        lastSyncedAt: new Date(),
+        syncError: null,
+      }
+    });
+
+  } catch (error: any) {
+    const errorMsg = error instanceof Error ? error.message : String(error);
+    console.error(`[Google Sync] Failed to sync booking ${bookingId}:`, errorMsg);
+    
+    await db.calendarSyncRecord.upsert({
+      where: { bookingId },
+      create: {
+        bookingId,
+        syncStatus: "failed",
+        lastSyncedAt: new Date(),
+        syncError: errorMsg,
+      },
+      update: {
+        syncStatus: "failed",
+        lastSyncedAt: new Date(),
+        syncError: errorMsg,
+      }
+    });
+  }
+}
+
+export async function deleteGoogleCalendarEventForBooking(bookingId: string) {
+  if (!isGoogleCalendarEnabled()) {
+    return;
+  }
+
+  const syncRecord = await db.calendarSyncRecord.findUnique({ where: { bookingId } });
+  if (!syncRecord || !syncRecord.externalEventId) return;
+
+  try {
+    await deleteGoogleCalendarEvent(syncRecord.externalEventId);
+    
+    await db.calendarSyncRecord.update({
+      where: { bookingId },
+      data: {
+        syncStatus: "deleted",
+        lastSyncedAt: new Date(),
+        syncError: null,
+      }
+    });
+  } catch (error: any) {
+    const errorMsg = error instanceof Error ? error.message : String(error);
+    console.error(`[Google Sync] Failed to delete event for booking ${bookingId}:`, errorMsg);
+    
+    await db.calendarSyncRecord.update({
+      where: { bookingId },
+      data: {
+        syncStatus: "failed",
+        lastSyncedAt: new Date(),
+        syncError: `Delete failed: ${errorMsg}`,
+      }
+    });
+  }
+}
+
+export async function resyncBooking(bookingId: string) {
+  return syncBookingToGoogleCalendar(bookingId);
 }

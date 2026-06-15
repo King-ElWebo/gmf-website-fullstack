@@ -1,6 +1,7 @@
 import { BookingRepository } from '../ports';
 import { AvailabilityService } from '../services/AvailabilityService';
 import { sendStatusChangeEmail, type BookingEmailContext } from '@/lib/email';
+import { syncBookingToGoogleCalendar, deleteGoogleCalendarEventForBooking } from '@/lib/calendar/service';
 
 export class AdminBookingCommands {
   constructor(
@@ -74,6 +75,11 @@ export class AdminBookingCommands {
     sendStatusChangeEmail("approved", this.buildEmailContext(booking)).catch((err) => {
       console.error("[AdminBooking] Email for approval failed (non-blocking):", err);
     });
+
+    // Fire-and-forget: Google Calendar Sync
+    syncBookingToGoogleCalendar(bookingId).catch((err) => {
+      console.error("[AdminBooking] Google Calendar Sync failed (non-blocking):", err);
+    });
   }
 
   async rejectBooking(bookingId: string, reasonDetails: string, adminId: string): Promise<void> {
@@ -87,6 +93,11 @@ export class AdminBookingCommands {
     sendStatusChangeEmail("rejected", this.buildEmailContext(booking, { reason: reasonDetails })).catch((err) => {
       console.error("[AdminBooking] Email for rejection failed (non-blocking):", err);
     });
+
+    // Fire-and-forget: Google Calendar Delete
+    deleteGoogleCalendarEventForBooking(bookingId).catch((err) => {
+      console.error("[AdminBooking] Google Calendar Delete failed (non-blocking):", err);
+    });
   }
 
   async cancelBooking(bookingId: string, reasonDetails: string, adminId: string): Promise<void> {
@@ -99,6 +110,11 @@ export class AdminBookingCommands {
     // Fire-and-forget: email notification
     sendStatusChangeEmail("cancelled", this.buildEmailContext(booking, { reason: reasonDetails })).catch((err) => {
       console.error("[AdminBooking] Email for cancellation failed (non-blocking):", err);
+    });
+
+    // Fire-and-forget: Google Calendar Delete
+    deleteGoogleCalendarEventForBooking(bookingId).catch((err) => {
+      console.error("[AdminBooking] Google Calendar Delete failed (non-blocking):", err);
     });
   }
 

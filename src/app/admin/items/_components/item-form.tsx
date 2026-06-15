@@ -56,6 +56,10 @@ type ItemFormState = {
     totalStock: string;
     published: boolean;
     categoryId: string;
+    availabilityMode: "STOCK_ONLY" | "STOCK_AND_RESOURCE" | "EXCLUSIVE_RESOURCE";
+    resourceId: string;
+    resourceUnits: string;
+    resourceAppliesTo: "DELIVERY_AND_SETUP" | "DELIVERY_ONLY" | "ALL_BOOKINGS";
 };
 
 const CLEANING_DEFAULT_TEXT = "Reinigung: 120 € exkl. MwSt. bei grober/mutwilliger Verschmutzung";
@@ -73,6 +77,7 @@ export default function ItemForm(props: {
     itemId?: string;
     categories: CategoryOption[];
     catalogTypes: { id: string; name: string }[];
+    resources: { id: string; name: string }[];
     initial?: Partial<ItemFormState>;
     initialImages?: ImageRow[];
     initialError?: string;
@@ -111,6 +116,10 @@ export default function ItemForm(props: {
         totalStock: props.initial?.totalStock ?? "1",
         published: Boolean(props.initial?.published ?? false),
         categoryId: props.initial?.categoryId ?? (categories[0]?.id ?? ""),
+        availabilityMode: props.initial?.availabilityMode ?? "STOCK_ONLY",
+        resourceId: props.initial?.resourceId ?? "",
+        resourceUnits: props.initial?.resourceUnits ?? "1",
+        resourceAppliesTo: props.initial?.resourceAppliesTo ?? "DELIVERY_AND_SETUP",
     });
     const [saving, setSaving] = useState(false);
     const [deleting, setDeleting] = useState(false);
@@ -219,6 +228,10 @@ export default function ItemForm(props: {
             totalStock: hasValidTotalStock ? Math.floor(parsedTotalStock) : 0,
             published: formState.published,
             categoryId: formState.categoryId,
+            availabilityMode: formState.availabilityMode,
+            resourceId: formState.availabilityMode !== "STOCK_ONLY" ? (formState.resourceId || null) : null,
+            resourceUnits: formState.availabilityMode !== "STOCK_ONLY" ? parseInt(formState.resourceUnits) : null,
+            resourceAppliesTo: formState.availabilityMode !== "STOCK_ONLY" ? formState.resourceAppliesTo : null,
         };
 
         const url = mode === "create" ? "/api/admin/items" : `/api/admin/items/${itemId}`;
@@ -718,6 +731,66 @@ export default function ItemForm(props: {
                                     />
                                 </AdminField>
                             </div>
+                        </div>
+                    </AdminCard>
+
+                    <AdminCard title="Ressourcen & Kapazität" description="Definiert, ob dieses Produkt zusätzlich operative Ressourcen (wie Fahrzeuge, Teams) für Lieferung/Aufbau blockiert.">
+                        <div className="space-y-5">
+                            <AdminField label="Ressourcen-Modus" htmlFor="availabilityMode">
+                                <AdminSelect
+                                    id="availabilityMode"
+                                    value={formState.availabilityMode}
+                                    onChange={(e) => updateField("availabilityMode", e.target.value as any)}
+                                >
+                                    <option value="STOCK_ONLY">Nur Bestand prüfen (z.B. für kleine Selbstabholer-Artikel)</option>
+                                    <option value="STOCK_AND_RESOURCE">Bestand & Ressource prüfen (Blockiert X Einheiten einer Ressource)</option>
+                                    <option value="EXCLUSIVE_RESOURCE">Exklusive Ressource (Blockiert gesamten Tag/Ressource)</option>
+                                </AdminSelect>
+                            </AdminField>
+
+                            {formState.availabilityMode !== "STOCK_ONLY" && (
+                                <>
+                                    <div className="grid gap-4 md:grid-cols-2">
+                                        <AdminField label="Benötigte Ressource" htmlFor="resourceId">
+                                            <AdminSelect
+                                                id="resourceId"
+                                                value={formState.resourceId}
+                                                onChange={(e) => updateField("resourceId", e.target.value)}
+                                            >
+                                                <option value="">-- Bitte wählen --</option>
+                                                {props.resources.map((r) => (
+                                                    <option key={r.id} value={r.id}>{r.name}</option>
+                                                ))}
+                                            </AdminSelect>
+                                        </AdminField>
+
+                                        {formState.availabilityMode === "STOCK_AND_RESOURCE" && (
+                                            <AdminField label="Verbrauchte Einheiten" htmlFor="resourceUnits">
+                                                <AdminInput
+                                                    id="resourceUnits"
+                                                    type="number"
+                                                    min={1}
+                                                    step={1}
+                                                    value={formState.resourceUnits}
+                                                    onChange={(e) => updateField("resourceUnits", e.target.value)}
+                                                />
+                                            </AdminField>
+                                        )}
+                                    </div>
+
+                                    <AdminField label="Wann wird die Ressource benötigt?" htmlFor="resourceAppliesTo">
+                                        <AdminSelect
+                                            id="resourceAppliesTo"
+                                            value={formState.resourceAppliesTo}
+                                            onChange={(e) => updateField("resourceAppliesTo", e.target.value as any)}
+                                        >
+                                            <option value="DELIVERY_AND_SETUP">Nur wenn Lieferung/Aufbau gewählt ist</option>
+                                            <option value="DELIVERY_ONLY">Nur bei Lieferung</option>
+                                            <option value="ALL_BOOKINGS">Immer (auch bei Selbstabholung)</option>
+                                        </AdminSelect>
+                                    </AdminField>
+                                </>
+                            )}
                         </div>
                     </AdminCard>
                 </div>

@@ -478,6 +478,7 @@ export function InquiryCartPageClient({ settings }: { settings?: SiteSettingsRec
                         })),
                         startDate: formState.startDate,
                         endDate: formState.endDate,
+                        deliveryType: formState.deliveryType,
                     }),
                 });
 
@@ -503,7 +504,7 @@ export function InquiryCartPageClient({ settings }: { settings?: SiteSettingsRec
         return () => {
             cancelled = true;
         };
-    }, [bookingDuration.days, formState.endDate, formState.startDate, items]);
+    }, [bookingDuration.days, formState.endDate, formState.startDate, formState.deliveryType, items]);
 
     useEffect(() => {
         for (const item of items) {

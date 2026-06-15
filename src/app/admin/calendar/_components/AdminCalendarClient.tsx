@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useDeferredValue, useEffect, useState } from "react";
+import AdminPageHeader from "../../_components/admin-page-header";
+import { AdminInput, AdminSelect } from "../../_components/ui/AdminInputs";
 import {
   BOOKING_STATUS_META,
   CALENDAR_VIEWS,
@@ -611,65 +613,38 @@ export function AdminCalendarClient({
 
   return (
     <div className="space-y-6 pb-12">
-      <section className="rounded-[2rem] border border-slate-200 bg-[linear-gradient(135deg,#f8fafc_0%,#eff6ff_48%,#ecfeff_100%)] p-6 shadow-sm">
-        <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
-          <div className="max-w-3xl space-y-3">
-            <div className="inline-flex rounded-full border border-white/80 bg-white/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-500 shadow-sm">
-              Admin Kalender
-            </div>
-            <div>
-              <h1 className="text-3xl font-semibold tracking-tight text-slate-900">Belegungen, Buchungen und interne Blocker an einem Ort</h1>
-              <p className="mt-2 text-sm leading-6 text-slate-600">
-                Der Kalender zeigt sichtbare Buchungen, markiert blockierende Zeitraeume und erlaubt direkte manuelle Reservierungen
-                fuer Items oder den kompletten Bestand.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-3">
-            <button
-              type="button"
-              onClick={() => openCreateEditor(anchorDate)}
-              className="rounded-2xl bg-slate-900 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-black"
-            >
-              Manuelle Blockung
-            </button>
-            <div className="rounded-2xl border border-white/80 bg-white/80 px-4 py-2 text-sm text-slate-600 shadow-sm">
-              {feed.stats.blockingEvents} blockierende Eintraege im sichtbaren Zeitraum
-            </div>
-          </div>
+      <div className="mb-2">
+        <AdminPageHeader
+          title="Kalender"
+          description="Buchungen, Anfragen und Blocker im Ueberblick."
+          action={{
+            label: "Manuelle Blockung",
+            onClick: () => openCreateEditor(anchorDate),
+          }}
+        />
+        <div className="flex flex-wrap items-center gap-4 text-sm text-slate-600 mb-2 mt-[-0.5rem]">
+          <span><strong className="text-slate-900">{feed.stats.totalEvents}</strong> Sichtbar</span>
+          <span>&middot;</span>
+          <span><strong className="text-emerald-700">{feed.stats.approvedBookings}</strong> Bestaetigt</span>
+          <span>&middot;</span>
+          <span><strong className="text-amber-700">{feed.stats.requestedBookings}</strong> Offen</span>
+          <span>&middot;</span>
+          <span><strong className="text-violet-700">{feed.stats.manualBlockers}</strong> Blocker</span>
+          <span>&middot;</span>
+          <span className="text-slate-500">{feed.stats.blockingEvents} Blockierende Eintraege</span>
         </div>
+      </div>
 
-        <div className="mt-6 grid gap-3 md:grid-cols-4">
-          <div className="rounded-2xl border border-white/80 bg-white/80 p-4 shadow-sm">
-            <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Sichtbare Eintraege</div>
-            <div className="mt-2 text-2xl font-semibold text-slate-900">{feed.stats.totalEvents}</div>
-          </div>
-          <div className="rounded-2xl border border-white/80 bg-white/80 p-4 shadow-sm">
-            <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Bestaetigt</div>
-            <div className="mt-2 text-2xl font-semibold text-emerald-700">{feed.stats.approvedBookings}</div>
-          </div>
-          <div className="rounded-2xl border border-white/80 bg-white/80 p-4 shadow-sm">
-            <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Offene Anfragen</div>
-            <div className="mt-2 text-2xl font-semibold text-amber-700">{feed.stats.requestedBookings}</div>
-          </div>
-          <div className="rounded-2xl border border-white/80 bg-white/80 p-4 shadow-sm">
-            <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Manuelle Blocker</div>
-            <div className="mt-2 text-2xl font-semibold text-violet-700">{feed.stats.manualBlockers}</div>
-          </div>
-        </div>
-      </section>
-
-      <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-        <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-          <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-wrap items-center gap-1 border border-slate-200 rounded-xl p-1 bg-slate-50 shadow-sm">
             {CALENDAR_VIEWS.map((calendarView) => (
               <button
                 key={calendarView}
                 type="button"
                 onClick={() => setView(calendarView)}
-                className={`rounded-xl px-4 py-2 text-sm font-medium transition ${
-                  view === calendarView ? "bg-slate-900 text-white shadow-sm" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                className={`rounded-lg px-3 py-1.5 text-xs font-medium transition ${
+                  view === calendarView ? "bg-white text-slate-900 shadow-sm border border-slate-200" : "text-slate-600 hover:bg-slate-200 border border-transparent"
                 }`}
               >
                 {calendarView === "month" ? "Monat" : calendarView === "week" ? "Woche" : "Tag"}
@@ -681,119 +656,116 @@ export function AdminCalendarClient({
             <button
               type="button"
               onClick={() => setAnchorDate(shiftAnchorDate(view, anchorDate, -1))}
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+              className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 shadow-sm"
             >
               Zurueck
             </button>
             <button
               type="button"
               onClick={() => setAnchorDate(toDateKey(new Date()))}
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+              className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 shadow-sm"
             >
               Heute
             </button>
             <button
               type="button"
               onClick={() => setAnchorDate(shiftAnchorDate(view, anchorDate, 1))}
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+              className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 shadow-sm"
             >
               Vor
             </button>
-            <div className="rounded-xl bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700">{getPeriodLabel(view, anchorDate)}</div>
+            <div className="rounded-xl bg-slate-100 border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-700">{getPeriodLabel(view, anchorDate)}</div>
           </div>
         </div>
 
-        <div className="mt-5 grid gap-3 xl:grid-cols-[1.1fr_1.1fr_1fr_1fr]">
-          <label className="space-y-2 text-sm">
-            <span className="font-medium text-slate-700">Suche</span>
-            <input
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              placeholder="Kunde, Referenz, Item, interner Titel"
-              className="w-full rounded-xl border border-slate-200 px-3 py-2.5 outline-none transition focus:border-slate-400"
-            />
-          </label>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <AdminInput
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder="Kunde, Referenz..."
+            className="flex-1 py-2 text-xs min-w-[150px]"
+          />
 
-          <label className="space-y-2 text-sm">
-            <span className="font-medium text-slate-700">Kategorie</span>
-            <select
-              value={selectedCategoryId}
-              onChange={(event) => {
-                const nextCategoryId = event.target.value;
-                setSelectedCategoryId(nextCategoryId);
-                if (selectedItemId && nextCategoryId) {
-                  const selectedItem = items.find((item) => item.id === selectedItemId);
-                  if (selectedItem && selectedItem.categoryId !== nextCategoryId) {
-                    setSelectedItemId("");
-                  }
+          <AdminSelect
+            value={selectedCategoryId}
+            onChange={(event) => {
+              const nextCategoryId = event.target.value;
+              setSelectedCategoryId(nextCategoryId);
+              if (selectedItemId && nextCategoryId) {
+                const selectedItem = items.find((item) => item.id === selectedItemId);
+                if (selectedItem && selectedItem.categoryId !== nextCategoryId) {
+                  setSelectedItemId("");
                 }
-              }}
-              className="w-full rounded-xl border border-slate-200 px-3 py-2.5 outline-none transition focus:border-slate-400"
-            >
-              <option value="">Alle Kategorien</option>
-              {categories.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
-          </label>
+              }
+            }}
+            className="flex-1 py-2 text-xs min-w-[150px]"
+          >
+            <option value="">Alle Kategorien</option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
+          </AdminSelect>
 
-          <label className="space-y-2 text-sm">
-            <span className="font-medium text-slate-700">Item / Produkt</span>
-            <select
-              value={selectedItemId}
-              onChange={(event) => setSelectedItemId(event.target.value)}
-              className="w-full rounded-xl border border-slate-200 px-3 py-2.5 outline-none transition focus:border-slate-400"
-            >
-              <option value="">Alle Items</option>
-              {filteredItems.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.title}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <div className="space-y-2 text-sm">
-            <div className="font-medium text-slate-700">Status</div>
-            <div className="flex flex-wrap gap-2">
-              {ALL_STATUS_OPTIONS.map((option) => {
-                const isActive = selectedStatuses.includes(option.value);
-
-                return (
-                  <button
-                    key={option.value}
-                    type="button"
-                    onClick={() => toggleStatus(option.value)}
-                    className={`rounded-full border px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] transition ${
-                      isActive ? option.chip : "border-slate-200 bg-white text-slate-500 hover:border-slate-300"
-                    }`}
-                  >
-                    {option.label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+          <AdminSelect
+            value={selectedItemId}
+            onChange={(event) => setSelectedItemId(event.target.value)}
+            className="flex-1 py-2 text-xs min-w-[150px]"
+          >
+            <option value="">Alle Items</option>
+            {filteredItems.map((item) => (
+              <option key={item.id} value={item.id}>
+                {item.title}
+              </option>
+            ))}
+          </AdminSelect>
         </div>
 
-        <div className="mt-5 flex flex-wrap items-center gap-2 text-xs text-slate-500">
-          <span className="font-semibold uppercase tracking-[0.18em] text-slate-400">Legende</span>
-          {ALL_STATUS_OPTIONS.map((option) => (
-            <span key={option.value} className={`inline-flex rounded-full border px-2.5 py-1 font-semibold uppercase tracking-[0.16em] ${option.chip}`}>
-              {option.label}
-            </span>
-          ))}
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-xs font-medium text-slate-500 mr-1">Status:</span>
+          {ALL_STATUS_OPTIONS.map((option) => {
+            const isActive = selectedStatuses.includes(option.value);
+            return (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => toggleStatus(option.value)}
+                className={`rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] transition ${
+                  isActive ? option.chip : "border-transparent bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-600"
+                }`}
+              >
+                {option.label}
+              </button>
+            );
+          })}
         </div>
 
-        {feed.warnings.map((warning) => (
-          <div key={warning} className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-            {warning}
+        <details className="text-xs group">
+          <summary className="cursor-pointer font-semibold uppercase tracking-wider text-slate-400 hover:text-slate-600 select-none list-none inline-flex items-center gap-1">
+            <span className="group-open:hidden">▶ Legende anzeigen</span>
+            <span className="hidden group-open:inline">▼ Legende ausblenden</span>
+          </summary>
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            {ALL_STATUS_OPTIONS.map((option) => (
+              <span key={option.value} className={`inline-flex rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] ${option.chip}`}>
+                {option.label}
+              </span>
+            ))}
           </div>
-        ))}
-        {error ? <div className="mt-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</div> : null}
-      </section>
+        </details>
+
+        {feed.warnings.length > 0 && (
+          <div className="flex flex-col gap-2 mt-2">
+            {feed.warnings.map((warning) => (
+              <div key={warning} className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+                {warning}
+              </div>
+            ))}
+          </div>
+        )}
+        {error && <div className="mt-2 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-xs text-rose-700">{error}</div>}
+      </div>
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
         <div className="space-y-4">
@@ -810,7 +782,7 @@ export function AdminCalendarClient({
           )}
         </div>
 
-        <aside className="space-y-4">
+        <aside className="space-y-4 sticky top-6 self-start">
           <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-slate-900">Details</h2>

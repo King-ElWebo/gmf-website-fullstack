@@ -121,6 +121,7 @@ export class PrismaBookingRepository implements BookingRepository {
             item: {
               include: {
                 category: true,
+                resource: true,
                 images: {
                   orderBy: { sortOrder: "asc" },
                   take: 1,
@@ -160,7 +161,11 @@ export class PrismaBookingRepository implements BookingRepository {
       include: {
         items: {
           include: {
-            item: true,
+            item: {
+              include: {
+                resource: true
+              }
+            },
           },
         },
         customer: true
@@ -204,7 +209,11 @@ export class PrismaBookingRepository implements BookingRepository {
       customer: true,
       items: {
         include: {
-          item: true,
+          item: {
+            include: {
+              resource: true
+            }
+          },
         },
       }
     } as const;
@@ -314,7 +323,9 @@ export class PrismaBookingRepository implements BookingRepository {
         customer: true,
         items: {
           include: {
-            item: true,
+            item: {
+              include: { resource: true }
+            },
           },
         },
       }
@@ -363,6 +374,7 @@ export class PrismaBookingRepository implements BookingRepository {
               item: {
                 include: {
                   category: true,
+                  resource: true,
                   images: {
                     orderBy: { sortOrder: "asc" },
                     take: 1,
@@ -434,7 +446,9 @@ export class PrismaBookingRepository implements BookingRepository {
         customer: true,
         items: {
           include: {
-            item: true,
+            item: {
+              include: { resource: true }
+            },
           },
         },
       }
@@ -454,7 +468,9 @@ export class PrismaBookingRepository implements BookingRepository {
         customer: true,
         items: {
           include: {
-            item: true,
+            item: {
+              include: { resource: true }
+            },
           },
         },
       }

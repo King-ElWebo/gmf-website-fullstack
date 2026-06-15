@@ -5,7 +5,7 @@ const availabilityService = createAvailabilityService();
 
 export async function POST(req: Request) {
   try {
-    const { items, startDate, endDate } = await req.json();
+    const { items, startDate, endDate, deliveryType } = await req.json();
     
     if (!Array.isArray(items) || items.length === 0 || !startDate || !endDate) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -25,7 +25,9 @@ export async function POST(req: Request) {
     const result = await availabilityService.checkAvailability(
       normalizedItems,
       new Date(`${startDate}T00:00:00.000Z`),
-      new Date(`${endDate}T00:00:00.000Z`)
+      new Date(`${endDate}T00:00:00.000Z`),
+      undefined,
+      deliveryType
     );
 
     return NextResponse.json(result);

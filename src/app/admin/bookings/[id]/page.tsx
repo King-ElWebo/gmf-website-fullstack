@@ -9,6 +9,7 @@ import { BookingStatusBadge } from "../../_components/BookingStatusBadge";
 import { ClientBookingActions, ClientBookingDeleteButton } from "../../_components/ClientBookingActions";
 import { NotesSection } from "../../_components/NotesSection";
 import { AdminCard } from "../../_components/ui/AdminCard";
+import { GoogleSyncButton } from "./_components/GoogleSyncButton";
 
 export const dynamic = "force-dynamic";
 
@@ -55,9 +56,14 @@ type BookingDetailItem = {
     setupRequirements?: string | null;
     accessRequirements?: string | null;
     depositInfo?: string | null;
-    cleaningFeeInfo?: string | null;
     dryingFeeInfo?: string | null;
     additionalCostsInfo?: string | null;
+    availabilityMode?: string | null;
+    resourceUnits?: number | null;
+    resourceAppliesTo?: string | null;
+    resource?: {
+      name?: string | null;
+    } | null;
   } | null;
 };
 
@@ -434,6 +440,19 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
                           </ul>
                         </div>
                       ) : null}
+
+                      {item.item?.availabilityMode && item.item.availabilityMode !== "STOCK_ONLY" && (
+                        <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
+                          <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                          </svg>
+                          Ressource blockiert: {item.item.resource?.name || "Unbekannt"} 
+                          {item.item.availabilityMode === "STOCK_AND_RESOURCE" ? ` (${item.item.resourceUnits || 1} Einheiten)` : " (Ganztägig exklusiv)"}
+                          {item.item.resourceAppliesTo === "DELIVERY_AND_SETUP" ? " (bei Lieferung/Aufbau)" : ""}
+                          {item.item.resourceAppliesTo === "DELIVERY_ONLY" ? " (nur bei Lieferung)" : ""}
+                          {item.item.resourceAppliesTo === "ALL_BOOKINGS" ? " (immer)" : ""}
+                        </div>
+                      )}
                     </div>
 
                     <div className="rounded-[18px] border border-slate-200 bg-slate-50 p-4 text-sm">
@@ -481,10 +500,12 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
                 <span className="text-slate-500">Lieferart</span>
                 <span className="font-medium text-slate-900">{booking.deliveryType}</span>
               </div>
-              <div className="flex items-center justify-between gap-4 border-b border-slate-100 pb-3">
-                <span className="text-slate-500">Calendar Sync</span>
-                <span className="font-medium text-slate-900">{booking.calendarSync?.syncStatus || "Nicht aktiv"}</span>
-              </div>
+              <GoogleSyncButton 
+                bookingId={booking.id}
+                syncStatus={booking.calendarSync?.syncStatus}
+                syncError={booking.calendarSync?.syncError}
+                htmlLink={(booking.calendarSync as any)?.htmlLink}
+              />
               <div className="flex items-center justify-between gap-4">
                 <span className="text-slate-500">Interne Notizen</span>
                 <span className="font-medium text-slate-900">{booking.notes?.length || 0}</span>

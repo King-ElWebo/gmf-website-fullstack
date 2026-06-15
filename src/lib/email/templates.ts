@@ -122,23 +122,36 @@ function renderNewBookingAdmin(ctx: BookingEmailContext): RenderedTemplate {
 
     const approveUrl = `${baseUrl}/bookings/action?bookingId=${ctx.bookingId}&action=approve&expiresAt=${expiresAt}&token=${approveToken}`;
     const rejectUrl = `${baseUrl}/bookings/action?bookingId=${ctx.bookingId}&action=reject&expiresAt=${expiresAt}&token=${rejectToken}`;
+    const adminUrl = `${baseUrl}/admin/bookings/${ctx.bookingId}`;
 
-    linksText = `\n\nSCHNELLAKTIONEN:\n- Anfrage annehmen:\n  ${approveUrl}\n- Anfrage ablehnen:\n  ${rejectUrl}\n`;
+    linksText = `\n\nAKTIONEN:\n- Anfrage im Admin-Bereich ansehen (EMPFOHLEN):\n  ${adminUrl}\n\n- Schnell annehmen:\n  ${approveUrl}\n- Schnell ablehnen:\n  ${rejectUrl}\n\nBitte prüfen Sie die Anfrage im Admin-Bereich, bevor Sie sie bestätigen. Die Schnellaktionen sind nur für eindeutige Fälle gedacht.\n`;
 
     linksHtml = `
       <div style="margin: 24px 0; padding: 24px; background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; text-align: center;">
-        <h3 style="margin: 0 0 16px 0; font-size: 14px; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.5px;">Schnellaktionen</h3>
-        <table role="presentation" cellpadding="0" cellspacing="0" style="margin: 0 auto; width: auto;">
+        <h3 style="margin: 0 0 16px 0; font-size: 14px; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.5px;">Aktionen</h3>
+        <table role="presentation" cellpadding="0" cellspacing="0" style="margin: 0 auto; width: 100%; max-width: 320px;">
           <tr>
-            <td style="padding: 0 12px;">
-              <a href="${approveUrl}" style="display: inline-block; padding: 12px 28px; font-family: 'Nunito', Arial, sans-serif; font-size: 14px; font-weight: 700; color: #ffffff; background-color: #10b981; text-decoration: none; border-radius: 8px; text-align: center; box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2); transition: all 0.2s ease;">Anfrage annehmen</a>
-            </td>
-            <td style="padding: 0 12px;">
-              <a href="${rejectUrl}" style="display: inline-block; padding: 12px 28px; font-family: 'Nunito', Arial, sans-serif; font-size: 14px; font-weight: 700; color: #ffffff; background-color: #ef4444; text-decoration: none; border-radius: 8px; text-align: center; box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.2); transition: all 0.2s ease;">Anfrage ablehnen</a>
+            <td style="padding: 0 0 16px 0;">
+              <a href="${adminUrl}" style="display: block; padding: 14px 28px; font-family: 'Nunito', Arial, sans-serif; font-size: 15px; font-weight: 700; color: #ffffff; background-color: #2563eb; text-decoration: none; border-radius: 8px; text-align: center; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2); transition: all 0.2s ease;">Anfrage im Admin-Bereich ansehen</a>
             </td>
           </tr>
         </table>
-        <p style="margin: 16px 0 0 0; font-size: 11px; color: #9ca3af; line-height: 1.4;">Diese Links sind 7 Tage gültig und kryptografisch signiert. Nur gültige Links können eine Statusänderung auslösen.</p>
+        
+        <p style="margin: 0 0 16px 0; font-size: 13px; color: #4b5563; line-height: 1.5;">Bitte pr&uuml;fen Sie die Anfrage im Admin-Bereich, bevor Sie sie best&auml;tigen. Die Schnellaktionen sind nur f&uuml;r eindeutige F&auml;lle gedacht.</p>
+        
+        <div style="border-top: 1px solid #e5e7eb; margin: 16px 0; padding-top: 16px;">
+          <table role="presentation" cellpadding="0" cellspacing="0" style="margin: 0 auto; width: auto;">
+            <tr>
+              <td style="padding: 0 8px;">
+                <a href="${approveUrl}" style="display: inline-block; padding: 8px 16px; font-family: 'Nunito', Arial, sans-serif; font-size: 12px; font-weight: 600; color: #10b981; background-color: transparent; border: 1px solid #10b981; text-decoration: none; border-radius: 6px; text-align: center; transition: all 0.2s ease;">Schnell annehmen</a>
+              </td>
+              <td style="padding: 0 8px;">
+                <a href="${rejectUrl}" style="display: inline-block; padding: 8px 16px; font-family: 'Nunito', Arial, sans-serif; font-size: 12px; font-weight: 600; color: #ef4444; background-color: transparent; border: 1px solid #ef4444; text-decoration: none; border-radius: 6px; text-align: center; transition: all 0.2s ease;">Schnell ablehnen</a>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <p style="margin: 16px 0 0 0; font-size: 11px; color: #9ca3af; line-height: 1.4;">Diese Schnellaktions-Links sind 7 Tage g&uuml;ltig und kryptografisch signiert.</p>
       </div>
     `;
   }

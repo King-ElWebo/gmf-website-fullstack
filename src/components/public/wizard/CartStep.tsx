@@ -57,15 +57,17 @@ export function CartStep({
                         : selectedRangeLabel;
 
                     const stockLabel =
-                        availability && availability.trackInventory && availability.availableQuantity != null
-                            ? availability.isAvailable
-                                ? `Verfügbar im Zeitraum: ${availability.availableQuantity}`
-                                : availability.availableQuantity === 0
-                                    ? "Nicht verfügbar im gewählten Zeitraum"
-                                    : `Nicht ausreichend verfügbar im Zeitraum (max. ${availability.availableQuantity})`
-                            : item.trackInventory
-                                ? `Bestand: ${item.totalStock}`
-                                : null;
+                        availability && availability.resourceLimitReached
+                            ? "Für den gewählten Zeitraum ist keine Lieferung/Aufbaukapazität verfügbar."
+                            : availability && availability.trackInventory && availability.availableQuantity != null
+                                ? availability.isAvailable
+                                    ? `Verfügbar im Zeitraum: ${availability.availableQuantity}`
+                                    : availability.availableQuantity === 0
+                                        ? "Nicht verfügbar im gewählten Zeitraum"
+                                        : `Nicht ausreichend verfügbar im Zeitraum (max. ${availability.availableQuantity})`
+                                : item.trackInventory
+                                    ? `Bestand: ${item.totalStock}`
+                                    : null;
 
                     return (
                         <div

@@ -45,7 +45,8 @@ export function DatesStep({
     availabilityByItemId,
     selectedRangeLabel,
 }: DatesStepProps) {
-    const hasUnavailableItem = Object.values(availabilityByItemId).some((entry) => !entry.isAvailable);
+    const hasUnavailableItem = Object.values(availabilityByItemId).some((entry: any) => !entry.isAvailable && !entry.resourceLimitReached);
+    const hasResourceLimit = Object.values(availabilityByItemId).some((entry: any) => entry.resourceLimitReached);
 
     return (
         <div className="space-y-6">
@@ -148,6 +149,14 @@ export function DatesStep({
                             </div>
                         )}
 
+                        {hasResourceLimit && (
+                            <div className="mt-3 flex items-start gap-2.5 rounded-[16px] bg-[#fef2f2] border border-[#fecaca] px-4 py-3">
+                                <AlertTriangle size={16} className="text-[#dc2626] shrink-0 mt-0.5" />
+                                <p className="font-['Nunito'] text-[13px] text-[#991b1b] leading-normal">
+                                    Für den gewählten Zeitraum ist keine Lieferung/Aufbaukapazität verfügbar.
+                                </p>
+                            </div>
+                        )}
                         {hasUnavailableItem && (
                             <div className="mt-3 flex items-start gap-2.5 rounded-[16px] bg-[#fef2f2] border border-[#fecaca] px-4 py-3">
                                 <AlertTriangle size={16} className="text-[#dc2626] shrink-0 mt-0.5" />

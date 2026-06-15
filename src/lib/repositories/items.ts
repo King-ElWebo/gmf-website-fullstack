@@ -34,6 +34,10 @@ export type ItemInput = {
     totalStock: number;
     published: boolean;
     categoryId: string;
+    availabilityMode: "STOCK_ONLY" | "STOCK_AND_RESOURCE" | "EXCLUSIVE_RESOURCE";
+    resourceId?: string | null;
+    resourceUnits?: number | null;
+    resourceAppliesTo?: "DELIVERY_AND_SETUP" | "DELIVERY_ONLY" | "ALL_BOOKINGS" | null;
 };
 
 export type ItemListSort =
@@ -74,6 +78,10 @@ function buildItemPersistenceData(data: ItemInput) {
         priceCents: syncedPriceCents,
         basePriceCents: syncedPriceCents,
         totalStock: Math.max(0, Math.floor(data.totalStock)),
+        availabilityMode: data.availabilityMode,
+        resourceId: data.resourceId,
+        resourceUnits: data.resourceUnits,
+        resourceAppliesTo: data.resourceAppliesTo,
     };
 }
 

@@ -1,6 +1,7 @@
 import { BookingRepository, CalendarBlockerRepository } from "../ports";
 import { BookingModuleConfig } from "../../domain/config";
 import { BookingConflict } from "../../domain/models";
+import { db } from "@/lib/db";
 
 export interface ItemAvailabilityDetail {
   resourceId: string;
@@ -9,6 +10,7 @@ export interface ItemAvailabilityDetail {
   totalStock: number | null;
   trackInventory: boolean;
   isAvailable: boolean;
+  resourceLimitReached?: boolean;
 }
 
 export interface AvailabilityCheckResult {
@@ -29,7 +31,8 @@ export class AvailabilityService {
     items: { resourceId: string; quantity: number }[],
     start: Date,
     end: Date,
-    excludeBookingId?: string
+    excludeBookingId?: string,
+    deliveryType?: string
   ): Promise<AvailabilityCheckResult> {
     const conflicts: BookingConflict[] = [];
     const inventoryRows = await this.bookingRepo.getResourceInventories(
@@ -40,6 +43,7 @@ export class AvailabilityService {
     );
     const itemDetails: ItemAvailabilityDetail[] = [];
 
+    // --- PHASE 1: Item Stock Check ---
     for (const item of items) {
       let overlaps = await this.bookingRepo.findOverlapping(
         item.resourceId,
@@ -134,6 +138,117 @@ export class AvailabilityService {
           reason: "oversold",
           severity: "critical",
         });
+      }
+    }
+
+    // --- PHASE 2: Operational Resource Check ---
+    const isPhase1Available = conflicts.length === 0;
+
+    if (isPhase1Available && deliveryType) {
+      const dbItems = await db.item.findMany({
+        where: { id: { in: items.map(i => i.resourceId) } },
+        include: { resource: true }
+      });
+
+      const resourceUsageMap = new Map<string, { resourceId: string; units: number; isExclusive: boolean }>();
+
+      for (const item of items) {
+        const dbItem = dbItems.find(i => i.id === item.resourceId);
+        if (!dbItem || !dbItem.resourceId) continue;
+        if (dbItem.availabilityMode === "STOCK_ONLY") continue;
+
+        const appliesTo = dbItem.resourceAppliesTo;
+        const isDelivery = deliveryType === "delivery";
+        const isPickup = deliveryType === "pickup";
+        
+        if (appliesTo === "DELIVERY_ONLY" && !isDelivery) continue;
+        if (appliesTo === "PICKUP_ONLY" && !isPickup) continue;
+
+        const isExclusive = dbItem.availabilityMode === "EXCLUSIVE_RESOURCE";
+        
+        const existing = resourceUsageMap.get(dbItem.resourceId) || { resourceId: dbItem.resourceId, units: 0, isExclusive: false };
+        existing.units += (dbItem.resourceUnits * item.quantity);
+        if (isExclusive) existing.isExclusive = true;
+        
+        resourceUsageMap.set(dbItem.resourceId, existing);
+      }
+
+      if (resourceUsageMap.size > 0) {
+        const overlappingBookings = await db.booking.findMany({
+          where: {
+            status: { in: this.config.blockingStatuses },
+            ...(excludeBookingId ? { id: { not: excludeBookingId } } : {}),
+            AND: [
+              { startDate: { lte: end } },
+              { endDate: { gte: start } },
+            ]
+          },
+          include: {
+            items: {
+              include: {
+                item: {
+                  include: { resource: true }
+                }
+              }
+            }
+          }
+        });
+
+        for (const [resId, requestedUsage] of Array.from(resourceUsageMap.entries())) {
+          const resourceObj = dbItems.find(i => i.resourceId === resId)?.resource;
+          if (!resourceObj) continue;
+
+          let existingUnits = 0;
+          let existingHasExclusive = false;
+
+          for (const booking of overlappingBookings) {
+            for (const bookingItem of booking.items) {
+              const bItem = bookingItem.item;
+              if (!bItem || bItem.resourceId !== resId) continue;
+              if (bItem.availabilityMode === "STOCK_ONLY") continue;
+              
+              const appliesTo = bItem.resourceAppliesTo;
+              const isDelivery = booking.deliveryType === "delivery";
+              const isPickup = booking.deliveryType === "pickup";
+              
+              if (appliesTo === "DELIVERY_ONLY" && !isDelivery) continue;
+              if (appliesTo === "PICKUP_ONLY" && !isPickup) continue;
+
+              existingUnits += (bItem.resourceUnits * bookingItem.quantity);
+              if (bItem.availabilityMode === "EXCLUSIVE_RESOURCE") {
+                existingHasExclusive = true;
+              }
+            }
+          }
+
+          let conflictReason = null;
+          
+          if (existingHasExclusive) {
+            conflictReason = "RESOURCE_CAPACITY_EXCEEDED";
+          } else if (requestedUsage.isExclusive && existingUnits > 0) {
+            conflictReason = "RESOURCE_CAPACITY_EXCEEDED";
+          } else if (existingUnits + requestedUsage.units > resourceObj.capacityPerDay) {
+            conflictReason = "RESOURCE_CAPACITY_EXCEEDED";
+          }
+
+          if (conflictReason) {
+            conflicts.push({
+              bookingId: "resource-limit",
+              resourceIds: [resId],
+              reason: "RESOURCE_CAPACITY_EXCEEDED",
+              severity: "critical"
+            });
+            
+            // Mark items needing this resource as unavailable
+            for (const detail of itemDetails) {
+              const dbItem = dbItems.find(i => i.id === detail.resourceId);
+              if (dbItem?.resourceId === resId) {
+                detail.isAvailable = false;
+                detail.resourceLimitReached = true;
+              }
+            }
+          }
+        }
       }
     }
 

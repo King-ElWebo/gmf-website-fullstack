@@ -3,6 +3,7 @@ import { listCategories } from "@/lib/repositories/categories";
 import { getItemById } from "@/lib/repositories/items";
 import { listByItemId } from "@/lib/repositories/item-images";
 import { listCatalogTypes } from "@/lib/repositories/catalog-types";
+import { listResources } from "@/lib/repositories/resources";
 import ItemForm from "../../_components/item-form";
 
 export default async function EditItemPage({
@@ -16,11 +17,12 @@ export default async function EditItemPage({
     const { uploadError } = await searchParams;
     if (!id || typeof id !== "string") return notFound();
 
-    const [categories, item, images, catalogTypes] = await Promise.all([
+    const [categories, item, images, catalogTypes, resources] = await Promise.all([
         listCategories(),
         getItemById(id),
         listByItemId(id),
         listCatalogTypes(),
+        listResources(),
     ]);
     if (!item) return notFound();
 
@@ -29,6 +31,7 @@ export default async function EditItemPage({
             mode="edit"
             itemId={item.id}
             initialError={typeof uploadError === "string" ? uploadError : undefined}
+            resources={resources}
             catalogTypes={catalogTypes.map((ct) => ({ id: ct.id, name: ct.name }))}
             categories={categories.map((c) => ({
                 id: c.id,
@@ -69,6 +72,10 @@ export default async function EditItemPage({
                 totalStock: item.totalStock.toString(),
                 published: item.published,
                 categoryId: item.categoryId,
+                availabilityMode: item.availabilityMode,
+                resourceId: item.resourceId,
+                resourceUnits: item.resourceUnits?.toString(),
+                resourceAppliesTo: item.resourceAppliesTo,
             }}
         />
     );

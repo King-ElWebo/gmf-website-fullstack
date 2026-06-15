@@ -21,22 +21,18 @@ const catalogItems: NavItem[] = [
 ];
 
 const operationsItems: NavItem[] = [
-    { href: "/admin/bookings/dashboard", label: "Booking Dashboard", icon: <ChartIcon /> },
     { href: "/admin/bookings", label: "Bookings", icon: <CalendarIcon /> },
-    { href: "/admin/emails", label: "Emails", icon: <MailIcon /> },
     { href: "/admin/calendar", label: "Calendar", icon: <ScheduleIcon /> },
+    { href: "/admin/resources", label: "Ressourcen", icon: <SettingsIcon /> },
+    { href: "/admin/emails", label: "Emails", icon: <MailIcon /> },
 ];
 
 function isActive(pathname: string, href: string) {
     if (href === "/admin") return pathname === href;
     
-    // Explicit match for dashboard to avoid it being caught by general bookings
-    if (href === "/admin/bookings/dashboard") return pathname === href;
-    
-    // For general bookings, match exactly or match sub-paths (like /admin/bookings/cl...)
-    // BUT ignore the dashboard sub-path here
+    // For general bookings, match exactly or match sub-paths (like /admin/bookings/id...)
     if (href === "/admin/bookings") {
-        return pathname === href || (pathname.startsWith("/admin/bookings/") && !pathname.startsWith("/admin/bookings/dashboard"));
+        return pathname === href || pathname.startsWith("/admin/bookings/");
     }
     
     return pathname === href || pathname.startsWith(`${href}/`);

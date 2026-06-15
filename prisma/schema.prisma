@@ -24,6 +24,30 @@ model Category {
   @@index([sortOrder])
 }
 
+model Resource {
+  id              String   @id @default(cuid())
+  name            String
+  slug            String   @unique
+  description     String?
+  capacityPerDay  Int      @default(1)
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  items           Item[]
+}
+
+enum AvailabilityMode {
+  STOCK_ONLY
+  STOCK_AND_RESOURCE
+  EXCLUSIVE_RESOURCE
+}
+
+enum ResourceAppliesTo {
+  DELIVERY_ONLY
+  PICKUP_ONLY
+  BOTH
+}
+
 model CatalogType {
   id          String     @id @default(cuid())
   name        String
@@ -78,6 +102,13 @@ model Item {
   accessRequirements      String?
   trackInventory          Boolean               @default(true)
   totalStock              Int                   @default(1)
+  
+  availabilityMode        AvailabilityMode      @default(STOCK_ONLY)
+  resourceId              String?
+  resourceUnits           Int                   @default(1)
+  resourceAppliesTo       ResourceAppliesTo     @default(BOTH)
+  
+  resource                Resource?             @relation(fields: [resourceId], references: [id])
   bookingItems            BookingItem[]
   calendarBlockerItems    CalendarBlockerItem[]
   category                Category              @relation(fields: [categoryId], references: [id])
@@ -275,6 +306,7 @@ model CalendarSyncRecord {
   id              String    @id @default(cuid())
   bookingId       String    @unique
   externalEventId String?
+  htmlLink        String?
   syncStatus      String    @default("pending")
   lastSyncedAt    DateTime?
   syncError       String?

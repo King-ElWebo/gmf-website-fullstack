@@ -99,14 +99,14 @@ export default async function AdminHome() {
           value={openInquiriesCount}
           icon={<Clock className="text-amber-500" size={24} />}
           accent="amber"
-          link="/admin/bookings/dashboard?status=requested"
+          link="/admin/bookings?status=requested"
         />
         <MetricCard
           title="Kommende Buchungen"
           value={upcomingBookingsCount}
           icon={<Calendar className="text-blue-500" size={24} />}
           accent="blue"
-          link="/admin/bookings/dashboard?status=approved"
+          link="/admin/bookings?status=approved"
         />
         <MetricCard
           title="Diese Woche"
@@ -119,7 +119,7 @@ export default async function AdminHome() {
           value={archivedCount}
           icon={<Archive className="text-slate-400" size={24} />}
           accent="slate"
-          link="/admin/bookings/dashboard?status=archived"
+          link="/admin/bookings?status=archived"
         />
       </div>
 
@@ -133,7 +133,7 @@ export default async function AdminHome() {
                 <h2 className="text-lg font-semibold text-slate-900">Offene Anfragen</h2>
                 <p className="mt-1 text-sm text-slate-500">Kunden warten auf Bestätigung oder Angebot.</p>
               </div>
-              <Link href="/admin/bookings/dashboard?status=requested" className="font-medium text-blue-600 hover:text-blue-800">
+              <Link href="/admin/bookings?status=requested" className="font-medium text-blue-600 hover:text-blue-800">
                 Alle ansehen
               </Link>
             </div>
@@ -187,7 +187,7 @@ export default async function AdminHome() {
                 <h2 className="text-lg font-semibold text-slate-900">Nächste Buchungen</h2>
                 <p className="mt-1 text-sm text-slate-500">Bestätigte Einsätze, die in Kürze anstehen.</p>
               </div>
-              <Link href="/admin/bookings/dashboard?status=approved" className="font-medium text-blue-600 hover:text-blue-800">
+              <Link href="/admin/bookings?status=approved" className="font-medium text-blue-600 hover:text-blue-800">
                 Alle ansehen
               </Link>
             </div>
@@ -253,8 +253,8 @@ export default async function AdminHome() {
               <h2 className="text-lg font-semibold text-slate-900">Tagesgeschäft</h2>
               <div className="mt-4 flex flex-col gap-3">
               <ActionCard 
-                href="/admin/bookings/dashboard" 
-                title="Booking Dashboard" 
+                href="/admin/bookings" 
+                title="Buchungen" 
                 text="Alle Anfragen und Buchungen" 
                 icon={<Calendar />} 
                 isPrimary 

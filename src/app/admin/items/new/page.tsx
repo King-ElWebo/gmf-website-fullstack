@@ -1,16 +1,19 @@
 import { listCategories } from "@/lib/repositories/categories";
 import { listCatalogTypes } from "@/lib/repositories/catalog-types";
+import { listResources } from "@/lib/repositories/resources";
 import ItemForm from "../_components/item-form";
 
 export default async function NewItemPage() {
-    const [categories, catalogTypes] = await Promise.all([
+    const [categories, catalogTypes, resources] = await Promise.all([
         listCategories(),
         listCatalogTypes(),
+        listResources(),
     ]);
 
     return (
         <ItemForm
             mode="create"
+            resources={resources}
             catalogTypes={catalogTypes.map((ct) => ({ id: ct.id, name: ct.name }))}
             categories={categories.map((c) => ({
                 id: c.id,
