@@ -48,6 +48,12 @@ enum ResourceAppliesTo {
   BOTH
 }
 
+enum ResourceBlockTime {
+  ENTIRE_DURATION
+  START_AND_END_DAYS
+  START_DAY_ONLY
+}
+
 model CatalogType {
   id          String     @id @default(cuid())
   name        String
@@ -107,6 +113,7 @@ model Item {
   resourceId              String?
   resourceUnits           Int                   @default(1)
   resourceAppliesTo       ResourceAppliesTo     @default(BOTH)
+  resourceBlockTime       ResourceBlockTime     @default(ENTIRE_DURATION)
   
   resource                Resource?             @relation(fields: [resourceId], references: [id])
   bookingItems            BookingItem[]

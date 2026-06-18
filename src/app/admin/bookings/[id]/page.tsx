@@ -56,6 +56,7 @@ type BookingDetailItem = {
     setupRequirements?: string | null;
     accessRequirements?: string | null;
     depositInfo?: string | null;
+    cleaningFeeInfo?: string | null;
     dryingFeeInfo?: string | null;
     additionalCostsInfo?: string | null;
     availabilityMode?: string | null;
@@ -442,15 +443,23 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
                       ) : null}
 
                       {item.item?.availabilityMode && item.item.availabilityMode !== "STOCK_ONLY" && (
-                        <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
-                          <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                          </svg>
-                          Ressource blockiert: {item.item.resource?.name || "Unbekannt"} 
-                          {item.item.availabilityMode === "STOCK_AND_RESOURCE" ? ` (${item.item.resourceUnits || 1} Einheiten)` : " (Ganztägig exklusiv)"}
-                          {item.item.resourceAppliesTo === "DELIVERY_AND_SETUP" ? " (bei Lieferung/Aufbau)" : ""}
-                          {item.item.resourceAppliesTo === "DELIVERY_ONLY" ? " (nur bei Lieferung)" : ""}
-                          {item.item.resourceAppliesTo === "ALL_BOOKINGS" ? " (immer)" : ""}
+                        <div className="mt-3 flex flex-col gap-1 rounded-xl bg-blue-50 p-3 text-sm font-medium text-blue-800 ring-1 ring-inset ring-blue-700/10">
+                          <div className="flex items-center gap-2">
+                            <svg className="h-4 w-4 shrink-0 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                            <span>Produkt blockiert: {formatDate(booking.startDate)} bis {formatDate(booking.endDate)}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <svg className="h-4 w-4 shrink-0 opacity-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                            <span className="text-blue-700">
+                              {item.item.availabilityMode === "EXCLUSIVE_RESOURCE" 
+                                ? `Ganzer Einsatztag blockiert: ${dateKey(booking.startDate) === dateKey(booking.endDate) ? formatDate(booking.startDate) : `${formatDate(booking.startDate)} bis ${formatDate(booking.endDate)}`}` 
+                                : `Lieferung/Aufbau blockiert: ${dateKey(booking.startDate) === dateKey(booking.endDate) ? formatDate(booking.startDate) : `${formatDate(booking.startDate)} und ${formatDate(booking.endDate)}`}`}
+                            </span>
+                          </div>
                         </div>
                       )}
                     </div>

@@ -73,7 +73,7 @@ export default async function EditItemPage({
                 published: item.published,
                 categoryId: item.categoryId,
                 availabilityMode: item.availabilityMode,
-                resourceId: item.resourceId,
+                resourceId: item.resourceId ?? undefined,
                 resourceUnits: item.resourceUnits?.toString(),
                 resourceAppliesTo: item.resourceAppliesTo,
             }}

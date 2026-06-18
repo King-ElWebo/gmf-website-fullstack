@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
 
-type CategoryCard = {
+export type CategoryCard = {
     id: string;
     title: string;
     description: string | null;

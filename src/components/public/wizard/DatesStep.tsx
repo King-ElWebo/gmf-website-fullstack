@@ -153,7 +153,7 @@ export function DatesStep({
                             <div className="mt-3 flex items-start gap-2.5 rounded-[16px] bg-[#fef2f2] border border-[#fecaca] px-4 py-3">
                                 <AlertTriangle size={16} className="text-[#dc2626] shrink-0 mt-0.5" />
                                 <p className="font-['Nunito'] text-[13px] text-[#991b1b] leading-normal">
-                                    Für den gewählten Zeitraum ist keine Lieferung/Aufbaukapazität verfügbar.
+                                    Für den gewählten Zeitraum ist die Liefer-/Aufbaukapazität leider nicht verfügbar.
                                 </p>
                             </div>
                         )}

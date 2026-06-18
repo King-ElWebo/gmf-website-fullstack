@@ -8,7 +8,11 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
         const { name, capacityPerDay, isActive } = body;
 
         const updateData: any = {};
-        if (name && typeof name === "string") updateData.name = name.trim();
+        if (name && typeof name === "string") {
+            updateData.name = name.trim();
+            const { slugify } = require("@/lib/slug");
+            updateData.slug = slugify(name.trim());
+        }
         if (typeof capacityPerDay === "number" && capacityPerDay >= 1) updateData.capacityPerDay = capacityPerDay;
         if (typeof isActive === "boolean") updateData.isActive = isActive;
 

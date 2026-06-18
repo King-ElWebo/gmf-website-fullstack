@@ -84,12 +84,12 @@ export default function ResourceForm({
     return (
         <div className="max-w-3xl space-y-6">
             <div>
-                <h1 className="text-2xl font-semibold text-slate-900">{mode === "create" ? "Neue Ressource" : "Ressource bearbeiten"}</h1>
-                <p className="mt-1 text-sm text-slate-500">Operative Ressourcen für Lieferung, Aufbau oder Betreuung.</p>
+                <h1 className="text-2xl font-semibold text-slate-900">{mode === "create" ? "Neue Verfügbarkeitsregel" : "Verfügbarkeitsregel bearbeiten"}</h1>
+                <p className="mt-1 text-sm text-slate-500">Operative Regeln für Lieferung, Aufbau oder Betreuung.</p>
             </div>
 
             <form onSubmit={onSave} className="space-y-6">
-                <AdminCard title="Ressourcen-Daten">
+                <AdminCard title="Regel & Tageskapazität">
                     <div className="space-y-5">
                         <AdminField label="Name" htmlFor="name">
                             <AdminInput
@@ -101,7 +101,7 @@ export default function ResourceForm({
                             />
                         </AdminField>
 
-                        <AdminField label="Kapazität pro Tag" htmlFor="capacityPerDay" helperText="Wie viele Einheiten/Buchungen kann diese Ressource pro Tag bedienen?">
+                        <AdminField label="Tageskapazität (Punkte/Anzahl)" htmlFor="capacityPerDay" helperText="Wie viele Kapazitäts-Punkte (z.B. Arbeitsstunden, Autos) habt ihr hiervon pro Tag zur Verfügung?">
                             <AdminInput
                                 id="capacityPerDay"
                                 type="number"

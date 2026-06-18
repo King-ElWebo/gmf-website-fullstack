@@ -12,7 +12,6 @@ type NavItem = {
 
 const catalogItems: NavItem[] = [
     { href: "/admin", label: "Overview", icon: <HomeIcon /> },
-    { href: "/admin/site-settings", label: "Site Settings", icon: <SettingsIcon /> },
     { href: "/admin/catalog-types", label: "Catalog Types", icon: <GridIcon /> },
     { href: "/admin/categories", label: "Categories", icon: <FolderIcon /> },
     { href: "/admin/items", label: "Items", icon: <CubeIcon /> },
@@ -23,8 +22,12 @@ const catalogItems: NavItem[] = [
 const operationsItems: NavItem[] = [
     { href: "/admin/bookings", label: "Bookings", icon: <CalendarIcon /> },
     { href: "/admin/calendar", label: "Calendar", icon: <ScheduleIcon /> },
-    { href: "/admin/resources", label: "Ressourcen", icon: <SettingsIcon /> },
     { href: "/admin/emails", label: "Emails", icon: <MailIcon /> },
+];
+
+const settingsItems: NavItem[] = [
+    { href: "/admin/site-settings", label: "Site Settings", icon: <SettingsIcon /> },
+    { href: "/admin/resources", label: "Verfügbarkeitsregeln", icon: <SettingsIcon /> },
 ];
 
 function isActive(pathname: string, href: string) {
@@ -134,6 +137,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
                         <div className="space-y-6">
                             <NavGroup title="Catalog" items={catalogItems} pathname={pathname} />
                             <NavGroup title="Operations" items={operationsItems} pathname={pathname} />
+                            <NavGroup title="Settings" items={settingsItems} pathname={pathname} />
                         </div>
                     </div>
                 </div>

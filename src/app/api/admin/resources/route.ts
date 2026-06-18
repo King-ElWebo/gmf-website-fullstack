@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { slugify } from "@/lib/slug";
 
 export async function GET() {
     try {
@@ -26,6 +27,7 @@ export async function POST(req: Request) {
         const resource = await db.resource.create({
             data: {
                 name: name.trim(),
+                slug: slugify(name.trim()),
                 capacityPerDay,
                 isActive: isActive ?? true,
             },

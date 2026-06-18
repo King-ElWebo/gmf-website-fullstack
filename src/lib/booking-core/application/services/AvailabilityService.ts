@@ -20,6 +20,35 @@ export interface AvailabilityCheckResult {
   items: ItemAvailabilityDetail[];
 }
 
+function getDatesInRange(startDate: Date, endDate: Date) {
+  const dates = [];
+  let current = new Date(startDate);
+  current.setHours(0, 0, 0, 0);
+  const end = new Date(endDate);
+  end.setHours(0, 0, 0, 0);
+  
+  while (current <= end) {
+    dates.push(new Date(current));
+    current.setDate(current.getDate() + 1);
+  }
+  return dates;
+}
+
+function isResourceActiveOnDate(
+  blockTime: string,
+  startDate: Date,
+  endDate: Date,
+  targetDate: Date
+) {
+  const s = new Date(startDate); s.setHours(0, 0, 0, 0);
+  const e = new Date(endDate); e.setHours(0, 0, 0, 0);
+  const t = new Date(targetDate); t.setHours(0, 0, 0, 0);
+  
+  if (blockTime === "START_DAY_ONLY") return t.getTime() === s.getTime();
+  if (blockTime === "START_AND_END_DAYS") return t.getTime() === s.getTime() || t.getTime() === e.getTime();
+  return true; // ENTIRE_DURATION
+}
+
 export class AvailabilityService {
   constructor(
     private bookingRepo: BookingRepository,
@@ -150,49 +179,56 @@ export class AvailabilityService {
         include: { resource: true }
       });
 
-      const resourceUsageMap = new Map<string, { resourceId: string; units: number; isExclusive: boolean }>();
+      const targetDates = getDatesInRange(start, end);
 
-      for (const item of items) {
-        const dbItem = dbItems.find(i => i.id === item.resourceId);
-        if (!dbItem || !dbItem.resourceId) continue;
-        if (dbItem.availabilityMode === "STOCK_ONLY") continue;
-
-        const appliesTo = dbItem.resourceAppliesTo;
-        const isDelivery = deliveryType === "delivery";
-        const isPickup = deliveryType === "pickup";
-        
-        if (appliesTo === "DELIVERY_ONLY" && !isDelivery) continue;
-        if (appliesTo === "PICKUP_ONLY" && !isPickup) continue;
-
-        const isExclusive = dbItem.availabilityMode === "EXCLUSIVE_RESOURCE";
-        
-        const existing = resourceUsageMap.get(dbItem.resourceId) || { resourceId: dbItem.resourceId, units: 0, isExclusive: false };
-        existing.units += (dbItem.resourceUnits * item.quantity);
-        if (isExclusive) existing.isExclusive = true;
-        
-        resourceUsageMap.set(dbItem.resourceId, existing);
-      }
-
-      if (resourceUsageMap.size > 0) {
-        const overlappingBookings = await db.booking.findMany({
-          where: {
-            status: { in: this.config.blockingStatuses },
-            ...(excludeBookingId ? { id: { not: excludeBookingId } } : {}),
-            AND: [
-              { startDate: { lte: end } },
-              { endDate: { gte: start } },
-            ]
-          },
-          include: {
-            items: {
-              include: {
-                item: {
-                  include: { resource: true }
-                }
+      const overlappingBookings = await db.booking.findMany({
+        where: {
+          status: { in: this.config.blockingStatuses },
+          ...(excludeBookingId ? { id: { not: excludeBookingId } } : {}),
+          AND: [
+            { startDate: { lte: end } },
+            { endDate: { gte: start } },
+          ]
+        },
+        include: {
+          items: {
+            include: {
+              item: {
+                include: { resource: true }
               }
             }
           }
-        });
+        }
+      });
+
+      for (const targetDate of targetDates) {
+        const resourceUsageMap = new Map<string, { resourceId: string; units: number; isExclusive: boolean }>();
+
+        for (const item of items) {
+          const dbItem = dbItems.find(i => i.id === item.resourceId);
+          if (!dbItem || !dbItem.resourceId) continue;
+          if (dbItem.availabilityMode === "STOCK_ONLY") continue;
+
+          const appliesTo = dbItem.resourceAppliesTo;
+          const isDelivery = deliveryType === "delivery";
+          const isPickup = deliveryType === "pickup";
+          
+          if (appliesTo === "DELIVERY_ONLY" && !isDelivery) continue;
+          if (appliesTo === "PICKUP_ONLY" && !isPickup) continue;
+
+          const blockTime = (dbItem as any).resourceBlockTime || "ENTIRE_DURATION";
+          if (!isResourceActiveOnDate(blockTime, start, end, targetDate)) continue;
+
+          const isExclusive = dbItem.availabilityMode === "EXCLUSIVE_RESOURCE";
+          
+          const existing = resourceUsageMap.get(dbItem.resourceId) || { resourceId: dbItem.resourceId, units: 0, isExclusive: false };
+          existing.units += (dbItem.resourceUnits * item.quantity);
+          if (isExclusive) existing.isExclusive = true;
+          
+          resourceUsageMap.set(dbItem.resourceId, existing);
+        }
+
+        if (resourceUsageMap.size === 0) continue;
 
         for (const [resId, requestedUsage] of Array.from(resourceUsageMap.entries())) {
           const resourceObj = dbItems.find(i => i.resourceId === resId)?.resource;
@@ -202,17 +238,26 @@ export class AvailabilityService {
           let existingHasExclusive = false;
 
           for (const booking of overlappingBookings) {
+            const bStart = new Date(booking.startDate); bStart.setHours(0,0,0,0);
+            const bEnd = new Date(booking.endDate); bEnd.setHours(0,0,0,0);
+            const tDate = new Date(targetDate); tDate.setHours(0,0,0,0);
+            
+            if (tDate < bStart || tDate > bEnd) continue;
+
             for (const bookingItem of booking.items) {
               const bItem = bookingItem.item;
               if (!bItem || bItem.resourceId !== resId) continue;
               if (bItem.availabilityMode === "STOCK_ONLY") continue;
               
               const appliesTo = bItem.resourceAppliesTo;
-              const isDelivery = booking.deliveryType === "delivery";
-              const isPickup = booking.deliveryType === "pickup";
+              const isDeliveryBooking = booking.deliveryType === "delivery";
+              const isPickupBooking = booking.deliveryType === "pickup";
               
-              if (appliesTo === "DELIVERY_ONLY" && !isDelivery) continue;
-              if (appliesTo === "PICKUP_ONLY" && !isPickup) continue;
+              if (appliesTo === "DELIVERY_ONLY" && !isDeliveryBooking) continue;
+              if (appliesTo === "PICKUP_ONLY" && !isPickupBooking) continue;
+
+              const blockTime = (bItem as any).resourceBlockTime || "ENTIRE_DURATION";
+              if (!isResourceActiveOnDate(blockTime, booking.startDate, booking.endDate, targetDate)) continue;
 
               existingUnits += (bItem.resourceUnits * bookingItem.quantity);
               if (bItem.availabilityMode === "EXCLUSIVE_RESOURCE") {
@@ -232,14 +277,16 @@ export class AvailabilityService {
           }
 
           if (conflictReason) {
-            conflicts.push({
-              bookingId: "resource-limit",
-              resourceIds: [resId],
-              reason: "RESOURCE_CAPACITY_EXCEEDED",
-              severity: "critical"
-            });
+            const alreadyAdded = conflicts.find(c => c.bookingId === "resource-limit" && c.resourceIds?.includes(resId));
+            if (!alreadyAdded) {
+              conflicts.push({
+                bookingId: "resource-limit",
+                resourceIds: [resId],
+                reason: "RESOURCE_CAPACITY_EXCEEDED",
+                severity: "critical"
+              });
+            }
             
-            // Mark items needing this resource as unavailable
             for (const detail of itemDetails) {
               const dbItem = dbItems.find(i => i.id === detail.resourceId);
               if (dbItem?.resourceId === resId) {

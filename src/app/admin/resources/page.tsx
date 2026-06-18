@@ -8,10 +8,10 @@ export default async function ResourcesPage() {
     const resources = await listResources();
 
     return (
-        <div className="space-y-6">
-            <div className="flex items-center justify-between">
+        <div className="mx-auto max-w-5xl">
+            <div className="mb-8 flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-semibold text-slate-900">Ressourcen</h1>
+                    <h1 className="text-2xl font-semibold text-slate-900">Verfügbarkeitsregeln</h1>
                     <p className="mt-1 text-sm text-slate-500">Operative Ressourcen wie Lieferteams oder Fahrzeuge verwalten.</p>
                 </div>
                 <Link href="/admin/resources/new">

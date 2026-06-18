@@ -58,7 +58,7 @@ export function CartStep({
 
                     const stockLabel =
                         availability && availability.resourceLimitReached
-                            ? "Für den gewählten Zeitraum ist keine Lieferung/Aufbaukapazität verfügbar."
+                            ? "Für den gewählten Zeitraum ist die Liefer-/Aufbaukapazität leider nicht verfügbar."
                             : availability && availability.trackInventory && availability.availableQuantity != null
                                 ? availability.isAvailable
                                     ? `Verfügbar im Zeitraum: ${availability.availableQuantity}`

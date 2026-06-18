@@ -37,7 +37,8 @@ export type ItemInput = {
     availabilityMode: "STOCK_ONLY" | "STOCK_AND_RESOURCE" | "EXCLUSIVE_RESOURCE";
     resourceId?: string | null;
     resourceUnits?: number | null;
-    resourceAppliesTo?: "DELIVERY_AND_SETUP" | "DELIVERY_ONLY" | "ALL_BOOKINGS" | null;
+    resourceAppliesTo?: "DELIVERY_ONLY" | "PICKUP_ONLY" | "BOTH" | null;
+    resourceBlockTime?: "ENTIRE_DURATION" | "START_AND_END_DAYS" | "START_DAY_ONLY" | null;
 };
 
 export type ItemListSort =
@@ -80,8 +81,9 @@ function buildItemPersistenceData(data: ItemInput) {
         totalStock: Math.max(0, Math.floor(data.totalStock)),
         availabilityMode: data.availabilityMode,
         resourceId: data.resourceId,
-        resourceUnits: data.resourceUnits,
-        resourceAppliesTo: data.resourceAppliesTo,
+        resourceUnits: data.resourceUnits ?? 1,
+        resourceAppliesTo: data.resourceAppliesTo ?? "BOTH",
+        resourceBlockTime: data.resourceBlockTime ?? "ENTIRE_DURATION",
     };
 }
 

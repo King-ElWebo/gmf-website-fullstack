@@ -2,7 +2,7 @@ import Image from "next/image";
 import { Instagram, Facebook, Sparkles, PartyPopper, Truck, Heart } from "lucide-react";
 import { DisplayArea } from "@/lib/display-area";
 import { HeroCarousel } from "@/components/public/HeroCarousel";
-import { CategoryCarousel } from "@/components/public/CategoryCarousel";
+import { CategoryCarousel, CategoryCard } from "@/components/public/CategoryCarousel";
 import { CopyableContact } from "@/components/public/CopyableContact";
 import { listGlobalImages } from "@/lib/repositories/global-images";
 import { listCategories } from "@/lib/repositories/catalog";
@@ -64,7 +64,7 @@ export default async function HomePage() {
                     slug: category.slug,
                     catalogTypeName: category.catalogType.name,
                     catalogTypeSlug: category.catalogType.slug,
-                }))}
+                })) as CategoryCard[]}
             />
 
             {/* === Willkommenstext === Surface B: Cream Accent */}
