@@ -170,6 +170,55 @@ export class AvailabilityService {
       }
     }
 
+    // --- PHASE 1.5: Global Setup/Teardown Block Check ---
+    const allOverlappingApprovedBookings = await db.booking.findMany({
+      where: {
+        status: "approved",
+        ...(excludeBookingId ? { id: { not: excludeBookingId } } : {}),
+        AND: [
+          { startDate: { lte: end } },
+          { endDate: { gte: start } },
+        ]
+      },
+      include: {
+        items: {
+          include: { item: { select: { availabilityMode: true } } }
+        }
+      }
+    });
+
+    const globalBlockedDates = new Set<string>();
+    for (const booking of allOverlappingApprovedBookings) {
+      const hasSetupItem = booking.items.some(bi => bi.item?.availabilityMode && bi.item.availabilityMode !== "STOCK_ONLY");
+      if (hasSetupItem) {
+        globalBlockedDates.add(booking.startDate.toISOString().slice(0, 10));
+        globalBlockedDates.add(booking.endDate.toISOString().slice(0, 10));
+      }
+    }
+
+    const startStr = start.toISOString().slice(0, 10);
+    const endStr = end.toISOString().slice(0, 10);
+    
+    if (globalBlockedDates.has(startStr) || globalBlockedDates.has(endStr)) {
+      conflicts.push({
+        bookingId: "global-setup-block",
+        resourceIds: items.map(i => i.resourceId),
+        reason: "GLOBAL_SETUP_BLOCK",
+        severity: "critical"
+      });
+      
+      for (const detail of itemDetails) {
+        detail.isAvailable = false;
+        (detail as any).globalBlockReached = true; 
+      }
+      
+      return {
+        isAvailable: false,
+        conflicts,
+        items: itemDetails
+      };
+    }
+
     // --- PHASE 2: Operational Resource Check ---
     const isPhase1Available = conflicts.length === 0;
 

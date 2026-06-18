@@ -65,11 +65,12 @@ export default function ItemsSortableList({
         <SortableRowList
             items={initialItems}
             reorderEnabled={reorderEnabled}
-            emptyText="No items yet."
+            emptyText="Keine Produkte vorhanden."
+            gridTemplate="40px minmax(200px, 3fr) minmax(130px, 1.5fr) minmax(100px, 1fr) minmax(80px, 0.8fr) minmax(80px, 0.8fr) minmax(80px, 0.8fr) 160px"
             columns={[
                 {
                     key: "title",
-                    header: "Title",
+                    header: "Titel",
                     render: (item) => {
                         const image = item.images?.[0];
 
@@ -91,7 +92,7 @@ export default function ItemsSortableList({
                                     )}
                                 </div>
                                 <div className="min-w-0">
-                                    <div className="truncate font-semibold text-slate-900">{item.title}</div>
+                                    <div className="font-semibold text-slate-900 leading-snug">{item.title}</div>
                                 </div>
                             </div>
                         );
@@ -99,10 +100,10 @@ export default function ItemsSortableList({
                 },
                 {
                     key: "category",
-                    header: "Category",
+                    header: "Kategorie",
                     render: (item) => (
                         <div>
-                            <div className="font-medium text-slate-700">{item.category?.name || "None"}</div>
+                            <div className="font-medium text-slate-700">{item.category?.name || "Keine"}</div>
                             {item.category?.catalogType?.name && (
                                 <div className="text-xs text-slate-400">{item.category.catalogType.name}</div>
                             )}
@@ -111,12 +112,12 @@ export default function ItemsSortableList({
                 },
                 {
                     key: "price",
-                    header: "Price",
+                    header: "Preis",
                     render: (item) => <span className="font-medium text-slate-700">{getItemPriceDisplay(item)}</span>,
                 },
                 {
                     key: "trackInventory",
-                    header: "Bestands-Tracking",
+                    header: "Bestand",
                     render: (item) =>
                         item.trackInventory ? (
                             <span className="admin-badge admin-badge-green">Aktiv</span>
@@ -126,7 +127,7 @@ export default function ItemsSortableList({
                 },
                 {
                     key: "totalStock",
-                    header: "Auf Lager",
+                    header: "Menge",
                     render: (item) =>
                         item.trackInventory ? (
                             <span

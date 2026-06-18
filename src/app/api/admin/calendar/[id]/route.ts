@@ -102,7 +102,7 @@ export async function PATCH(
   } catch (error: unknown) {
     if (isMissingCalendarBlockerTable(error)) {
       return NextResponse.json(
-        { error: "Die Datenbank-Migration fuer manuelle Kalender-Blocker fehlt noch. Bitte Migration ausfuehren." },
+        { error: "Die Datenbank-Migration für manuelle Kalender-Blocker fehlt noch. Bitte Migration ausführen." },
         { status: 409 }
       );
     }
@@ -125,7 +125,7 @@ export async function DELETE(
   } catch (error: unknown) {
     if (isMissingCalendarBlockerTable(error)) {
       return NextResponse.json(
-        { error: "Die Datenbank-Migration fuer manuelle Kalender-Blocker fehlt noch. Bitte Migration ausfuehren." },
+        { error: "Die Datenbank-Migration für manuelle Kalender-Blocker fehlt noch. Bitte Migration ausführen." },
         { status: 409 }
       );
     }

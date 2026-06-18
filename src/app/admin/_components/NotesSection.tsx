@@ -84,7 +84,7 @@ export function NotesSection({
         <textarea
           value={content}
           onChange={(event) => setContent(event.target.value)}
-          placeholder="Neue interne Notiz hinzufuegen..."
+          placeholder="Neue interne Notiz hinzufügen..."
           className="w-full resize-none rounded-lg border border-neutral-200 p-3 text-sm shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
           rows={4}
         />

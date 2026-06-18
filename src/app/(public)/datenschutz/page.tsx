@@ -35,7 +35,7 @@ export default async function DatenschutzPage() {
                         <h2 className="mb-2 font-['Nunito'] text-[20px] font-semibold text-[#1a202c]">3. Kontaktanfragen</h2>
                         <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">
                             Wenn Sie uns kontaktieren (z. B. per Formular, E-Mail oder Telefon), verarbeiten wir die
-                            uebermittelten Daten zur Bearbeitung Ihrer Anfrage und fuer eventuelle Anschlussfragen.
+                            übermittelten Daten zur Bearbeitung Ihrer Anfrage und für eventuelle Anschlussfragen.
                         </p>
                     </section>
 
@@ -50,7 +50,7 @@ export default async function DatenschutzPage() {
                     <section>
                         <h2 className="mb-2 font-['Nunito'] text-[20px] font-semibold text-[#1a202c]">5. Speicherdauer</h2>
                         <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">
-                            Daten werden nur so lange gespeichert, wie dies fuer die jeweiligen Zwecke erforderlich
+                            Daten werden nur so lange gespeichert, wie dies für die jeweiligen Zwecke erforderlich
                             ist oder gesetzliche Aufbewahrungspflichten bestehen.
                         </p>
                     </section>

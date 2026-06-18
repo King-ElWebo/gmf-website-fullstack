@@ -11,7 +11,7 @@ export default function AgbPage() {
                     <section>
                         <h2 className="mb-2 font-['Nunito'] text-[20px] font-semibold text-[#1a202c]">1. Geltungsbereich</h2>
                         <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">
-                            Diese AGB gelten fuer die Vermietung von Eventtechnik und -modulen durch den Betreiber {COMPANY_CONFIG.legalName} (unter der Marke „{COMPANY_CONFIG.brandingName}“).
+                            Diese AGB gelten für die Vermietung von Eventtechnik und -modulen durch den Betreiber {COMPANY_CONFIG.legalName} (unter der Marke „{COMPANY_CONFIG.brandingName}“).
                             Abweichende Bedingungen des Kunden gelten nur, wenn diese ausdruecklich schriftlich
                             bestaetigt wurden.
                         </p>
@@ -20,7 +20,7 @@ export default function AgbPage() {
                     <section>
                         <h2 className="mb-2 font-['Nunito'] text-[20px] font-semibold text-[#1a202c]">2. Angebot und Vertrag</h2>
                         <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">
-                            Angebote sind freibleibend. Ein Vertrag kommt erst durch ausdrueckliche Bestaetigung
+                            Angebote sind freibleibend. Ein Vertrag kommt erst durch ausdrückliche Bestätigung
                             des Vermieters zustande.
                         </p>
                     </section>
@@ -28,7 +28,7 @@ export default function AgbPage() {
                     <section>
                         <h2 className="mb-2 font-['Nunito'] text-[20px] font-semibold text-[#1a202c]">3. Preise und Zahlung</h2>
                         <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">
-                            Es gelten die im Angebot oder in der Bestaetigung vereinbarten Preise. Zusatzleistungen
+                            Es gelten die im Angebot oder in der Bestätigung vereinbarten Preise. Zusatzleistungen
                             wie Lieferung, Abholung, Reinigung oder Sonderaufwand koennen gesondert verrechnet werden.
                         </p>
                     </section>
@@ -45,7 +45,7 @@ export default function AgbPage() {
                         <h2 className="mb-2 font-['Nunito'] text-[20px] font-semibold text-[#1a202c]">5. Nutzung und Haftung</h2>
                         <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">
                             Der Mieter ist verpflichtet, die Mietgegenstaende sachgemaess und sicher zu verwenden.
-                            Fuer Schaeden durch unsachgemaesse Nutzung haftet der Mieter im Rahmen der gesetzlichen
+                            Für Schäden durch unsachgemäße Nutzung haftet der Mieter im Rahmen der gesetzlichen
                             Bestimmungen.
                         </p>
                     </section>

@@ -25,33 +25,15 @@ model Category {
 }
 
 model Resource {
-  id              String   @id @default(cuid())
-  name            String
-  slug            String   @unique
-  description     String?
-  capacityPerDay  Int      @default(1)
-  isActive        Boolean  @default(true)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  items           Item[]
-}
-
-enum AvailabilityMode {
-  STOCK_ONLY
-  STOCK_AND_RESOURCE
-  EXCLUSIVE_RESOURCE
-}
-
-enum ResourceAppliesTo {
-  DELIVERY_ONLY
-  PICKUP_ONLY
-  BOTH
-}
-
-enum ResourceBlockTime {
-  ENTIRE_DURATION
-  START_AND_END_DAYS
-  START_DAY_ONLY
+  id             String   @id @default(cuid())
+  name           String
+  slug           String   @unique
+  description    String?
+  capacityPerDay Int      @default(1)
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  items          Item[]
 }
 
 model CatalogType {
@@ -108,17 +90,15 @@ model Item {
   accessRequirements      String?
   trackInventory          Boolean               @default(true)
   totalStock              Int                   @default(1)
-  
   availabilityMode        AvailabilityMode      @default(STOCK_ONLY)
+  resourceAppliesTo       ResourceAppliesTo     @default(BOTH)
   resourceId              String?
   resourceUnits           Int                   @default(1)
-  resourceAppliesTo       ResourceAppliesTo     @default(BOTH)
   resourceBlockTime       ResourceBlockTime     @default(ENTIRE_DURATION)
-  
-  resource                Resource?             @relation(fields: [resourceId], references: [id])
   bookingItems            BookingItem[]
   calendarBlockerItems    CalendarBlockerItem[]
   category                Category              @relation(fields: [categoryId], references: [id])
+  resource                Resource?             @relation(fields: [resourceId], references: [id])
   images                  ItemImage[]
 
   @@index([categoryId])
@@ -149,9 +129,9 @@ model SiteSettings {
   heroTitle      String?
   heroText       String?
   additionalInfo String?
-  deliveryTerms  String?
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
+  deliveryTerms  String?
   socialLinks    SiteSocialLink[]
 }
 
@@ -216,12 +196,6 @@ model CalendarBlockerItem {
   @@index([itemId])
 }
 
-enum ItemPriceType {
-  FIXED
-  ON_REQUEST
-  FROM_PRICE
-}
-
 model Faq {
   id        String   @id @default(cuid())
   question  String
@@ -248,13 +222,13 @@ model Booking {
   hasIndividualPricing         Boolean             @default(false)
   createdAt                    DateTime            @default(now())
   updatedAt                    DateTime            @updatedAt
+  archiveReason                String?
   archivedAt                   DateTime?
   archivedBy                   String?
-  archiveReason                String?
   customer                     BookingCustomer?
   items                        BookingItem[]
-  notes                        InternalNote[]
   calendarSync                 CalendarSyncRecord?
+  notes                        InternalNote[]
 
   @@index([status])
   @@index([startDate, endDate])
@@ -313,13 +287,37 @@ model CalendarSyncRecord {
   id              String    @id @default(cuid())
   bookingId       String    @unique
   externalEventId String?
-  htmlLink        String?
   syncStatus      String    @default("pending")
   lastSyncedAt    DateTime?
   syncError       String?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+  htmlLink        String?
   booking         Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
 
   @@index([syncStatus])
+}
+
+enum AvailabilityMode {
+  STOCK_ONLY
+  STOCK_AND_RESOURCE
+  EXCLUSIVE_RESOURCE
+}
+
+enum ResourceAppliesTo {
+  DELIVERY_ONLY
+  PICKUP_ONLY
+  BOTH
+}
+
+enum ResourceBlockTime {
+  ENTIRE_DURATION
+  START_AND_END_DAYS
+  START_DAY_ONLY
+}
+
+enum ItemPriceType {
+  FIXED
+  ON_REQUEST
+  FROM_PRICE
 }

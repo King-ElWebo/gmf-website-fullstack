@@ -270,7 +270,7 @@ export async function getAdminCalendarFeed(filters: CalendarFeedFilters): Promis
     })
     .catch((error: unknown) => {
       if (isMissingCalendarBlockerTable(error)) {
-        warnings.push("Die Datenbank-Migration fuer manuelle Kalender-Blocker wurde noch nicht ausgefuehrt.");
+        warnings.push("Die Datenbank-Migration für manuelle Kalender-Blocker wurde noch nicht ausgeführt.");
         return [] as BlockerCalendarRecord[];
       }
 

@@ -127,7 +127,7 @@ export async function POST(request: NextRequest) {
   } catch (error: unknown) {
     if (isMissingCalendarBlockerTable(error)) {
       return NextResponse.json(
-        { error: "Die Datenbank-Migration fuer manuelle Kalender-Blocker fehlt noch. Bitte Migration ausfuehren." },
+        { error: "Die Datenbank-Migration für manuelle Kalender-Blocker fehlt noch. Bitte Migration ausführen." },
         { status: 409 }
       );
     }

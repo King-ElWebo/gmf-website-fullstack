@@ -455,11 +455,11 @@ export function AdminCalendarClient({
                         >
                           {dateFromKey(dateKey).getUTCDate()}
                         </span>
-                        <span className="text-[11px] text-slate-400">{dayEvents.length} Eintraege</span>
+                        <span className="text-[11px] text-slate-400">{dayEvents.length} Einträge</span>
                       </div>
 
                       <div className="pt-24 text-xs text-slate-500">
-                        {hiddenByDay[dateKey] > 0 ? `+${hiddenByDay[dateKey]} weitere` : dayEvents.length === 0 ? "Klick fuer Blocker" : ""}
+                        {hiddenByDay[dateKey] > 0 ? `+${hiddenByDay[dateKey]} weitere` : dayEvents.length === 0 ? "Klick für Blocker" : ""}
                       </div>
 
                       <div className="mt-2 space-y-1">
@@ -550,7 +550,7 @@ export function AdminCalendarClient({
                 onClick={() => openCreateEditor(dateKey)}
                 className="min-h-24 rounded-2xl border border-dashed border-slate-200 bg-slate-50/60 px-3 py-3 text-left text-xs text-slate-500 transition hover:border-slate-300 hover:bg-slate-100"
               >
-                <div>{hiddenByDay[dateKey] > 0 ? `+${hiddenByDay[dateKey]} weitere Eintraege` : "Neuen Blocker anlegen"}</div>
+                <div>{hiddenByDay[dateKey] > 0 ? `+${hiddenByDay[dateKey]} weitere Einträge` : "Neuen Blocker anlegen"}</div>
               </button>
             ))}
           </div>
@@ -570,21 +570,21 @@ export function AdminCalendarClient({
         <div className="flex items-center justify-between border-b border-slate-200 px-6 py-5">
           <div>
             <h2 className="text-lg font-semibold text-slate-900">{getDayLabel(dateKey)}</h2>
-            <p className="text-sm text-slate-500">{dayEvents.length} sichtbare Eintraege</p>
+            <p className="text-sm text-slate-500">{dayEvents.length} sichtbare Einträge</p>
           </div>
           <button
             type="button"
             onClick={() => openCreateEditor(dateKey)}
             className="rounded-xl border border-slate-200 bg-slate-900 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-black"
           >
-            Blocker fuer diesen Tag
+            Blocker für diesen Tag
           </button>
         </div>
 
         <div className="space-y-3 p-6">
           {dayEvents.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-10 text-center text-sm text-slate-500">
-              Keine Eintraege fuer diesen Tag. Klick oben, um eine interne Blockung anzulegen.
+              Keine Einträge für diesen Tag. Klick oben, um eine interne Blockung anzulegen.
             </div>
           ) : (
             dayEvents.map((event) => (
@@ -631,7 +631,7 @@ export function AdminCalendarClient({
           <span>&middot;</span>
           <span><strong className="text-violet-700">{feed.stats.manualBlockers}</strong> Blocker</span>
           <span>&middot;</span>
-          <span className="text-slate-500">{feed.stats.blockingEvents} Blockierende Eintraege</span>
+          <span className="text-slate-500">{feed.stats.blockingEvents} Blockierende Einträge</span>
         </div>
       </div>
 
@@ -658,7 +658,7 @@ export function AdminCalendarClient({
               onClick={() => setAnchorDate(shiftAnchorDate(view, anchorDate, -1))}
               className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 shadow-sm"
             >
-              Zurueck
+              Zurück
             </button>
             <button
               type="button"
@@ -852,7 +852,7 @@ export function AdminCalendarClient({
                       onClick={() => handleDeleteBlocker(selectedEvent.blockerId!)}
                       className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-2 text-sm font-medium text-rose-700 hover:bg-rose-100"
                     >
-                      Loeschen
+                      Löschen
                     </button>
                   ) : null}
                 </div>
@@ -961,7 +961,7 @@ function BlockerEditor({
             onClick={onClose}
             className="rounded-xl border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
           >
-            Schliessen
+            Schließen
           </button>
         </div>
 
@@ -1052,7 +1052,7 @@ function BlockerEditor({
               />
               <span>
                 <span className="block font-medium text-slate-900">Auf alle Items anwenden</span>
-                <span className="mt-1 block text-slate-500">Sperrt den gesamten Bestand fuer den gewaehlten Zeitraum.</span>
+                <span className="mt-1 block text-slate-500">Sperrt den gesamten Bestand für den gewählten Zeitraum.</span>
               </span>
             </label>
 
@@ -1060,7 +1060,7 @@ function BlockerEditor({
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="font-semibold text-slate-900">Betroffene Items</h3>
-                  <p className="mt-1 text-sm text-slate-500">Mehrfachauswahl fuer spezifische Produkte oder Ressourcen.</p>
+                  <p className="mt-1 text-sm text-slate-500">Mehrfachauswahl für spezifische Produkte oder Ressourcen.</p>
                 </div>
                 <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
                   {formState.itemIds.length} ausgewaehlt
@@ -1122,7 +1122,7 @@ function BlockerEditor({
                 onClick={() => onDelete(formState.blockerId!)}
                 className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-2 text-sm font-medium text-rose-700 hover:bg-rose-100"
               >
-                Blocker loeschen
+                Blocker löschen
               </button>
             ) : null}
           </div>
@@ -1141,7 +1141,7 @@ function BlockerEditor({
               onClick={() => onSave(formState)}
               className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-black disabled:opacity-50"
             >
-              {saving ? "Speichert..." : formState.mode === "create" ? "Blocker anlegen" : "Aenderungen speichern"}
+              {saving ? "Speichert..." : formState.mode === "create" ? "Blocker anlegen" : "Änderungen speichern"}
             </button>
           </div>
         </div>

@@ -60,7 +60,7 @@ export function GoogleSyncButton({ bookingId, syncStatus, syncError, htmlLink }:
           className="inline-flex items-center text-xs text-blue-600 hover:text-blue-800"
         >
           <ExternalLink className="w-3 h-3 mr-1" />
-          Event in Google Calendar oeffnen
+          Event in Google Calendar öffnen
         </a>
       )}
 

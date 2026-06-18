@@ -37,7 +37,7 @@ export default async function GlobalImagesPage({
         <div className="space-y-6">
             <AdminPageHeader
                 title="Bilder"
-                description="Drag-and-drop sortierbar, mit klaren Filtern fuer Bereich und Status."
+                description="Drag-and-drop sortierbar, mit klaren Filtern für Bereich und Status."
                 action={{ href: "/admin/images/new", label: "Neues Bild" }}
             />
 

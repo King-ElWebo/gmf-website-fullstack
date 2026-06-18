@@ -157,7 +157,7 @@ function buildBillingAddressFromCustomer(customer: BookingCustomer): BookingAddr
 
 function parseSeparateBillingAddress(value: unknown): ParseResult<BookingAddress> {
     if (!isRecord(value)) {
-        return { ok: false, error: "Bitte die Rechnungsadresse vollstaendig angeben." };
+        return { ok: false, error: "Bitte die Rechnungsadresse vollständig angeben." };
     }
 
     const nameOrCompany = toOptionalTrimmedString(value.nameOrCompany);

@@ -48,6 +48,8 @@ type AvailabilityItemDetail = {
     totalStock: number | null;
     trackInventory: boolean;
     isAvailable: boolean;
+    resourceLimitReached?: boolean;
+    globalBlockReached?: boolean;
 };
 
 const initialFormState: FormState = {
@@ -95,7 +97,7 @@ function getPricingReasonLabel(reason: string | null) {
 
     switch (reason) {
         case "missing_date_range":
-            return "Bitte zuerst den Zeitraum auswaehlen.";
+            return "Bitte zuerst den Zeitraum auswählen.";
         case "invalid_date_range":
             return "Ungueltiger Zeitraum.";
         case "duration_over_limit":
@@ -181,12 +183,31 @@ export function InquiryCartPageClient({ settings }: { settings?: SiteSettingsRec
                 if (bookingDuration.reason === "invalid_date_range") {
                     return "Das Enddatum darf nicht vor dem Startdatum liegen.";
                 }
-                const hasUnavailableItem = Object.values(availabilityByItemId).some((entry) => !entry.isAvailable);
-                if (hasUnavailableItem) {
+                const hasGlobalBlock = Object.values(availabilityByItemId).some((entry) => !entry.isAvailable && entry.globalBlockReached);
+                if (hasGlobalBlock) {
+                    return "An diesem Tag ist GMF bereits für Auf- und Abbau eingeplant. Bitte wählen Sie einen anderen Tag.";
+                }
+                const hasStockUnavailable = Object.values(availabilityByItemId).some((entry) => !entry.isAvailable && !entry.resourceLimitReached && !entry.globalBlockReached);
+                if (hasStockUnavailable) {
                     return "Mindestens ein Produkt ist im gewählten Zeitraum nicht verfügbar.";
                 }
                 return null;
             case "delivery":
+                const resourceUnavailableEntries = Object.values(availabilityByItemId).filter((entry) => !entry.isAvailable && entry.resourceLimitReached);
+                if (resourceUnavailableEntries.length > 0) {
+                    const unavailableItemIds = resourceUnavailableEntries.map(e => e.resourceId);
+                    const itemsThatFailed = items.filter(i => unavailableItemIds.includes(i.id));
+                    const allFailedSupportPickup = itemsThatFailed.every(i => i.pickupAvailable);
+                    
+                    if (formState.deliveryType === "delivery") {
+                        return allFailedSupportPickup 
+                            ? "Lieferung/Aufbau ist an diesem Tag nicht möglich. Abholung ist weiterhin möglich."
+                            : "Die Liefer-/Aufbaukapazität ist an diesem Tag für Ihre Auswahl leider erschöpft.";
+                    } else {
+                        return "Die Kapazität für diesen Tag ist für Ihre Auswahl leider erschöpft.";
+                    }
+                }
+                
                 if (formState.deliveryType === "delivery") {
                     if (!formState.addressLine1.trim() || !formState.zip.trim() || !formState.city.trim()) {
                         return "Bitte ergänzen Sie die Veranstaltungs-/Lieferadresse.";

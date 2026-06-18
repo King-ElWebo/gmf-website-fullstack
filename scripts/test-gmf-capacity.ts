@@ -49,11 +49,16 @@ async function main() {
       startDate: fri,
       endDate: sun,
       totalPriceCents: 10000,
-      customerName: 'Test Booking',
-      customerEmail: 'test@example.com',
+      customer: {
+        create: {
+          firstName: 'Test',
+          lastName: 'Booking',
+          email: 'test@example.com'
+        }
+      },
       // We assume it's a test
       items: {
-        create: [{ itemId: huepfburg.id, quantity: 1, priceCents: 10000 }]
+        create: [{ itemId: huepfburg.id, quantity: 1, basePriceCents: 10000 }]
       }
     }
   });
@@ -90,4 +95,4 @@ async function main() {
   console.log("Test G (Google Calendar): SUCCESS (Keine Änderung in Calendar-Logik vorgenommen)");
 }
 
-main().catch(console.error).finally(() => prisma.$disconnect());
+main().catch(console.error).finally(() => db.$disconnect());

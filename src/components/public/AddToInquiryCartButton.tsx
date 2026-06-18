@@ -58,7 +58,7 @@ export function AddToInquiryCartButton({
                 type="button"
                 onClick={handleClick}
                 disabled={isSoldOut}
-                aria-label={inCart ? `${item.title} erneut zum Anfragekorb hinzufuegen` : `${item.title} zum Anfragekorb hinzufuegen`}
+                aria-label={inCart ? `${item.title} erneut zum Anfragekorb hinzufügen` : `${item.title} zum Anfragekorb hinzufügen`}
                 className={`${iconOnlyClassName} disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
             >
                 {justAdded
@@ -75,18 +75,18 @@ export function AddToInquiryCartButton({
     const iconStrokeClass = variant === "playful" ? "stroke-[3]" : undefined;
     const label = variant === "playful"
         ? isSoldOut
-            ? "Nicht verfuegbar"
+            ? "Nicht verfügbar"
             : justAdded
                 ? "Hinzugefuegt!"
                 : inCart
                     ? "Nochmals"
                     : "In Anfragekorb"
         : isSoldOut
-            ? "Nicht verfuegbar"
+            ? "Nicht verfügbar"
             : justAdded
                 ? "Hinzugefuegt"
                 : inCart
-                    ? "Nochmals hinzufuegen"
+                    ? "Nochmals hinzufügen"
                     : "In Anfragekorb";
 
     return (

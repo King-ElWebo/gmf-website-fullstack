@@ -11,7 +11,7 @@ export default async function ImpressumPage() {
 
                 <div className="space-y-6 rounded-[16px] border border-[#cbd5e1] bg-[#f8fafc] p-6 sm:p-8">
                     <section>
-                        <h2 className="mb-2 font-['Nunito'] text-[20px] font-semibold text-[#1a202c]">Angaben gemaess ECG / UGB / GewO / MedienG</h2>
+                        <h2 className="mb-2 font-['Nunito'] text-[20px] font-semibold text-[#1a202c]">Angaben gemäß ECG / UGB / GewO / MedienG</h2>
                     </section>
 
                     <section>

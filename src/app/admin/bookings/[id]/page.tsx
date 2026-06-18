@@ -238,7 +238,7 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
       <AdminCard className="text-center">
         <h1 className="text-xl font-semibold text-slate-950">Anfrage nicht gefunden</h1>
         <Link href="/admin/bookings" className="mt-4 inline-flex text-sm font-medium text-blue-600 hover:text-blue-800">
-          Zurueck zur Anfragenliste
+          Zurück zur Anfragenliste
         </Link>
       </AdminCard>
     );
@@ -259,7 +259,7 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
               href="/admin/bookings"
               className="mb-3 inline-flex text-[11px] font-semibold uppercase tracking-[0.1em] text-slate-500 transition hover:text-slate-900"
             >
-              Zurueck zur Liste
+              Zurück zur Liste
             </Link>
             <div className="flex flex-wrap items-center gap-3">
               <h1 className="text-2xl font-semibold tracking-tight text-slate-950">{booking.referenceCode}</h1>
@@ -455,9 +455,10 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                             </svg>
                             <span className="text-blue-700">
-                              {item.item.availabilityMode === "EXCLUSIVE_RESOURCE" 
-                                ? `Ganzer Einsatztag blockiert: ${dateKey(booking.startDate) === dateKey(booking.endDate) ? formatDate(booking.startDate) : `${formatDate(booking.startDate)} bis ${formatDate(booking.endDate)}`}` 
-                                : `Lieferung/Aufbau blockiert: ${dateKey(booking.startDate) === dateKey(booking.endDate) ? formatDate(booking.startDate) : `${formatDate(booking.startDate)} und ${formatDate(booking.endDate)}`}`}
+                              {dateKey(booking.startDate) === dateKey(booking.endDate) 
+                                ? `Ganzer Buchungstag gesperrt: ${formatDate(booking.startDate)}`
+                                : `Ganzer Buchungstag gesperrt: ${formatDate(booking.startDate)} und ${formatDate(booking.endDate)}`
+                              }
                             </span>
                           </div>
                         </div>

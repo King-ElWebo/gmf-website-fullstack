@@ -31,6 +31,7 @@ const settingsItems: NavItem[] = [
 ];
 
 function isActive(pathname: string, href: string) {
+    if (!pathname) return false;
     if (href === "/admin") return pathname === href;
     
     // For general bookings, match exactly or match sub-paths (like /admin/bookings/id...)
@@ -85,8 +86,14 @@ function NavGroup({
 }
 
 export default function AdminShell({ children }: { children: ReactNode }) {
-    const pathname = usePathname();
+    const rawPathname = usePathname();
+    const pathname = rawPathname || "";
+    const [mounted, setMounted] = useState(false);
     const [mobileNavOpen, setMobileNavOpen] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     useEffect(() => {
         setMobileNavOpen(false);
@@ -101,7 +108,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
             {mobileNavOpen && (
                 <button
                     type="button"
-                    aria-label="Navigation schliessen"
+                    aria-label="Navigation schließen"
                     onClick={() => setMobileNavOpen(false)}
                     className="fixed inset-0 z-40 bg-slate-900/35 backdrop-blur-[1px] lg:hidden"
                 />
@@ -119,7 +126,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
                                 type="button"
                                 onClick={() => setMobileNavOpen(false)}
                                 className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700"
-                                aria-label="Navigation schliessen"
+                                aria-label="Navigation schließen"
                             >
                                 <CloseIcon />
                             </button>
@@ -151,19 +158,19 @@ export default function AdminShell({ children }: { children: ReactNode }) {
                                 type="button"
                                 onClick={() => setMobileNavOpen(true)}
                                 className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 shadow-sm lg:hidden"
-                                aria-label="Navigation oeffnen"
+                                aria-label="Navigation öffnen"
                             >
                                 <MenuBarsIcon />
                             </button>
                             <div className="min-w-0">
                                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">Workspace</p>
-                                <p className="hidden truncate text-sm text-slate-500 sm:block">Professionelles Admin-Backend fuer Katalog, Inhalte und Prozesse</p>
+                                <p className="hidden truncate text-sm text-slate-500 sm:block">Professionelles Admin-Backend für Katalog, Inhalte und Prozesse</p>
                             </div>
                         </div>
 
                         <div className="flex items-center gap-3">
                             <div className="hidden rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-500 shadow-sm md:flex">
-                                {pathname.replace("/admin", "Admin") || "Admin"}
+                                {mounted ? (pathname.replace("/admin", "Admin") || "Admin") : "Admin"}
                             </div>
                             <form action="/api/admin/logout?redirectTo=/admin/login" method="post">
                                 <button className="admin-action-secondary px-4 py-2.5 text-sm">Logout</button>

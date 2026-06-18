@@ -26,7 +26,7 @@ export default async function AdminItemsPage({
         <div className="space-y-6">
             <AdminPageHeader
                 title="Items"
-                description="Pflege Produkte, Inhalte und Preise in einer klaren, sortierbaren Uebersicht."
+                description="Pflege Produkte, Inhalte und Preise in einer klaren, sortierbaren Übersicht."
                 action={{ href: "/admin/items/new", label: "New Item" }}
             />
 

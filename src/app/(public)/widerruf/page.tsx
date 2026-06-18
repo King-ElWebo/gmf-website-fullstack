@@ -11,7 +11,7 @@ export default async function WiderrufPage() {
 
                 <div className="space-y-6 rounded-[16px] border border-[#cbd5e1] bg-[#f8fafc] p-6 sm:p-8">
                     <section>
-                        <h2 className="mb-2 font-['Nunito'] text-[20px] font-semibold text-[#1a202c]">Widerrufsrecht fuer Verbraucher</h2>
+                        <h2 className="mb-2 font-['Nunito'] text-[20px] font-semibold text-[#1a202c]">Widerrufsrecht für Verbraucher</h2>
                         <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">
                             Verbraucher haben grundsaetzlich das Recht, binnen 14 Tagen ohne Angabe von Gruenden
                             einen Vertrag zu widerrufen, sofern kein gesetzlicher Ausschlussgrund vorliegt.
@@ -29,7 +29,7 @@ export default async function WiderrufPage() {
                     <section>
                         <h2 className="mb-2 font-['Nunito'] text-[20px] font-semibold text-[#1a202c]">Folgen des Widerrufs</h2>
                         <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">
-                            Im Fall eines wirksamen Widerrufs werden bereits erhaltene Zahlungen gemaess den
+                            Im Fall eines wirksamen Widerrufs werden bereits erhaltene Zahlungen gemäß den
                             gesetzlichen Vorgaben rueckerstattet.
                         </p>
                     </section>
@@ -37,7 +37,7 @@ export default async function WiderrufPage() {
                     <section>
                         <h2 className="mb-2 font-['Nunito'] text-[20px] font-semibold text-[#1a202c]">Ausschluss bzw. vorzeitiges Erloeschen</h2>
                         <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">
-                            Das Widerrufsrecht erlischt vorzeitig, sobald die Dienstleistung vollstaendig erbracht wurde. Wir weisen darauf hin, dass bei Vertraegen ueber Dienstleistungen im Bereich der Freizeitbetaetigung, fuer die ein spezifischer Termin oder Zeitraum vereinbart wurde (wie die zeitgebundene Miete von Eventmodulen), gemaess FAGG kein gesetzliches Widerrufsrecht besteht.
+                            Das Widerrufsrecht erlischt vorzeitig, sobald die Dienstleistung vollständig erbracht wurde. Wir weisen darauf hin, dass bei Verträgen über Dienstleistungen im Bereich der Freizeitbetaetigung, für die ein spezifischer Termin oder Zeitraum vereinbart wurde (wie die zeitgebundene Miete von Eventmodulen), gemäß FAGG kein gesetzliches Widerrufsrecht besteht.
                         </p>
                     </section>
 
@@ -45,7 +45,7 @@ export default async function WiderrufPage() {
                         <h2 className="mb-2 font-['Nunito'] text-[20px] font-semibold text-[#1a202c]">Muster-Widerrufsformular</h2>
                         <div className="rounded-[12px] border border-[#dbe3ee] bg-white p-4">
                             <p className="font-['Nunito'] text-[14px] leading-[22px] text-[#4a5568]">
-                                Wenn Sie den Vertrag widerrufen wollen, fuellen Sie bitte dieses Formular aus und senden Sie es zurueck:
+                                Wenn Sie den Vertrag widerrufen wollen, füllen Sie bitte dieses Formular aus und senden Sie es zurück:
                             </p>
                             <div className="mt-3 whitespace-pre-line font-['Nunito'] text-[14px] leading-[22px] text-[#4a5568]">
                                 {`An:
@@ -53,7 +53,7 @@ ${COMPANY_CONFIG.legalName}
 ${settings.address || COMPANY_CONFIG.address}
 E-Mail: ${settings.email || COMPANY_CONFIG.emailPrimary}
 
-Hiermit widerrufe ich den von mir abgeschlossenen Vertrag ueber die Anmietung der folgenden Waren/Dienstleistungen:
+Hiermit widerrufe ich den von mir abgeschlossenen Vertrag über die Anmietung der folgenden Waren/Dienstleistungen:
 [Bezeichnung]
 
 Bestellt am / erhalten am:

@@ -16,7 +16,13 @@ type CategoryRow = {
     };
 };
 
-export default function CategoriesSortableList({ initialCategories }: { initialCategories: CategoryRow[] }) {
+export default function CategoriesSortableList({
+    initialCategories,
+    reorderEnabled = true,
+}: {
+    initialCategories: CategoryRow[];
+    reorderEnabled?: boolean;
+}) {
     const router = useRouter();
 
     const handleDelete = async (id: string, name: string) => {
@@ -45,7 +51,8 @@ export default function CategoriesSortableList({ initialCategories }: { initialC
     return (
         <SortableRowList
             items={initialCategories}
-            emptyText="No categories yet."
+            reorderEnabled={reorderEnabled}
+            emptyText="Keine Kategorien vorhanden."
             columns={[
                 {
                     key: "preview",
@@ -79,7 +86,7 @@ export default function CategoriesSortableList({ initialCategories }: { initialC
                 },
                 {
                     key: "catalogType",
-                    header: "Catalog Type",
+                    header: "Katalogtyp",
                     render: (category) => (
                         <div>
                             <div className="font-medium text-slate-700">{category.catalogType.name}</div>

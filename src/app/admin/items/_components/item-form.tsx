@@ -56,11 +56,7 @@ type ItemFormState = {
     totalStock: string;
     published: boolean;
     categoryId: string;
-    availabilityMode: "STOCK_ONLY" | "STOCK_AND_RESOURCE" | "EXCLUSIVE_RESOURCE";
-    resourceId: string;
-    resourceUnits: string;
-    resourceAppliesTo: "DELIVERY_ONLY" | "PICKUP_ONLY" | "BOTH";
-    resourceBlockTime: "ENTIRE_DURATION" | "START_AND_END_DAYS" | "START_DAY_ONLY";
+    setupRequired: boolean;
 };
 
 const CLEANING_DEFAULT_TEXT = "Reinigung: 120 € exkl. MwSt. bei grober/mutwilliger Verschmutzung";
@@ -79,7 +75,12 @@ export default function ItemForm(props: {
     categories: CategoryOption[];
     catalogTypes: { id: string; name: string }[];
     resources: { id: string; name: string; slug?: string }[];
-    initial?: Partial<ItemFormState>;
+    initial?: Partial<ItemFormState> & {
+        availabilityMode?: string | null;
+        resourceId?: string | null;
+        resourceUnits?: string | null;
+        resourceAppliesTo?: string | null;
+    };
     initialImages?: ImageRow[];
     initialError?: string;
 }) {
@@ -117,11 +118,7 @@ export default function ItemForm(props: {
         totalStock: props.initial?.totalStock ?? "1",
         published: Boolean(props.initial?.published ?? false),
         categoryId: props.initial?.categoryId ?? (categories[0]?.id ?? ""),
-        availabilityMode: props.initial?.availabilityMode ?? "STOCK_ONLY",
-        resourceId: props.initial?.resourceId ?? "",
-        resourceUnits: props.initial?.resourceUnits ?? "1",
-        resourceAppliesTo: props.initial?.resourceAppliesTo ?? "BOTH",
-        resourceBlockTime: props.initial?.resourceBlockTime ?? "ENTIRE_DURATION",
+        setupRequired: props.initial?.availabilityMode !== undefined && props.initial.availabilityMode !== "STOCK_ONLY",
     });
     const [saving, setSaving] = useState(false);
     const [deleting, setDeleting] = useState(false);
@@ -230,10 +227,11 @@ export default function ItemForm(props: {
             totalStock: hasValidTotalStock ? Math.floor(parsedTotalStock) : 0,
             published: formState.published,
             categoryId: formState.categoryId,
-            availabilityMode: formState.availabilityMode,
-            resourceId: formState.availabilityMode !== "STOCK_ONLY" ? (formState.resourceId || null) : null,
-            resourceUnits: formState.availabilityMode !== "STOCK_ONLY" ? parseInt(formState.resourceUnits) : null,
-            resourceAppliesTo: formState.availabilityMode !== "STOCK_ONLY" ? formState.resourceAppliesTo : null,
+            availabilityMode: formState.setupRequired ? "STOCK_AND_RESOURCE" : "STOCK_ONLY",
+            resourceId: formState.setupRequired ? "betreiber-lieferteam" : null,
+            resourceUnits: formState.setupRequired ? 10 : 0,
+            resourceAppliesTo: formState.setupRequired ? "DELIVERY_ONLY" : "BOTH",
+            resourceBlockTime: formState.setupRequired ? "START_AND_END_DAYS" : "ENTIRE_DURATION",
         };
 
         const url = mode === "create" ? "/api/admin/items" : `/api/admin/items/${itemId}`;
@@ -311,38 +309,6 @@ export default function ItemForm(props: {
         router.refresh();
     }
 
-    const simpleBlockMode = formState.availabilityMode === "STOCK_ONLY" 
-        ? "A" 
-        : (formState.availabilityMode === "EXCLUSIVE_RESOURCE" || formState.resourceBlockTime === "ENTIRE_DURATION") 
-            ? "C" 
-            : "B";
-
-    const handleSimpleBlockModeChange = (val: string) => {
-        if (val === "A") {
-            updateField("availabilityMode", "STOCK_ONLY");
-            updateField("resourceId", "");
-        } else {
-            const defaultResource = props.resources.find(r => r.slug === "betreiber-lieferteam") || props.resources[0];
-            if (!defaultResource) {
-                alert("Fehler: Kein Kapazitäts-Pool ('betreiber-lieferteam') gefunden! Bitte unter Verfügbarkeitsregeln anlegen.");
-                return;
-            }
-            updateField("resourceId", defaultResource.id);
-            updateField("resourceUnits", "10");
-
-            if (val === "B") {
-                updateField("availabilityMode", "STOCK_AND_RESOURCE");
-                updateField("resourceBlockTime", "START_AND_END_DAYS");
-            } else if (val === "C") {
-                updateField("availabilityMode", "EXCLUSIVE_RESOURCE");
-                updateField("resourceBlockTime", "ENTIRE_DURATION");
-            }
-            
-            if (!formState.resourceAppliesTo || formState.resourceAppliesTo === "PICKUP_ONLY") {
-                updateField("resourceAppliesTo", "DELIVERY_ONLY");
-            }
-        }
-    };
 
     return (
         <div className="max-w-5xl space-y-6">
@@ -361,7 +327,7 @@ export default function ItemForm(props: {
                 <form onSubmit={onSave} className="space-y-4">
                     <div className="grid gap-6 lg:grid-cols-2 lg:items-start">
                         <div className="space-y-6">
-                    <AdminCard title="Stammdaten & Darstellung" description="Inhalte fuer Karten, Listen und Produktdetailseiten.">
+                    <AdminCard title="Stammdaten & Darstellung" description="Inhalte für Karten, Listen und Produktdetailseiten.">
                         <div className="space-y-5">
                             <AdminField label="Titel" htmlFor="title">
                                 <AdminInput
@@ -408,7 +374,7 @@ export default function ItemForm(props: {
                                     rows={3}
                                     value={formState.shortDescription}
                                     onChange={(e) => updateField("shortDescription", e.target.value)}
-                                    placeholder="Kurzer Teaser fuer Karten, Listen oder Vorschauen"
+                                    placeholder="Kurzer Teaser für Karten, Listen oder Vorschauen"
                                 />
                             </AdminField>
                             
@@ -418,7 +384,7 @@ export default function ItemForm(props: {
                                     rows={6}
                                     value={formState.longDescription}
                                     onChange={(e) => updateField("longDescription", e.target.value)}
-                                    placeholder="Inhalt fuer die Detailseite"
+                                    placeholder="Inhalt für die Detailseite"
                                 />
                             </AdminField>
 
@@ -508,7 +474,7 @@ export default function ItemForm(props: {
                                             rows={3}
                                             value={formState.depositInfo}
                                             onChange={(e) => updateField("depositInfo", e.target.value)}
-                                            placeholder="Freitext fuer Kaution und Rueckgabehinweise"
+                                            placeholder="Freitext für Kaution und Rückgabehinweise"
                                         />
                                     </AdminField>
                                 </div>
@@ -563,7 +529,7 @@ export default function ItemForm(props: {
                                             rows={3}
                                             value={formState.cleaningFeeInfo}
                                             onChange={(e) => updateField("cleaningFeeInfo", e.target.value)}
-                                            placeholder="Freitext fuer Reinigungskosten"
+                                            placeholder="Freitext für Reinigungskosten"
                                         />
                                     </AdminField>
                                 </div>
@@ -618,7 +584,7 @@ export default function ItemForm(props: {
                                             rows={3}
                                             value={formState.dryingFeeInfo}
                                             onChange={(e) => updateField("dryingFeeInfo", e.target.value)}
-                                            placeholder="Freitext fuer Trocknungskosten"
+                                            placeholder="Freitext für Trocknungskosten"
                                         />
                                     </AdminField>
                                 </div>
@@ -647,45 +613,53 @@ export default function ItemForm(props: {
                             <ImagePanel itemId={itemId} initialImages={props.initialImages ?? []} />
                         ) : null}
                     </AdminCard>
-                    <AdminCard title="Lieferung, Abholung & Anforderungen" description="Verfuegbarkeit und Hinweise fuer Logistik, Nutzung und Aufbau.">
+                    <AdminCard title="Übergabe & Verfügbarkeit" description="Lege fest, wie dieses Produkt übergeben wird und ob GMF dafür vor Ort auf- und abbauen muss.">
                         <div className="space-y-5">
-                            <div className="grid gap-4 md:grid-cols-2">
-                                <AdminField label="Liefer- & Abholungsoptionen" htmlFor="deliveryOption">
-                                    <AdminSelect
-                                        id="deliveryOption"
-                                        value={formState.pickupAvailable && formState.deliveryAvailable ? "both" : formState.pickupAvailable ? "pickup" : formState.deliveryAvailable ? "delivery" : "both"}
+                            <div className="grid gap-4 md:grid-cols-3">
+                                <div className="min-h-[44px] py-2.5 border border-slate-200 bg-slate-50/50 hover:bg-slate-50 transition-colors flex items-start px-4 rounded-xl">
+                                    <AdminCheckbox
+                                        checked={formState.pickupAvailable}
+                                        onChange={(e) => updateField("pickupAvailable", e.target.checked)}
+                                        label="Abholung möglich"
+                                    />
+                                </div>
+                                <div className="min-h-[44px] py-2.5 border border-slate-200 bg-slate-50/50 hover:bg-slate-50 transition-colors flex items-start px-4 rounded-xl">
+                                    <AdminCheckbox
+                                        checked={formState.deliveryAvailable}
+                                        onChange={(e) => updateField("deliveryAvailable", e.target.checked)}
+                                        label="Lieferung möglich"
+                                    />
+                                </div>
+                                <div className="min-h-[44px] py-2.5 border border-slate-200 bg-slate-50/50 hover:bg-slate-50 transition-colors flex items-start px-4 rounded-xl">
+                                    <AdminCheckbox
+                                        checked={formState.setupRequired}
                                         onChange={(e) => {
-                                            const val = e.target.value;
-                                            if (val === "pickup") {
-                                                updateField("pickupAvailable", true);
-                                                updateField("deliveryAvailable", false);
-                                            } else if (val === "delivery") {
-                                                updateField("pickupAvailable", false);
-                                                updateField("deliveryAvailable", true);
-                                            } else {
-                                                updateField("pickupAvailable", true);
+                                            const isSetupRequired = e.target.checked;
+                                            updateField("setupRequired", isSetupRequired);
+                                            if (isSetupRequired) {
                                                 updateField("deliveryAvailable", true);
                                             }
                                         }}
-                                    >
-                                        <option value="both">Beides (Abholung & Lieferung)</option>
-                                        <option value="pickup">Nur Selbstabholung</option>
-                                        <option value="delivery">Nur Lieferung</option>
-                                    </AdminSelect>
-                                </AdminField>
-
-                                {formState.deliveryAvailable && (
-                                    <div className="flex items-end">
-                                        <div className="h-10 border border-slate-200 bg-slate-50 flex items-center px-4 rounded-xl w-full">
-                                            <AdminCheckbox
-                                                checked={formState.requiresDeliveryAddress}
-                                                onChange={(e) => updateField("requiresDeliveryAddress", e.target.checked)}
-                                                label="Lieferadresse erforderlich"
-                                            />
-                                        </div>
-                                    </div>
-                                )}
+                                        label="Auf- & Abbau durch GMF notwendig"
+                                    />
+                                </div>
                             </div>
+
+                            <p className="text-sm text-slate-500">
+                                <strong>Tipp:</strong> Aktivieren, wenn GMF das Produkt vor Ort aufbauen und später wieder abbauen muss. Dann werden der Liefer- und Abholtag für weitere Aufbau-Produkte blockiert.
+                            </p>
+
+                            {formState.deliveryAvailable && (
+                                <div className="flex items-end mt-4">
+                                    <div className="min-h-[44px] py-2.5 border border-slate-200 bg-slate-50/50 hover:bg-slate-50 transition-colors flex items-start px-4 rounded-xl w-full">
+                                        <AdminCheckbox
+                                            checked={formState.requiresDeliveryAddress}
+                                            onChange={(e) => updateField("requiresDeliveryAddress", e.target.checked)}
+                                            label="Lieferadresse erforderlich"
+                                        />
+                                    </div>
+                                </div>
+                            )}
 
                             <AdminField label="Lieferhinweise" htmlFor="deliveryInfo">
                                 <AdminTextarea
@@ -703,7 +677,7 @@ export default function ItemForm(props: {
                                     rows={4}
                                     value={formState.usageInfo}
                                     onChange={(e) => updateField("usageInfo", e.target.value)}
-                                    placeholder="Wichtige Informationen fuer Nutzung oder Einsatz"
+                                    placeholder="Wichtige Informationen für Nutzung oder Einsatz"
                                 />
                             </AdminField>
 
@@ -713,7 +687,7 @@ export default function ItemForm(props: {
                                     rows={4}
                                     value={formState.rentalNotes}
                                     onChange={(e) => updateField("rentalNotes", e.target.value)}
-                                    placeholder="Zusatznotizen fuer Anfrage- oder Checkout-Prozesse"
+                                    placeholder="Zusatznotizen für Anfrage- oder Checkout-Prozesse"
                                 />
                             </AdminField>
 
@@ -766,35 +740,6 @@ export default function ItemForm(props: {
                                     />
                                 </AdminField>
                             </div>
-                        </div>
-                    </AdminCard>
-
-                    <AdminCard title="Verfügbarkeitswirkung" description="Lege fest, was durch eine bestätigte Buchung dieses Produkts blockiert wird.">
-                        <div className="space-y-5">
-                            <AdminField label="Was blockiert dieses Produkt bei einer bestätigten Buchung?" htmlFor="simpleBlockMode">
-                                <AdminSelect
-                                    id="simpleBlockMode"
-                                    value={simpleBlockMode}
-                                    onChange={(e) => handleSimpleBlockModeChange(e.target.value)}
-                                >
-                                    <option value="A">Nur dieses Produkt (Es wird nur der Lagerbestand dieses Produkts blockiert. Andere Produkte bleiben verfügbar.)</option>
-                                    <option value="B">Dieses Produkt + Liefer-/Aufbautag (Zusätzlich sind am Liefer- und Abholtag keine weiteren Liefer-/Aufbau-Produkte möglich.)</option>
-                                    <option value="C">Ganzer Tag gesperrt (An den betroffenen Tagen sollen keine weiteren Anfragen mit Liefer-/Aufbau-Aufwand möglich sein.)</option>
-                                </AdminSelect>
-                            </AdminField>
-
-                            {simpleBlockMode !== "A" && (
-                                <AdminField label="Wann gilt diese Wirkung?" htmlFor="resourceAppliesTo">
-                                    <AdminSelect
-                                        id="resourceAppliesTo"
-                                        value={formState.resourceAppliesTo === "PICKUP_ONLY" ? "DELIVERY_ONLY" : formState.resourceAppliesTo}
-                                        onChange={(e) => updateField("resourceAppliesTo", e.target.value as any)}
-                                    >
-                                        <option value="DELIVERY_ONLY">Nur bei Lieferung</option>
-                                        <option value="BOTH">Bei Lieferung und Abholung/Selbstabholung</option>
-                                    </AdminSelect>
-                                </AdminField>
-                            )}
                         </div>
                     </AdminCard>
                 </div>

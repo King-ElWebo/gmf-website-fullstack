@@ -159,7 +159,7 @@ export function HeaderClient({ navCatalogTypes }: HeaderClientProps) {
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="flex h-11 w-11 items-center justify-center rounded-[14px] bg-[#f7f8fa] text-[#1a202c] shadow-sm transition-[transform,background-color,box-shadow] duration-150 ease-out-strong hover:-translate-y-0.5 hover:bg-white hover:shadow-md active:scale-[0.97]"
               aria-expanded={mobileMenuOpen}
-              aria-label={mobileMenuOpen ? "Menue schliessen" : "Menue oeffnen"}
+              aria-label={mobileMenuOpen ? "Menü schließen" : "Menü öffnen"}
             >
               {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
             </button>
