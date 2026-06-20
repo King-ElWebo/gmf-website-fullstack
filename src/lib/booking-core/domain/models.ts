@@ -102,7 +102,7 @@ export interface AdminDashboardStats {
 export interface BookingConflict {
   bookingId: string;
   resourceIds: string[];
-  reason: 'oversold' | 'buffer_overlap' | 'maintenance' | 'status_collision' | 'RESOURCE_CAPACITY_EXCEEDED';
+  reason: 'oversold' | 'buffer_overlap' | 'maintenance' | 'status_collision' | 'RESOURCE_CAPACITY_EXCEEDED' | 'GLOBAL_SETUP_BLOCK';
   severity: 'warning' | 'critical';
 }
 

@@ -1,19 +1,34 @@
 import { db } from "../src/lib/db";
 import { PrismaBookingRepository } from "../src/lib/booking-core/infrastructure/database/PrismaBookingRepository";
 import { AvailabilityService } from "../src/lib/booking-core/application/services/AvailabilityService";
-import { config } from "../src/lib/booking-core/server";
+import type { BookingModuleConfig } from "../src/lib/booking-core/domain/config";
+
+const config: BookingModuleConfig = {
+  blockingStatuses: ["approved"],
+  requiresApproval: true,
+  trackInventoryGlobally: true,
+  useTimeSlots: false,
+  allowMultipleItemsPerBooking: true,
+  features: {
+    calendarSync: false,
+    emailNotifications: false,
+    deliveryManagement: false,
+  },
+};
 
 async function runTests() {
   const repo = new PrismaBookingRepository();
   const availabilityService = new AvailabilityService(repo, config);
 
   console.log("Setting up test data...");
+  await db.booking.deleteMany({
+    where: { referenceCode: { startsWith: "TEST-AVAILABILITY-" } }
+  });
   await db.item.deleteMany({
     where: { id: { in: ["test-huepfburg", "test-zuckerwatte", "test-popcorn"] } }
   });
   await db.category.deleteMany({ where: { id: "test-cat" } });
   await db.catalogType.deleteMany({ where: { id: "test-catalog-type" } });
-  await db.customer.deleteMany({ where: { id: "test-customer" } });
 
   const catalogType = await db.catalogType.create({
     data: {
@@ -85,27 +100,25 @@ async function runTests() {
     }
   });
 
-  const customer = await db.customer.create({
-    data: {
-      id: "test-customer",
-      email: "test@example.com",
-      firstName: "Test",
-      lastName: "Kunde"
-    }
-  });
-
   // Helper to create booking
   async function createBooking(itemId: string, qty: number, startStr: string, endStr: string, status: string, deliveryType: string) {
     const start = new Date(startStr);
     const end = new Date(endStr);
     return await db.booking.create({
       data: {
+        referenceCode: `TEST-AVAILABILITY-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
         status,
         startDate: start,
         endDate: end,
-        customerId: customer.id,
         deliveryType,
         totalPriceCents: 10000,
+        customer: {
+          create: {
+            email: "test@example.com",
+            firstName: "Test",
+            lastName: "Kunde"
+          }
+        },
         items: {
           create: [{
             itemId: itemId,
@@ -237,12 +250,14 @@ async function runTests() {
     console.error("Test failed:", e);
   } finally {
     console.log("\nCleaning up test data...");
+    await db.booking.deleteMany({
+      where: { referenceCode: { startsWith: "TEST-AVAILABILITY-" } }
+    });
     await db.item.deleteMany({
       where: { id: { in: ["test-huepfburg", "test-zuckerwatte", "test-popcorn"] } }
     });
     await db.category.deleteMany({ where: { id: "test-cat" } });
     await db.catalogType.deleteMany({ where: { id: "test-catalog-type" } });
-    await db.customer.delete({ where: { id: "test-customer" } });
     console.log("Done.");
   }
 }
