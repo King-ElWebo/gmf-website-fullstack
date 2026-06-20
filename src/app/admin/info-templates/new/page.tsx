@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import { AdminHeader } from "../../_components/ui/AdminHeader";
+import AdminPageHeader from "../../_components/admin-page-header";
 import { InfoTemplateForm } from "../_components/info-template-form";
 
 export const metadata: Metadata = {
@@ -10,13 +10,10 @@ export const metadata: Metadata = {
 export default function NewInfoTemplatePage() {
     return (
         <div className="mx-auto max-w-4xl space-y-6">
-            <AdminHeader
+            <AdminPageHeader
                 title="Neue Hinweis-Vorlage"
                 description="Lege eine neue Vorlage für Produkthinweise an."
-                breadcrumbs={[
-                    { label: "Hinweis-Vorlagen", href: "/admin/info-templates" },
-                    { label: "Neu", href: "/admin/info-templates/new" },
-                ]}
+                eyebrow="Hinweis-Vorlagen"
             />
             <InfoTemplateForm />
         </div>

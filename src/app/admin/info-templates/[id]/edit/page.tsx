@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
-import { AdminHeader } from "../../../_components/ui/AdminHeader";
+import AdminPageHeader from "../../../_components/admin-page-header";
 import { InfoTemplateForm } from "../../_components/info-template-form";
 
 export const metadata: Metadata = {
@@ -28,13 +28,10 @@ export default async function EditInfoTemplatePage({
 
     return (
         <div className="mx-auto max-w-4xl space-y-6">
-            <AdminHeader
+            <AdminPageHeader
                 title="Hinweis-Vorlage bearbeiten"
                 description={`Bearbeite die Vorlage "${template.internalName}".`}
-                breadcrumbs={[
-                    { label: "Hinweis-Vorlagen", href: "/admin/info-templates" },
-                    { label: template.internalName, href: `/admin/info-templates/${template.id}/edit` },
-                ]}
+                eyebrow="Hinweis-Vorlagen"
             />
             <InfoTemplateForm initialData={template} />
         </div>

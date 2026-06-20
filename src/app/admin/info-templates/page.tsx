@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { db } from "@/lib/db";
-import { AdminHeader } from "../_components/ui/AdminHeader";
+import AdminPageHeader from "../_components/admin-page-header";
 import { AdminButton } from "../_components/ui/AdminButton";
 import { AdminBadge } from "../_components/ui/AdminBadge";
 
@@ -23,14 +23,10 @@ export default async function InfoTemplatesPage() {
 
     return (
         <div className="space-y-6">
-            <AdminHeader
+            <AdminPageHeader
                 title="Hinweis-Vorlagen"
                 description="Verwalte die Vorlagen für die 'Wichtige Infos'-Boxen auf der Produktdetailseite."
-                actions={
-                    <Link href="/admin/info-templates/new">
-                        <AdminButton variant="primary">Neue Vorlage</AdminButton>
-                    </Link>
-                }
+                action={{ href: "/admin/info-templates/new", label: "Neue Vorlage" }}
             />
 
             <div className="admin-table rounded-[26px]">
