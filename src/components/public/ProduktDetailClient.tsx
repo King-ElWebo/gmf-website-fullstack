@@ -40,6 +40,14 @@ interface ProduktDetailItem {
     deliveryAvailable: boolean;
     pickupAvailable: boolean;
     requiresDeliveryAddress: boolean;
+    infoTemplate: {
+        title: string;
+        blocks: {
+            highlightLabel: string;
+            heading: string;
+            body: string;
+        }[];
+    } | null;
 }
 
 type DetailGroup = {
@@ -431,36 +439,20 @@ export function ProduktDetailClient({ item, deliveryTerms }: { item: ProduktDeta
                             </div>
                         )}
 
-                        {item.catalogType.toLowerCase().includes("event") && (
+                        {item.infoTemplate && item.infoTemplate.blocks.length > 0 && (
                             <div className="mt-8 rounded-[24px] border border-orange-100 bg-white p-5 shadow-lg shadow-orange-500/5 sm:p-6">
                                 <h3 style={{ fontFamily: 'var(--font-fredoka), sans-serif' }} className="mb-4 text-[20px] text-[#1a3a52]">
-                                    Wichtige Infos & Inklusivleistungen
+                                    {item.infoTemplate.title}
                                 </h3>
                                 <div className="grid grid-cols-1 gap-4 text-sm font-['Nunito'] leading-relaxed text-[#4a5568] sm:grid-cols-2 sm:gap-5">
-                                    <div className="flex gap-2.5">
-                                        <span className="text-lg font-bold text-[#f13c20]">OK</span>
-                                        <div>
-                                            <strong>Zubehör inklusive:</strong> Fallschutzmatten, Gebläse, Erdnägel, Transportwagen und weiteres notwendiges Zubehör.
+                                    {item.infoTemplate.blocks.map((block, i) => (
+                                        <div key={i} className="flex gap-2.5">
+                                            <span className="text-lg font-bold text-[#f13c20]">{block.highlightLabel}</span>
+                                            <div>
+                                                <strong>{block.heading}:</strong> {block.body}
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="flex gap-2.5">
-                                        <span className="text-lg font-bold text-[#f13c20]">230V</span>
-                                        <div>
-                                            <strong>Strombedarf:</strong> Normale 230V Steckdose, ca. 3 kW Leistung pro Hüpfburg/Gebläse erforderlich.
-                                        </div>
-                                    </div>
-                                    <div className="flex gap-2.5">
-                                        <span className="text-lg font-bold text-[#f13c20]">OK</span>
-                                        <div>
-                                            <strong>Aufbau-Hilfe:</strong> Seitens des Mieters werden 1-2 kräftige Helfer für den Auf- & Abbau benötigt.
-                                        </div>
-                                    </div>
-                                    <div className="flex gap-2.5">
-                                        <span className="text-lg font-bold text-[#f13c20]">!</span>
-                                        <div>
-                                            <strong>Sicherheit:</strong> Ständige Betreuung durch einen Erwachsenen ist verpflichtend (zivil-technisch überprüft).
-                                        </div>
-                                    </div>
+                                    ))}
                                 </div>
                             </div>
                         )}

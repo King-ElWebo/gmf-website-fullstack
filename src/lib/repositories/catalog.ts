@@ -3,6 +3,14 @@ import { db } from "@/lib/db";
 const publicItemInclude = {
   images: { orderBy: { sortOrder: "asc" } },
   category: { include: { catalogType: true } },
+  infoTemplate: {
+    include: {
+      blocks: {
+        where: { isActive: true },
+        orderBy: { sortOrder: "asc" }
+      }
+    }
+  }
 } as const;
 
 export async function listCategories(catalogTypeSlug?: string) {

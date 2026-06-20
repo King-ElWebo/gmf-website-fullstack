@@ -49,12 +49,14 @@ export default function ImagesSortableList({ initialImages }: { initialImages: G
                     key: "preview",
                     header: "Vorschau",
                     render: (image) => (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                            src={image.url}
-                            alt={image.alt ?? ""}
-                            className="h-16 w-16 rounded-2xl border border-slate-200 object-cover shadow-sm"
-                        />
+                        <Link href={`/admin/images/${image.id}/edit`} className="block hover:opacity-80 transition-opacity">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                                src={image.url}
+                                alt={image.alt ?? ""}
+                                className="h-16 w-16 rounded-2xl border border-slate-200 object-cover shadow-sm hover:border-blue-300 transition-colors"
+                            />
+                        </Link>
                     ),
                 },
                 {

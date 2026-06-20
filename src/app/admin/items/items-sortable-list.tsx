@@ -75,7 +75,7 @@ export default function ItemsSortableList({
                         const image = item.images?.[0];
 
                         return (
-                            <div className="flex min-w-0 items-center gap-3">
+                            <Link href={`/admin/items/${item.id}/edit`} className="flex min-w-0 items-center gap-3 hover:opacity-80 transition-opacity">
                                 <div className="h-12 w-16 shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
                                     {image ? (
                                         // eslint-disable-next-line @next/next/no-img-element
@@ -92,9 +92,9 @@ export default function ItemsSortableList({
                                     )}
                                 </div>
                                 <div className="min-w-0">
-                                    <div className="font-semibold text-slate-900 leading-snug">{item.title}</div>
+                                    <div className="font-semibold text-slate-900 leading-snug hover:text-blue-600 transition-colors">{item.title}</div>
                                 </div>
-                            </div>
+                            </Link>
                         );
                     },
                 },

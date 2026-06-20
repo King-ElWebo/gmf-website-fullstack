@@ -97,11 +97,39 @@ model Item {
   resourceBlockTime       ResourceBlockTime     @default(ENTIRE_DURATION)
   bookingItems            BookingItem[]
   calendarBlockerItems    CalendarBlockerItem[]
+  infoTemplateId          String?
+  infoTemplate            InfoTemplate?         @relation(fields: [infoTemplateId], references: [id])
   category                Category              @relation(fields: [categoryId], references: [id])
   resource                Resource?             @relation(fields: [resourceId], references: [id])
   images                  ItemImage[]
 
   @@index([categoryId])
+  @@index([sortOrder])
+  @@index([infoTemplateId])
+}
+
+model InfoTemplate {
+  id           String              @id @default(cuid())
+  internalName String
+  title        String
+  isActive     Boolean             @default(true)
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+  blocks       InfoTemplateBlock[]
+  items        Item[]
+}
+
+model InfoTemplateBlock {
+  id             String       @id @default(cuid())
+  infoTemplateId String
+  highlightLabel String
+  heading        String
+  body           String
+  sortOrder      Int          @default(0)
+  isActive       Boolean      @default(true)
+  infoTemplate   InfoTemplate @relation(fields: [infoTemplateId], references: [id], onDelete: Cascade)
+
+  @@index([infoTemplateId])
   @@index([sortOrder])
 }
 

@@ -39,6 +39,7 @@ export type ItemInput = {
     resourceUnits?: number | null;
     resourceAppliesTo?: "DELIVERY_ONLY" | "PICKUP_ONLY" | "BOTH" | null;
     resourceBlockTime?: "ENTIRE_DURATION" | "START_AND_END_DAYS" | "START_DAY_ONLY" | null;
+    infoTemplateId?: string | null;
 };
 
 export type ItemListSort =
@@ -84,6 +85,7 @@ function buildItemPersistenceData(data: ItemInput) {
         resourceUnits: data.resourceUnits ?? 1,
         resourceAppliesTo: data.resourceAppliesTo ?? "BOTH",
         resourceBlockTime: data.resourceBlockTime ?? "ENTIRE_DURATION",
+        infoTemplateId: data.infoTemplateId,
     };
 }
 

@@ -99,4 +99,4 @@ if (existingClient && !hasExpectedClientShape(existingClient)) {
 
 export const db = globalForPrisma.prisma ?? createPrismaClient();
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = db; // Trigger refresh
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = db; // Trigger refresh again

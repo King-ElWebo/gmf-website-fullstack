@@ -139,15 +139,25 @@ export default function ImageForm({ mode, initialData }: ImageFormProps) {
                     )}
 
                     <AdminField label={mode === "create" ? "Bilder *" : "Bild austauschen (optional)"} htmlFor="files">
-                        <input
-                            id="files"
-                            type="file"
-                            accept="image/*"
-                            multiple={mode === "create"}
-                            required={mode === "create"}
-                            onChange={(e) => setFiles(e.target.files)}
-                            className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm transition outline-none focus:border-slate-400 focus:ring-4 focus:ring-slate-100"
-                        />
+                        <div className="flex items-center gap-3">
+                            <label className="inline-flex h-10 cursor-pointer items-center justify-center rounded-xl bg-blue-600 px-4 text-sm font-semibold text-white shadow-sm shadow-blue-600/20 transition-colors hover:bg-blue-700">
+                                {mode === "create" ? "Bilder wählen..." : "Bild austauschen..."}
+                                <input
+                                    id="files"
+                                    type="file"
+                                    accept="image/*"
+                                    multiple={mode === "create"}
+                                    required={mode === "create"}
+                                    onChange={(e) => setFiles(e.target.files)}
+                                    className="sr-only"
+                                />
+                            </label>
+                            {files && files.length > 0 && (
+                                <span className="text-sm text-slate-600 truncate max-w-[200px]">
+                                    {files.length === 1 ? files[0].name : `${files.length} Dateien ausgewählt`}
+                                </span>
+                            )}
+                        </div>
                     </AdminField>
                 </AdminCard>
 

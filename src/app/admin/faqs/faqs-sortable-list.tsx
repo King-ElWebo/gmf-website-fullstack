@@ -49,10 +49,10 @@ export default function FaqsSortableList({ initialFaqs }: { initialFaqs: FaqRow[
                     key: "question",
                     header: "Frage",
                     render: (faq) => (
-                        <div>
-                            <div className="font-semibold text-slate-900">{faq.question}</div>
+                        <Link href={`/admin/faqs/${faq.id}/edit`} className="block hover:opacity-80 transition-opacity">
+                            <div className="font-semibold text-slate-900 hover:text-blue-600 transition-colors">{faq.question}</div>
                             <div className="line-clamp-2 text-xs leading-5 text-slate-500">{faq.answer}</div>
-                        </div>
+                        </Link>
                     ),
                 },
                 {

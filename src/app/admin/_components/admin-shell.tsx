@@ -16,6 +16,7 @@ const catalogItems: NavItem[] = [
     { href: "/admin/categories", label: "Categories", icon: <FolderIcon /> },
     { href: "/admin/items", label: "Items", icon: <CubeIcon /> },
     { href: "/admin/faqs", label: "FAQs", icon: <HelpIcon /> },
+    { href: "/admin/info-templates", label: "Hinweis-Vorlagen", icon: <LayersIcon /> },
     { href: "/admin/images", label: "Media", icon: <ImageIcon /> },
 ];
 

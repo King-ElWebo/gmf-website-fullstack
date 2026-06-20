@@ -77,7 +77,11 @@ export default function CategoriesSortableList({
                 {
                     key: "name",
                     header: "Name",
-                    render: (category) => <div className="font-semibold text-slate-900">{category.name}</div>,
+                    render: (category) => (
+                        <Link href={`/admin/categories/${category.id}/edit`} className="font-semibold text-slate-900 hover:text-blue-600 transition-colors">
+                            {category.name}
+                        </Link>
+                    ),
                 },
                 {
                     key: "slug",

@@ -215,15 +215,23 @@ export default function CategoryForm({ mode, category, catalogTypes }: CategoryF
                                         </div>
                                     )}
 
-                                    <AdminField label={imagePreview && !removeImage ? "Bild austauschen (optional)" : "Titelbild (optional)"} htmlFor="image">
-                                        <input
-                                            id="image"
-                                            ref={fileInputRef}
-                                            type="file"
-                                            accept="image/*"
-                                            onChange={handleImageChange}
-                                            className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm transition outline-none focus:border-slate-400 focus:ring-4 focus:ring-slate-100"
-                                        />
+                                    <AdminField label={imagePreview && !removeImage ? "Anderes Bild wählen (optional)" : "Titelbild (optional)"} htmlFor="image">
+                                        <div className="flex items-center gap-3">
+                                            <label className="inline-flex h-10 cursor-pointer items-center justify-center rounded-xl bg-blue-600 px-4 text-sm font-semibold text-white shadow-sm shadow-blue-600/20 transition-colors hover:bg-blue-700">
+                                                {imagePreview && !removeImage ? "Bild austauschen..." : "Bild hinzufügen..."}
+                                                <input
+                                                    id="image"
+                                                    ref={fileInputRef}
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={handleImageChange}
+                                                    className="sr-only"
+                                                />
+                                            </label>
+                                            {imageFile && (
+                                                <span className="text-sm text-slate-600 truncate max-w-[200px]">{imageFile.name}</span>
+                                            )}
+                                        </div>
                                     </AdminField>
                                 </div>
                             </AdminCard>

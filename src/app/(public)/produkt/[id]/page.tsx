@@ -49,6 +49,15 @@ export default async function ProductDetailPage({ params }: PageProps) {
         deliveryAvailable: item.deliveryAvailable,
         pickupAvailable: item.pickupAvailable,
         requiresDeliveryAddress: item.requiresDeliveryAddress,
+        infoTemplate: item.infoTemplate?.isActive ? {
+            title: item.infoTemplate.title,
+            blocks: item.infoTemplate.blocks.map((block) => ({
+                highlightLabel: block.highlightLabel,
+                heading: block.heading,
+                body: block.body,
+                sortOrder: block.sortOrder,
+            })),
+        } : null,
     };
 
     return <ProduktDetailClient item={mappedItem} deliveryTerms={settings.deliveryTerms} />;

@@ -4,6 +4,7 @@ import { getItemById } from "@/lib/repositories/items";
 import { listByItemId } from "@/lib/repositories/item-images";
 import { listCatalogTypes } from "@/lib/repositories/catalog-types";
 import { listResources } from "@/lib/repositories/resources";
+import { db } from "@/lib/db";
 import ItemForm from "../../_components/item-form";
 
 export default async function EditItemPage({
@@ -17,12 +18,13 @@ export default async function EditItemPage({
     const { uploadError } = await searchParams;
     if (!id || typeof id !== "string") return notFound();
 
-    const [categories, item, images, catalogTypes, resources] = await Promise.all([
+    const [categories, item, images, catalogTypes, resources, infoTemplates] = await Promise.all([
         listCategories(),
         getItemById(id),
         listByItemId(id),
         listCatalogTypes(),
         listResources(),
+        db.infoTemplate.findMany({ orderBy: { title: "asc" } }),
     ]);
     if (!item) return notFound();
 
@@ -41,6 +43,7 @@ export default async function EditItemPage({
                 catalogTypeId: c.catalogTypeId,
             }))}
             initialImages={images}
+            infoTemplates={infoTemplates}
             initial={{
                 title: item.title,
                 slug: item.slug,
@@ -72,6 +75,7 @@ export default async function EditItemPage({
                 totalStock: item.totalStock.toString(),
                 published: item.published,
                 categoryId: item.categoryId,
+                infoTemplateId: item.infoTemplateId ?? "",
                 availabilityMode: item.availabilityMode,
                 resourceId: item.resourceId ?? undefined,
                 resourceUnits: item.resourceUnits?.toString(),

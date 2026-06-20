@@ -104,6 +104,7 @@ export function parseAdminItemPayload(body: Record<string, unknown> | null): Par
             totalStock: Math.floor(totalStock),
             published,
             categoryId,
+            infoTemplateId: asTrimmedText(body?.infoTemplateId),
             availabilityMode: (body?.availabilityMode as "STOCK_ONLY" | "STOCK_AND_RESOURCE" | "EXCLUSIVE_RESOURCE") || "STOCK_ONLY",
             resourceId: asTrimmedText(body?.resourceId),
             resourceUnits: typeof body?.resourceUnits === "number" ? body.resourceUnits : (typeof body?.resourceUnits === "string" ? parseInt(body.resourceUnits, 10) : null),

@@ -52,10 +52,10 @@ export default function CatalogTypesSortableList({ initialCatalogTypes }: { init
                     key: "name",
                     header: "Name",
                     render: (type) => (
-                        <div>
-                            <div className="font-semibold text-slate-900">{type.name}</div>
+                        <Link href={`/admin/catalog-types/${type.id}/edit`} className="block hover:opacity-80 transition-opacity">
+                            <div className="font-semibold text-slate-900 hover:text-blue-600 transition-colors">{type.name}</div>
                             {type.description && <div className="mt-1 text-xs leading-5 text-slate-500">{type.description}</div>}
-                        </div>
+                        </Link>
                     ),
                 },
                 {

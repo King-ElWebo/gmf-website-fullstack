@@ -56,6 +56,7 @@ type ItemFormState = {
     totalStock: string;
     published: boolean;
     categoryId: string;
+    infoTemplateId: string;
     setupRequired: boolean;
 };
 
@@ -80,8 +81,10 @@ export default function ItemForm(props: {
         resourceId?: string | null;
         resourceUnits?: string | null;
         resourceAppliesTo?: string | null;
+        infoTemplateId?: string;
     };
     initialImages?: ImageRow[];
+    infoTemplates?: { id: string; internalName: string }[];
     initialError?: string;
 }) {
     const router = useRouter();
@@ -118,6 +121,7 @@ export default function ItemForm(props: {
         totalStock: props.initial?.totalStock ?? "1",
         published: Boolean(props.initial?.published ?? false),
         categoryId: props.initial?.categoryId ?? (categories[0]?.id ?? ""),
+        infoTemplateId: props.initial?.infoTemplateId ?? "",
         setupRequired: props.initial?.availabilityMode !== undefined && props.initial.availabilityMode !== "STOCK_ONLY",
     });
     const [saving, setSaving] = useState(false);
@@ -227,10 +231,11 @@ export default function ItemForm(props: {
             totalStock: hasValidTotalStock ? Math.floor(parsedTotalStock) : 0,
             published: formState.published,
             categoryId: formState.categoryId,
+            infoTemplateId: formState.infoTemplateId || null,
             availabilityMode: formState.setupRequired ? "STOCK_AND_RESOURCE" : "STOCK_ONLY",
-            resourceId: formState.setupRequired ? "betreiber-lieferteam" : null,
-            resourceUnits: formState.setupRequired ? 10 : 0,
-            resourceAppliesTo: formState.setupRequired ? "DELIVERY_ONLY" : "BOTH",
+            resourceId: formState.setupRequired ? (props.initial?.resourceId || props.resources?.[0]?.id || null) : null,
+            resourceUnits: formState.setupRequired ? (props.initial?.resourceUnits ? Number(props.initial.resourceUnits) : 10) : 0,
+            resourceAppliesTo: formState.setupRequired ? (props.initial?.resourceAppliesTo || "DELIVERY_ONLY") : "BOTH",
             resourceBlockTime: formState.setupRequired ? "START_AND_END_DAYS" : "ENTIRE_DURATION",
         };
 
@@ -362,6 +367,21 @@ export default function ItemForm(props: {
                                         {filteredCategories.map((category) => (
                                             <option key={category.id} value={category.id}>
                                                 {category.name} ({category.slug})
+                                            </option>
+                                        ))}
+                                    </AdminSelect>
+                                </AdminField>
+
+                                <AdminField label="Hinweis-Vorlage" htmlFor="infoTemplate">
+                                    <AdminSelect
+                                        id="infoTemplate"
+                                        value={formState.infoTemplateId}
+                                        onChange={(e) => updateField("infoTemplateId", e.target.value)}
+                                    >
+                                        <option value="">-- Keine Vorlage --</option>
+                                        {props.infoTemplates?.map((t) => (
+                                            <option key={t.id} value={t.id}>
+                                                {t.internalName}
                                             </option>
                                         ))}
                                     </AdminSelect>
