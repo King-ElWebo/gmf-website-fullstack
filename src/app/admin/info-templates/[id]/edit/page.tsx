@@ -11,10 +11,11 @@ export const metadata: Metadata = {
 export default async function EditInfoTemplatePage({
     params,
 }: {
-    params: { id: string };
+    params: Promise<{ id: string }>;
 }) {
+    const { id } = await params;
     const template = await db.infoTemplate.findUnique({
-        where: { id: params.id },
+        where: { id },
         include: {
             blocks: {
                 orderBy: { sortOrder: "asc" },

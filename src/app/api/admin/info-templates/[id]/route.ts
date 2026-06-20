@@ -18,10 +18,11 @@ const infoTemplateSchema = z.object({
     ).max(4, "Maximal 4 Blöcke erlaubt"),
 });
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
+        const { id } = await params;
         const template = await db.infoTemplate.findUnique({
-            where: { id: params.id },
+            where: { id },
             include: { blocks: { orderBy: { sortOrder: "asc" } } },
         });
 
@@ -35,18 +36,19 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     }
 }
 
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
+        const { id } = await params;
         const json = await req.json();
         const data = infoTemplateSchema.parse(json);
 
         // We delete all existing blocks and recreate them to handle updates cleanly
         await db.infoTemplateBlock.deleteMany({
-            where: { infoTemplateId: params.id },
+            where: { infoTemplateId: id },
         });
 
         const template = await db.infoTemplate.update({
-            where: { id: params.id },
+            where: { id },
             data: {
                 internalName: data.internalName,
                 title: data.title,
@@ -74,10 +76,11 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     }
 }
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
+        const { id } = await params;
         await db.infoTemplate.delete({
-            where: { id: params.id },
+            where: { id },
         });
 
         return new NextResponse(null, { status: 204 });
