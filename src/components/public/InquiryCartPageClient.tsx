@@ -563,6 +563,13 @@ export function InquiryCartPageClient({ settings }: { settings?: SiteSettingsRec
         setError(null);
 
         const billingAddressSameAsDelivery = !formState.billingAddressDiffers;
+        const formElement = event.target as HTMLFormElement;
+        const agbCheckbox = formElement.querySelector('#agb-terms') as HTMLInputElement | null;
+        const bouncyCastleCheckbox = formElement.querySelector('#bouncy-castle-terms') as HTMLInputElement | null;
+
+        const agbAcceptedAt = agbCheckbox?.checked ? new Date().toISOString() : undefined;
+        const bouncyCastleTermsAcceptedAt = bouncyCastleCheckbox?.checked ? new Date().toISOString() : undefined;
+
         const payload: InquiryBookingRequestPayload = {
             items: items.map((item) => ({
                 resourceId: item.id,
@@ -605,6 +612,8 @@ export function InquiryCartPageClient({ settings }: { settings?: SiteSettingsRec
                 zip: formState.zip || undefined,
                 city: formState.city || undefined,
             },
+            agbAcceptedAt,
+            bouncyCastleTermsAcceptedAt,
         };
 
         const response = await fetch("/api/public/bookings/request", {

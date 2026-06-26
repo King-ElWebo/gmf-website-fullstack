@@ -28,6 +28,8 @@ export interface CreateBookingRequestDTO {
   endDate: Date;
   deliveryType: string;
   customerMessage?: string;
+  agbAcceptedAt?: Date;
+  bouncyCastleTermsAcceptedAt?: Date;
 }
 
 export class PublicBookingUseCases {
@@ -98,6 +100,8 @@ export class PublicBookingUseCases {
       billingAddressSameAsDelivery: dto.billingAddressSameAsDelivery ?? true,
       billingAddress: dto.billingAddress ?? null,
       customerMessage: dto.customerMessage,
+      agbAcceptedAt: dto.agbAcceptedAt,
+      bouncyCastleTermsAcceptedAt: dto.bouncyCastleTermsAcceptedAt,
       createdAt: new Date(),
       updatedAt: new Date(),
     };

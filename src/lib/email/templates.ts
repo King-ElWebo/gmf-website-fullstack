@@ -16,6 +16,7 @@ import {
   formatCentsEuro,
 } from "./html-layout";
 import { generateActionToken } from "./security";
+import { getBaseUrl } from "@/lib/config/base-url";
 
 
 // ──────────────────────────────────────────────
@@ -102,7 +103,7 @@ function textDateRange(ctx: BookingEmailContext): string {
 
 function renderNewBookingAdmin(ctx: BookingEmailContext): RenderedTemplate {
   const subject = `Neue Anfrage ${ctx.referenceCode}`;
-  const baseUrl = process.env.APP_URL || "http://localhost:3000";
+  const baseUrl = getBaseUrl();
 
   let linksText = "";
   let linksHtml = "";
@@ -258,6 +259,25 @@ function renderBookingConfirmation(ctx: BookingEmailContext): RenderedTemplate {
     `Ihr GMF-Team`,
   );
 
+  const hasBouncyCastle = ctx.items?.some(i => 
+    i.title.toLowerCase().includes('hüpfburg') || 
+    i.title.toLowerCase().includes('rutsche')
+  );
+  const bouncyCastleLinkText = hasBouncyCastle ? `\n\nHinweis zur sicheren Nutzung:\nBitte beachten Sie unsere Anleitung für Hüpfburgen/Rutschen: ${getBaseUrl()}/downloads/anleitung-huepfburg.pdf` : "";
+  if (bouncyCastleLinkText) {
+    textParts.splice(textParts.length - 3, 0, bouncyCastleLinkText);
+  }
+
+  const bouncyCastleLinkHtml = hasBouncyCastle ? `
+    <div style="margin: 24px 0; padding: 16px; background-color: #fffdf8; border: 1px solid #fef08a; border-radius: 12px;">
+      <h3 style="margin: 0 0 8px 0; font-size: 15px; font-weight: 700; color: #92400e;">Wichtiger Hinweis zur sicheren Nutzung</h3>
+      <p style="margin: 0; font-size: 14px; color: #b45309; line-height: 1.5;">
+        Bitte laden Sie sich unsere <strong>Anleitung für Hüpfburgen und Rutschen</strong> herunter und lesen Sie diese aufmerksam durch:<br>
+        <a href="${getBaseUrl()}/downloads/anleitung-huepfburg.pdf" style="color: #066bb7; text-decoration: underline;">Anleitung herunterladen (PDF)</a>
+      </p>
+    </div>
+  ` : "";
+
   // ── HTML ──
   let body = `
     <p style="margin:0 0 4px 0;font-size:15px;color:#1f2937;">Hallo <strong>${esc(ctx.customerFirstName)}</strong>,</p>
@@ -282,6 +302,10 @@ function renderBookingConfirmation(ctx: BookingEmailContext): RenderedTemplate {
   if (ctx.customerMessage) {
     body += sectionHeading("Ihre Nachricht");
     body += messageBox(ctx.customerMessage);
+  }
+
+  if (bouncyCastleLinkHtml) {
+    body += bouncyCastleLinkHtml;
   }
 
   body += `<p style="margin:24px 0 0 0;font-size:15px;color:#1f2937;">Wir melden uns bei Ihnen, sobald wir Ihre Anfrage geprüft haben.</p>`;
@@ -319,6 +343,25 @@ function renderBookingApproved(ctx: BookingEmailContext): RenderedTemplate {
     `Ihr GMF-Team`,
   ];
 
+  const hasBouncyCastle = ctx.items?.some(i => 
+    i.title.toLowerCase().includes('hüpfburg') || 
+    i.title.toLowerCase().includes('rutsche')
+  );
+  const bouncyCastleLinkText = hasBouncyCastle ? `\n\nHinweis zur sicheren Nutzung:\nBitte beachten Sie unsere Anleitung für Hüpfburgen/Rutschen: ${getBaseUrl()}/downloads/anleitung-huepfburg.pdf` : "";
+  if (bouncyCastleLinkText) {
+    textParts.splice(textParts.length - 3, 0, bouncyCastleLinkText);
+  }
+
+  const bouncyCastleLinkHtml = hasBouncyCastle ? `
+    <div style="margin: 24px 0; padding: 16px; background-color: #fffdf8; border: 1px solid #fef08a; border-radius: 12px;">
+      <h3 style="margin: 0 0 8px 0; font-size: 15px; font-weight: 700; color: #92400e;">Wichtiger Hinweis zur sicheren Nutzung</h3>
+      <p style="margin: 0; font-size: 14px; color: #b45309; line-height: 1.5;">
+        Bitte laden Sie sich unsere <strong>Anleitung für Hüpfburgen und Rutschen</strong> herunter und lesen Sie diese aufmerksam durch:<br>
+        <a href="${getBaseUrl()}/downloads/anleitung-huepfburg.pdf" style="color: #066bb7; text-decoration: underline;">Anleitung herunterladen (PDF)</a>
+      </p>
+    </div>
+  ` : "";
+
   // ── HTML ──
   let body = `
     <p style="margin:0 0 4px 0;font-size:15px;color:#1f2937;">Hallo <strong>${esc(ctx.customerFirstName)}</strong>,</p>
@@ -348,6 +391,10 @@ function renderBookingApproved(ctx: BookingEmailContext): RenderedTemplate {
   }
 
   body += addressBlock(ctx);
+
+  if (bouncyCastleLinkHtml) {
+    body += bouncyCastleLinkHtml;
+  }
 
   body += `<p style="margin:24px 0 0 0;font-size:15px;color:#1f2937;">Wir melden uns bei Ihnen mit weiteren Details zur Abwicklung.</p>`;
   body += `<p style="margin:16px 0 0 0;font-size:15px;color:#1f2937;">Mit freundlichen Grüßen,<br><strong>Ihr GMF-Team</strong></p>`;

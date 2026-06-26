@@ -16,10 +16,32 @@ interface ContactClientProps {
 export function ContactClient({ settings }: ContactClientProps) {
     const [formData, setFormData] = useState({ name: '', email: '', phone: '', subject: '', message: '' });
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setIsSubmitted(true);
+        setIsSubmitting(true);
+        setError(null);
+
+        try {
+            const res = await fetch('/api/public/contact', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData),
+            });
+
+            if (!res.ok) {
+                const data = await res.json();
+                throw new Error(data.error || 'Ein Fehler ist aufgetreten');
+            }
+
+            setIsSubmitted(true);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Ein unbekannter Fehler ist aufgetreten');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     if (isSubmitted) {
@@ -153,7 +175,14 @@ export function ContactClient({ settings }: ContactClientProps) {
                             <Input label="Telefon" type="tel" name="phone" placeholder="0123 456789" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} />
                             <Input label="Betreff" type="text" name="subject" placeholder="Worum geht es?" value={formData.subject} onChange={(e) => setFormData({ ...formData, subject: e.target.value })} required />
                             <Textarea label="Nachricht" name="message" placeholder="Ihre Nachricht an uns..." value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })} rows={8} required />
-                            <Button type="submit" variant="primary" className="w-full">Anfrage senden</Button>
+                            {error && (
+                                <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm font-['Nunito']">
+                                    {error}
+                                </div>
+                            )}
+                            <Button type="submit" variant="primary" className="w-full" disabled={isSubmitting}>
+                                {isSubmitting ? 'Wird gesendet...' : 'Anfrage senden'}
+                            </Button>
                         </form>
                         <div className="mt-6 bg-[#f7f8fa] rounded-[16px] p-4">
                             <p className="font-['Nunito'] text-[12px] text-[#64748b] leading-[18px]">

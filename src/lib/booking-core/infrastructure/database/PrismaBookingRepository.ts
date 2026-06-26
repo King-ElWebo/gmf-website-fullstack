@@ -187,6 +187,8 @@ export class PrismaBookingRepository implements BookingRepository {
       customerMessage: booking.customerMessage,
       totalPriceCents: booking.totalPriceCents ?? null,
       hasIndividualPricing: booking.hasIndividualPricing ?? false,
+      agbAcceptedAt: booking.agbAcceptedAt ?? null,
+      bouncyCastleTermsAcceptedAt: booking.bouncyCastleTermsAcceptedAt ?? null,
       customer: {
         create: {
           firstName: booking.customer.firstName,

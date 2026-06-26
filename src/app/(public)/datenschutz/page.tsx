@@ -93,7 +93,7 @@ export default async function DatenschutzPage() {
                     </section>
 
                     <p className="border-t border-[#dbe3ee] pt-4 font-['Nunito'] text-[13px] text-[#64748b]">
-                        Stand: 22. April 2026. Diese Datenschutzerklaerung ist eine Vorlage und ersetzt keine Rechtsberatung.
+                        Stand: 22. April 2026.
                     </p>
                 </div>
             </div>

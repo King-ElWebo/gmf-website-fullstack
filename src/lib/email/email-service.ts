@@ -49,6 +49,10 @@ export async function sendEmail(
   }
 
   try {
+    if (!process.env.EMAIL_FROM || process.env.EMAIL_FROM.includes("example.com")) {
+      throw new Error("CRITICAL: EMAIL_FROM is missing or set to example.com while EMAIL_ENABLED=true. Please configure a valid sender domain.");
+    }
+
     const resend = getResendClient();
 
     const { data, error } = await resend.emails.send({

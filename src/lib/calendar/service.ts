@@ -351,6 +351,7 @@ export async function getCalendarCategoryOptions(): Promise<CalendarCategoryOpti
 // --- Google Calendar Sync ---
 
 import { isGoogleCalendarEnabled, createGoogleCalendarEvent, updateGoogleCalendarEvent, deleteGoogleCalendarEvent } from "./google-calendar-client";
+import { getBaseUrl } from "@/lib/config/base-url";
 
 function buildEventPayload(booking: any) {
   const startDate = new Date(booking.startDate);
@@ -361,7 +362,7 @@ function buildEventPayload(booking: any) {
   const startString = startDate.toISOString().split("T")[0];
   const endString = endDate.toISOString().split("T")[0];
 
-  const baseUrl = process.env.APP_URL || "http://localhost:3000";
+  const baseUrl = getBaseUrl();
   const adminUrl = `${baseUrl}/admin/bookings/${booking.id}`;
 
   const customerName = `${booking.customer?.firstName || ""} ${booking.customer?.lastName || ""}`.trim();

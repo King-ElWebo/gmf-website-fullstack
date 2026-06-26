@@ -46,3 +46,8 @@ next-env.d.ts
 public/uploads/*
 !public/uploads/.gitkeep
 scratch/
+
+# database dumps
+/*.sql
+*.sql
+!prisma/migrations/**/*.sql

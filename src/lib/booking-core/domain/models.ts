@@ -78,6 +78,8 @@ export interface Booking {
   archivedAt?: Date | null;
   archivedBy?: string | null;
   archiveReason?: string | null;
+  agbAcceptedAt?: Date | null;
+  bouncyCastleTermsAcceptedAt?: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }

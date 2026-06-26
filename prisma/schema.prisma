@@ -248,6 +248,8 @@ model Booking {
   billingAddress               Json?
   totalPriceCents              Int?
   hasIndividualPricing         Boolean             @default(false)
+  agbAcceptedAt                DateTime?
+  bouncyCastleTermsAcceptedAt  DateTime?
   createdAt                    DateTime            @default(now())
   updatedAt                    DateTime            @updatedAt
   archiveReason                String?

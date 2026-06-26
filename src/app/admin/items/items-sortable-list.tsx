@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { getItemPriceDisplay } from "@/lib/items/price";
 import SortableRowList from "../_components/sortable-row-list";
 import { AdminButton } from "../_components/ui/AdminButton";
+import { useTransition } from "react";
+import { toggleItemPublished } from "./actions";
 
 type ItemRow = {
     id: string;
@@ -37,6 +39,7 @@ export default function ItemsSortableList({
     reorderEnabled?: boolean;
 }) {
     const router = useRouter();
+    const [isPending, startTransition] = useTransition();
 
     const handleDelete = async (id: string, title: string) => {
         if (!window.confirm(`Möchten Sie das Produkt "${title}" wirklich löschen?`)) {
@@ -146,12 +149,26 @@ export default function ItemsSortableList({
                 {
                     key: "status",
                     header: "Status",
-                    render: (item) =>
-                        item.published ? (
-                            <span className="admin-badge admin-badge-green">Published</span>
-                        ) : (
-                            <span className="admin-badge admin-badge-neutral">Draft</span>
-                        ),
+                    render: (item) => (
+                        <button
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                startTransition(async () => {
+                                    const res = await toggleItemPublished(item.id, item.published);
+                                    if (!res.success) {
+                                        alert(res.error);
+                                    }
+                                });
+                            }}
+                            disabled={isPending}
+                            className={`admin-badge hover:opacity-80 transition-opacity ${
+                                item.published ? "admin-badge-green" : "admin-badge-neutral"
+                            } ${isPending ? "opacity-50 cursor-wait" : "cursor-pointer"}`}
+                        >
+                            {item.published ? "Published" : "Draft"}
+                        </button>
+                    ),
                 },
             ]}
             renderActions={(item) => (

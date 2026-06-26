@@ -244,23 +244,43 @@ export function CategoryCarousel({ categories }: { categories: CategoryCard[] })
                             </div>
                         </div>
 
-                        <div className="mt-4 flex justify-center gap-1.5 pb-0 sm:hidden">
-                            {categories.map((_, idx) => (
-                                <button
-                                    key={idx}
-                                    onClick={() => {
-                                        setWithTransition(true);
-                                        setCurrentIndex(categoryCount + idx);
-                                        isJumping.current = false;
-                                    }}
-                                    aria-label={`Kategorie ${idx + 1}`}
-                                    className="flex h-5 min-w-5 items-center justify-center rounded-full sm:h-6 sm:min-w-6"
-                                >
-                                    <span
-                                        className={`h-1.5 rounded-full transition-all duration-300 ease-out-strong ${activeDot === idx ? 'w-5 bg-gradient-to-r from-[#f13c20] to-[#ff7a3d] sm:w-6' : 'w-1.5 bg-[#1a3a52]/20 hover:bg-[#1a3a52]/40'}`}
-                                    />
-                                </button>
-                            ))}
+                        <div className="mt-4 flex items-center justify-center gap-4 pb-0 sm:hidden">
+                            <button
+                                onClick={() => navigate(-1)}
+                                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#f0e3ca] bg-white text-[#1a3a52] shadow-sm transition-all duration-200 active:scale-[0.95] disabled:opacity-30"
+                                aria-label="Vorherige Kategorie"
+                                disabled={categoryCount <= 1}
+                            >
+                                <ChevronLeft size={22} className="stroke-[2.5] -ml-0.5" />
+                            </button>
+
+                            <div className="flex flex-wrap justify-center gap-1.5">
+                                {categories.map((_, idx) => (
+                                    <button
+                                        key={idx}
+                                        onClick={() => {
+                                            setWithTransition(true);
+                                            setCurrentIndex(categoryCount + idx);
+                                            isJumping.current = false;
+                                        }}
+                                        aria-label={`Kategorie ${idx + 1}`}
+                                        className="flex h-5 min-w-5 items-center justify-center rounded-full sm:h-6 sm:min-w-6"
+                                    >
+                                        <span
+                                            className={`h-1.5 rounded-full transition-all duration-300 ease-out-strong ${activeDot === idx ? 'w-5 bg-gradient-to-r from-[#f13c20] to-[#ff7a3d] sm:w-6' : 'w-1.5 bg-[#1a3a52]/20 hover:bg-[#1a3a52]/40'}`}
+                                        />
+                                    </button>
+                                ))}
+                            </div>
+
+                            <button
+                                onClick={() => navigate(1)}
+                                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#f0e3ca] bg-white text-[#1a3a52] shadow-sm transition-all duration-200 active:scale-[0.95] disabled:opacity-30"
+                                aria-label="Nächste Kategorie"
+                                disabled={categoryCount <= 1}
+                            >
+                                <ChevronRight size={22} className="stroke-[2.5] -mr-0.5" />
+                            </button>
                         </div>
                     </>
                 ) : (

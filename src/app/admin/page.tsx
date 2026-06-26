@@ -83,7 +83,7 @@ export default async function AdminHome() {
 
   const hasVercelBlob = !!process.env.BLOB_READ_WRITE_TOKEN;
   const hasResend = !!process.env.RESEND_API_KEY;
-  const hasAppUrl = !!process.env.NEXT_PUBLIC_APP_URL;
+  const hasAppUrl = !!(process.env.APP_URL || process.env.NEXT_PUBLIC_APP_URL);
 
   return (
     <div className="space-y-4">

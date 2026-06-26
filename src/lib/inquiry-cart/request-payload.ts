@@ -27,6 +27,8 @@ export type InquiryBookingRequestPayload = {
     billingAddress?: BookingAddress | null;
     customerMessage?: string;
     customer: BookingCustomer;
+    agbAcceptedAt?: string;
+    bouncyCastleTermsAcceptedAt?: string;
 };
 
 export type InquiryBookingRequestItemInput = {
@@ -53,6 +55,8 @@ export type ParsedInquiryBookingRequest = {
     billingAddress: BookingAddress | null;
     customerMessage?: string;
     customer: BookingCustomer;
+    agbAcceptedAt?: string;
+    bouncyCastleTermsAcceptedAt?: string;
 };
 
 const ALLOWED_PRICE_TYPES: InquiryCartPriceType[] = ["FIXED", "FROM_PRICE", "ON_REQUEST"];
@@ -261,6 +265,8 @@ export function parseInquiryBookingRequestPayload(input: unknown): ParseResult<P
             billingAddress: parsedBillingAddress.value,
             customerMessage: toOptionalTrimmedString(input.customerMessage),
             customer: parsedCustomer.value,
+            agbAcceptedAt: toOptionalTrimmedString(input.agbAcceptedAt),
+            bouncyCastleTermsAcceptedAt: toOptionalTrimmedString(input.bouncyCastleTermsAcceptedAt),
         },
     };
 }

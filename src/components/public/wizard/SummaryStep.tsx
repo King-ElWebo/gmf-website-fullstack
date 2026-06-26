@@ -65,6 +65,19 @@ export function SummaryStep({
     submitting,
     error,
 }: SummaryStepProps) {
+    const hasBouncyCastle = React.useMemo(() => {
+        return items.some(item => 
+            item.slug.includes('huepfburg') || 
+            item.slug.includes('rutsche') || 
+            item.title.toLowerCase().includes('hüpfburg') ||
+            item.title.toLowerCase().includes('rutsche')
+        );
+    }, [items]);
+
+    const [agbAccepted, setAgbAccepted] = React.useState(false);
+    const [bouncyCastleAccepted, setBouncyCastleAccepted] = React.useState(false);
+    const isFormValid = agbAccepted && (!hasBouncyCastle || bouncyCastleAccepted);
+
     return (
         <div className="space-y-6">
             <div>
@@ -333,12 +346,42 @@ export function SummaryStep({
                         </p>
                     )}
 
+                    {hasBouncyCastle && (
+                        <div className="bg-[#fffdf8] border border-blue-100 rounded-[16px] p-4 flex items-start gap-3 mt-4">
+                            <input 
+                                type="checkbox" 
+                                id="bouncy-castle-terms" 
+                                required 
+                                checked={bouncyCastleAccepted}
+                                onChange={(e) => setBouncyCastleAccepted(e.target.checked)}
+                                className="mt-1 w-4 h-4 text-[#066bb7] rounded border-gray-300 focus:ring-[#066bb7]"
+                            />
+                            <label htmlFor="bouncy-castle-terms" className="font-['Nunito'] text-[14px] text-[#4a5568] leading-relaxed">
+                                Ich habe die <a href="/downloads/verleihbedingungen-huepfburg.pdf" target="_blank" rel="noopener noreferrer" className="text-[#066bb7] hover:underline">Verleihbedingungen für Hüpfburgen</a> sowie die <a href="/downloads/anleitung-huepfburg.pdf" target="_blank" rel="noopener noreferrer" className="text-[#066bb7] hover:underline">Bedienungs- und Sicherheitsanleitung</a> gelesen und zur Kenntnis genommen.
+                            </label>
+                        </div>
+                    )}
+
+                    <div className="bg-[#fffdf8] border border-blue-100 rounded-[16px] p-4 flex items-start gap-3 mt-4">
+                        <input 
+                            type="checkbox" 
+                            id="agb-terms" 
+                            required 
+                            checked={agbAccepted}
+                            onChange={(e) => setAgbAccepted(e.target.checked)}
+                            className="mt-1 w-4 h-4 text-[#066bb7] rounded border-gray-300 focus:ring-[#066bb7]"
+                        />
+                        <label htmlFor="agb-terms" className="font-['Nunito'] text-[14px] text-[#4a5568] leading-relaxed">
+                            Ich habe die <Link href="/agb" target="_blank" className="text-[#066bb7] hover:underline">Verleihbedingungen (AGB)</Link> sowie die <Link href="/datenschutz" target="_blank" className="text-[#066bb7] hover:underline">Datenschutzerklärung</Link> gelesen und akzeptiere diese.
+                        </label>
+                    </div>
+
                     <div className="pt-2">
                         <button
                             type="submit"
-                            disabled={submitting}
+                            disabled={submitting || !isFormValid}
                             className={`w-full h-[54px] rounded-[18px] text-[16px] font-['Fredoka'] font-semibold transition-all duration-200 flex items-center justify-center ${
-                                submitting
+                                submitting || !isFormValid
                                     ? "bg-slate-300 text-slate-500 cursor-not-allowed"
                                     : "bg-[#066bb7] text-white hover:bg-[#1a3a52] hover:shadow-lg hover:shadow-blue-500/10 active:scale-[0.98]"
                             }`}

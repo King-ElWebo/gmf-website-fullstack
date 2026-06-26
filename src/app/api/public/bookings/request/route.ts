@@ -105,7 +105,9 @@ export async function POST(req: Request) {
       startDate: new Date(`${parsed.value.startDate}T00:00:00.000Z`),
       endDate: new Date(`${parsed.value.endDate}T00:00:00.000Z`),
       deliveryType: parsed.value.deliveryType,
-      customerMessage: parsed.value.customerMessage
+      customerMessage: parsed.value.customerMessage,
+      agbAcceptedAt: parsed.value.agbAcceptedAt ? new Date(parsed.value.agbAcceptedAt) : undefined,
+      bouncyCastleTermsAcceptedAt: parsed.value.bouncyCastleTermsAcceptedAt ? new Date(parsed.value.bouncyCastleTermsAcceptedAt) : undefined,
     });
 
     return NextResponse.json({ success: true, bookingId: booking.id, status: booking.status });

@@ -116,12 +116,12 @@ export default function AdminShell({ children }: { children: ReactNode }) {
             )}
 
             <aside
-                className={`admin-sidebar fixed inset-y-0 left-0 z-50 w-[86vw] max-w-[320px] px-4 py-4 transition-transform duration-300 lg:static lg:flex lg:h-full lg:w-auto lg:max-w-none lg:flex-col lg:translate-x-0 lg:px-5 lg:py-6 ${
+                className={`admin-sidebar fixed inset-y-0 left-0 z-50 w-[86vw] max-w-[320px] px-4 py-4 transition-transform duration-300 lg:static lg:flex lg:h-full lg:w-auto lg:max-w-none lg:flex-col lg:min-h-0 lg:translate-x-0 lg:px-5 lg:py-6 ${
                     mobileNavOpen ? "translate-x-0" : "-translate-x-full"
                 }`}
             >
-                <div className="admin-surface flex h-full flex-col rounded-[28px] overflow-hidden">
-                    <div className="flex-1 overflow-y-auto p-4 lg:p-5">
+                <div className="admin-surface flex h-full min-h-0 flex-col rounded-[28px] overflow-hidden">
+                    <div className="flex-1 overflow-y-auto min-h-0 p-4 lg:p-5">
                         <div className="mb-3 flex justify-end lg:hidden">
                             <button
                                 type="button"

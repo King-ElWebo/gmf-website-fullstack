@@ -141,7 +141,7 @@ export function HeaderClient({ navCatalogTypes }: HeaderClientProps) {
           </nav>
 
           {/* Mobile Navigation controls (Cart icon next to Burger menu) */}
-          <div className="flex items-center gap-2.5 lg:hidden">
+          <div className="flex items-center gap-2.5 lg:hidden" suppressHydrationWarning>
             <Link
               href="/anfragekorb"
               className="group relative flex h-11 w-11 items-center justify-center rounded-[14px] bg-gradient-to-br from-[#f13c20] to-[#d93018] text-white shadow-md shadow-red-500/20 transition-all duration-150 active:scale-[0.95] transform-gpu hover:-translate-y-0.5"

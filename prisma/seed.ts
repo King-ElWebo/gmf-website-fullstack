@@ -4,6 +4,12 @@ import { ItemPriceType } from "@prisma/client";
 import { COMPANY_CONFIG } from "../src/lib/company-config";
 
 async function main() {
+  if (process.env.NODE_ENV === "production" && process.env.ALLOW_PRODUCTION_SEED !== "true") {
+    console.error("CRITICAL: Attempted to run db:seed in production.");
+    console.error("To override this, set ALLOW_PRODUCTION_SEED=true in your environment variables.");
+    process.exit(1);
+  }
+
   console.log("Starting comprehensive database seed...");
 
   // 1. Site Settings
