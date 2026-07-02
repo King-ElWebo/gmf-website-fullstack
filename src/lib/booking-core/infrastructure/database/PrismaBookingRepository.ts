@@ -18,13 +18,19 @@ const BOOKING_ITEM_SNAPSHOT_FIELDS = [
 
 function isUnknownBookingItemSnapshotArgument(error: unknown) {
   if (!(error instanceof Error)) return false;
-  if (!error.message.includes("Unknown argument")) return false;
+  if (!error.message.includes("Unknown argument") && !error.message.includes("Unknown arg")) return false;
   return BOOKING_ITEM_SNAPSHOT_FIELDS.some((field) => error.message.includes(`\`${field}\``));
+}
+
+function isUnknownLegalAcceptedArgument(error: unknown) {
+  if (!(error instanceof Error)) return false;
+  if (!error.message.includes("Unknown argument") && !error.message.includes("Unknown arg")) return false;
+  return error.message.includes("`agbAcceptedAt`") || error.message.includes("`bouncyCastleTermsAcceptedAt`");
 }
 
 function isUnknownBillingAddressArgument(error: unknown) {
   if (!(error instanceof Error)) return false;
-  if (!error.message.includes("Unknown argument")) return false;
+  if (!error.message.includes("Unknown argument") && !error.message.includes("Unknown arg")) return false;
   return error.message.includes("`billingAddress`") || error.message.includes("`billingAddressSameAsDelivery`");
 }
 
@@ -194,10 +200,10 @@ export class PrismaBookingRepository implements BookingRepository {
           firstName: booking.customer.firstName,
           lastName: booking.customer.lastName,
           email: booking.customer.email,
-          phone: booking.customer.phone,
-          addressLine1: booking.customer.addressLine1,
-          zip: booking.customer.zip,
-          city: booking.customer.city
+          phone: booking.customer.phone ?? null,
+          addressLine1: booking.customer.addressLine1 ?? null,
+          zip: booking.customer.zip ?? null,
+          city: booking.customer.city ?? null
         }
       },
     } as const;
@@ -228,8 +234,8 @@ export class PrismaBookingRepository implements BookingRepository {
             create: booking.items.map(i => ({
               itemId: i.resourceId,
               quantity: i.quantity,
-              resourceTitle: i.resourceTitle,
-              priceType: i.priceType,
+              resourceTitle: i.resourceTitle ?? null,
+              priceType: i.priceType ?? null,
               basePriceCents: i.basePriceCents ?? null,
               priceLabel: i.priceLabel ?? null,
               displayPrice: i.displayPrice ?? null,
@@ -248,12 +254,17 @@ export class PrismaBookingRepository implements BookingRepository {
     } catch (error) {
       const unknownBillingAddressArgument = isUnknownBillingAddressArgument(error);
       const unknownSnapshotArgument = isUnknownBookingItemSnapshotArgument(error);
+      const unknownLegalAcceptedArgument = isUnknownLegalAcceptedArgument(error);
 
-      if (!unknownBillingAddressArgument && !unknownSnapshotArgument) {
+      if (!unknownBillingAddressArgument && !unknownSnapshotArgument && !unknownLegalAcceptedArgument) {
         throw error;
       }
 
-      const retryCommonData = unknownBillingAddressArgument ? commonDataWithoutBilling : commonData;
+      let retryCommonData = unknownBillingAddressArgument ? commonDataWithoutBilling : commonData;
+      if (unknownLegalAcceptedArgument) {
+        const { agbAcceptedAt, bouncyCastleTermsAcceptedAt, ...rest } = retryCommonData;
+        retryCommonData = rest as any;
+      }
 
       if (!unknownSnapshotArgument) {
         const retryData = await (db as any).booking.create({
@@ -263,8 +274,8 @@ export class PrismaBookingRepository implements BookingRepository {
               create: booking.items.map(i => ({
                 itemId: i.resourceId,
                 quantity: i.quantity,
-                resourceTitle: i.resourceTitle,
-                priceType: i.priceType,
+                resourceTitle: i.resourceTitle ?? null,
+                priceType: i.priceType ?? null,
                 basePriceCents: i.basePriceCents ?? null,
                 priceLabel: i.priceLabel ?? null,
                 displayPrice: i.displayPrice ?? null,

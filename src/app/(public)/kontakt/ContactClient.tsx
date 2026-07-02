@@ -172,7 +172,10 @@ export function ContactClient({ settings }: ContactClientProps) {
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <Input label="Name" type="text" name="name" placeholder="Max Mustermann" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
                             <Input label="E-Mail" type="email" name="email" placeholder="max@beispiel.de" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} required />
-                            <Input label="Telefon" type="tel" name="phone" placeholder="0123 456789" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} />
+                            <Input label="Telefon" type="tel" name="phone" placeholder="0123 456789" value={formData.phone} onChange={(e) => {
+                                const sanitizedValue = e.target.value.replace(/[^\d\s+\-()]/g, '');
+                                setFormData({ ...formData, phone: sanitizedValue });
+                            }} />
                             <Input label="Betreff" type="text" name="subject" placeholder="Worum geht es?" value={formData.subject} onChange={(e) => setFormData({ ...formData, subject: e.target.value })} required />
                             <Textarea label="Nachricht" name="message" placeholder="Ihre Nachricht an uns..." value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })} rows={8} required />
                             {error && (

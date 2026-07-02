@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AdminButton } from "../../_components/ui/AdminButton";
+import { AdminCard } from "../../_components/ui/AdminCard";
+import { AdminField, AdminInput, AdminTextarea, AdminCheckbox } from "../../_components/ui/AdminInputs";
 import { GripVertical, Plus, Trash2 } from "lucide-react";
 
 export type InfoTemplateBlockData = {
@@ -154,63 +156,53 @@ export function InfoTemplateForm({
                 </div>
             )}
 
-            <div className="space-y-5 rounded-[26px] border border-[#e2e8f0] bg-white p-6 shadow-sm">
-                <h2 className="font-semibold text-slate-800">Allgemeine Einstellungen</h2>
-
+            <AdminCard title="Allgemeine Einstellungen">
                 <div className="grid gap-5 md:grid-cols-2">
-                    <div>
-                        <label className="mb-1.5 block text-sm font-medium text-slate-700">Interner Name</label>
-                        <input
+                    <AdminField label="Interner Name" helperText="Nur für dich im Admin sichtbar.">
+                        <AdminInput
                             type="text"
                             required
                             value={formData.internalName}
                             onChange={(e) => setFormData({ ...formData, internalName: e.target.value })}
-                            className="admin-input"
                             placeholder="z.B. Hüpfburg Standard"
                         />
-                        <p className="mt-1 text-xs text-slate-500">Nur für dich im Admin sichtbar.</p>
-                    </div>
+                    </AdminField>
 
-                    <div>
-                        <label className="mb-1.5 block text-sm font-medium text-slate-700">Anzeige-Titel (Überschrift)</label>
-                        <input
+                    <AdminField label="Anzeige-Titel (Überschrift)" helperText="Wird für den Bereich über den Blöcken angezeigt.">
+                        <AdminInput
                             type="text"
                             required
                             value={formData.title}
                             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                            className="admin-input"
                         />
-                        <p className="mt-1 text-xs text-slate-500">Wird für den Bereich über den Blöcken angezeigt.</p>
-                    </div>
+                    </AdminField>
                 </div>
 
-                <div>
-                    <label className="flex items-center gap-2 text-sm font-medium text-slate-700">
-                        <input
-                            type="checkbox"
-                            checked={formData.isActive}
-                            onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                            className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-                        />
-                        Vorlage aktivieren
-                    </label>
+                <div className="mt-6">
+                    <AdminCheckbox
+                        label="Vorlage aktivieren"
+                        checked={formData.isActive}
+                        onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                    />
                 </div>
-            </div>
+            </AdminCard>
 
-            <div className="space-y-5 rounded-[26px] border border-[#e2e8f0] bg-slate-50 p-6 shadow-sm">
-                <div className="flex items-center justify-between">
-                    <h2 className="font-semibold text-slate-800">Hinweis-Blöcke (Maximal 4)</h2>
-                    {formData.blocks.length < 4 && (
-                        <button
+            <AdminCard
+                title="Hinweis-Blöcke (Maximal 4)"
+                headerAction={
+                    formData.blocks.length < 4 && (
+                        <AdminButton
                             type="button"
                             onClick={addBlock}
-                            className="inline-flex items-center gap-1 rounded-full bg-white px-3 py-1.5 text-xs font-medium text-blue-600 shadow-sm ring-1 ring-inset ring-slate-200 hover:bg-slate-50"
+                            variant="secondary"
+                            className="h-8 gap-1 px-3 text-xs"
                         >
                             <Plus size={14} />
                             Block hinzufügen
-                        </button>
-                    )}
-                </div>
+                        </AdminButton>
+                    )
+                }
+            >
 
                 <div className="space-y-4">
                     {formData.blocks.length === 0 ? (
@@ -219,7 +211,7 @@ export function InfoTemplateForm({
                         </div>
                     ) : (
                         formData.blocks.map((block, index) => (
-                            <div key={index} className="relative rounded-[20px] border border-slate-200 bg-white p-5 shadow-sm">
+                            <div key={index} className="relative rounded-[20px] border border-slate-200 bg-slate-50 p-5 shadow-sm">
                                 <div className="absolute right-4 top-4 flex items-center gap-2">
                                     <button
                                         type="button"
@@ -249,56 +241,47 @@ export function InfoTemplateForm({
                                 <div className="mb-4 text-xs font-semibold uppercase text-slate-400">Block {index + 1}</div>
 
                                 <div className="grid gap-4 md:grid-cols-[100px_1fr]">
-                                    <div>
-                                        <label className="mb-1.5 block text-xs font-medium text-slate-700">Label (Links)</label>
-                                        <input
+                                    <AdminField label="Label (Links)">
+                                        <AdminInput
                                             type="text"
                                             required
                                             value={block.highlightLabel}
                                             onChange={(e) => updateBlock(index, "highlightLabel", e.target.value)}
-                                            className="admin-input py-1.5 text-sm"
                                             placeholder="z.B. OK, 230V, !"
                                         />
-                                    </div>
-                                    <div>
-                                        <label className="mb-1.5 block text-xs font-medium text-slate-700">Überschrift</label>
-                                        <input
+                                    </AdminField>
+                                    <AdminField label="Überschrift">
+                                        <AdminInput
                                             type="text"
                                             required
                                             value={block.heading}
                                             onChange={(e) => updateBlock(index, "heading", e.target.value)}
-                                            className="admin-input py-1.5 text-sm"
                                             placeholder="z.B. Zubehör inklusive"
                                         />
-                                    </div>
-                                    <div className="md:col-span-2">
-                                        <label className="mb-1.5 block text-xs font-medium text-slate-700">Fließtext</label>
-                                        <textarea
+                                    </AdminField>
+                                    <AdminField label="Fließtext" className="md:col-span-2">
+                                        <AdminTextarea
                                             required
                                             value={block.body}
                                             onChange={(e) => updateBlock(index, "body", e.target.value)}
-                                            className="admin-input min-h-[60px] py-1.5 text-sm"
                                             placeholder="Beschreibung..."
+                                            rows={2}
                                         />
-                                    </div>
+                                    </AdminField>
                                 </div>
                                 
-                                <div className="mt-4 border-t border-slate-100 pt-3">
-                                    <label className="flex items-center gap-2 text-xs font-medium text-slate-700">
-                                        <input
-                                            type="checkbox"
-                                            checked={block.isActive}
-                                            onChange={(e) => updateBlock(index, "isActive", e.target.checked)}
-                                            className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-                                        />
-                                        Block aktiv
-                                    </label>
+                                <div className="mt-4 border-t border-slate-200 pt-4">
+                                    <AdminCheckbox
+                                        label="Block aktiv"
+                                        checked={block.isActive}
+                                        onChange={(e) => updateBlock(index, "isActive", e.target.checked)}
+                                    />
                                 </div>
                             </div>
                         ))
                     )}
                 </div>
-            </div>
+            </AdminCard>
 
             <div className="flex items-center justify-between border-t border-slate-200 pt-6">
                 {!isNew ? (
