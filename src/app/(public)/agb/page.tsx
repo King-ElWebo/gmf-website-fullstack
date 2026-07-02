@@ -51,7 +51,17 @@ export default function AgbPage() {
                     </section>
 
                     <section>
-                        <h2 className="mb-2 font-['Nunito'] text-[20px] font-semibold text-[#1a202c]">6. Schlussbestimmungen</h2>
+                        <h2 className="mb-2 font-['Nunito'] text-[20px] font-semibold text-[#1a202c]">6. Bildrechte und Werbung</h2>
+                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">
+                            Der Vermieter behält sich das Recht vor, auf Veranstaltungen, bei denen seine Mietgegenstände zum Einsatz kommen, 
+                            Foto- und Videoaufnahmen von den bereitgestellten Modulen und Produkten zu machen. Diese Aufnahmen dürfen für 
+                            eigene Werbezwecke (z. B. auf der Website, in Social-Media-Kanälen oder in Printmedien) honorarfrei genutzt werden. 
+                            Dabei wird darauf geachtet, dass keine Personen ohne deren ausdrückliche Zustimmung erkennbar im Fokus stehen.
+                        </p>
+                    </section>
+
+                    <section>
+                        <h2 className="mb-2 font-['Nunito'] text-[20px] font-semibold text-[#1a202c]">7. Schlussbestimmungen</h2>
                         <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">
                             Es gilt oesterreichisches Recht. Als Gerichtsstand wird, sofern zulaessig, Korneuburg vereinbart.
                         </p>

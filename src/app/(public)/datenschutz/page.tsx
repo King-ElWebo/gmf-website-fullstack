@@ -86,7 +86,19 @@ export default async function DatenschutzPage() {
                     </section>
 
                     <section>
-                        <h2 className="mb-2 font-['Nunito'] text-[20px] font-semibold text-[#1a202c]">8. Verlinkte Dokumente</h2>
+                        <h2 className="mb-2 font-['Nunito'] text-[20px] font-semibold text-[#1a202c]">8. Bildaufnahmen auf Veranstaltungen</h2>
+                        <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">
+                            Auf Veranstaltungen, bei denen wir als Vermieter oder Dienstleister tätig sind, können unter Umständen 
+                            Bild- und Videoaufnahmen unserer eingesetzten Produkte und Module angefertigt werden, um diese zu 
+                            Dokumentations- und Werbezwecken (z.B. Website, Social Media) zu nutzen. Die Verarbeitung stützt sich 
+                            hierbei auf unser berechtigtes Interesse gemäß Art. 6 Abs. 1 lit. f DSGVO. Es wird darauf geachtet, 
+                            dass Personen entweder nicht im Fokus stehen oder unkenntlich gemacht werden. Werden Personen gezielt 
+                            fotografiert, holen wir vorab eine entsprechende Einwilligung nach Art. 6 Abs. 1 lit. a DSGVO ein.
+                        </p>
+                    </section>
+
+                    <section>
+                        <h2 className="mb-2 font-['Nunito'] text-[20px] font-semibold text-[#1a202c]">9. Verlinkte Dokumente</h2>
                         <p className="font-['Nunito'] text-[15px] leading-[24px] text-[#4a5568]">
                             Weitere rechtliche Informationen finden Sie im <Link href="/impressum" className="text-[#1a3a52] underline">Impressum</Link>.
                         </p>
