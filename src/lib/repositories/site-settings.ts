@@ -56,15 +56,10 @@ const settingsInclude = {
 };
 
 export async function getSiteSettings(): Promise<SiteSettingsRecord> {
-    const existing = await db.siteSettings.findUnique({
+    return (await db.siteSettings.upsert({
         where: { key: "default" },
-        include: settingsInclude,
-    });
-
-    if (existing) return existing as SiteSettingsRecord;
-
-    return (await db.siteSettings.create({
-        data: { key: "default" },
+        update: {},
+        create: { key: "default" },
         include: settingsInclude,
     })) as SiteSettingsRecord;
 }
